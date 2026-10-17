@@ -89,20 +89,16 @@
       document.getElementById('app-screen').classList.remove('hidden');
       document.getElementById('group-name-display').innerText = groupId.replace('_', ' ').toUpperCase();
 
-      // Listener Real-time
       db.ref('groups/' + selectedGroup).on('value', (snapshot) => {
         const data = snapshot.val();
         
-        // JIKA GURU MENEKAN RESET (Data dikosongkan/dikembalikan ke awal)
         if (!data || (data.current_round === 1 && data.status === 'answering' && data.total_score === 0 && !data.answer && !data.finish_order)) {
-          // Bawa HP siswa kembali ke layar Memilih Kelompok (Login)
           document.getElementById('app-screen').classList.add('hidden');
           document.getElementById('login-screen').classList.remove('hidden');
           document.getElementById('answer-input').value = "";
           return;
         }
 
-        // Update Skor
         document.getElementById('score-display').innerText = 'Total Skor: ' + (data.total_score || 0);
 
         if (data.status === 'answering') {
@@ -139,17 +135,25 @@
         const groups = snapshot.val() || {};
         let myCurrentRound = groups[selectedGroup] ? groups[selectedGroup].current_round : 1;
         
-        let countWaiting = 0;
+        let countWaitingInRound = 0;
         for (let key in groups) {
           if (groups[key].current_round === myCurrentRound && groups[key].finish_order) {
-            countWaiting++;
+            countWaitingInRound++;
           }
         }
 
-        db.ref('groups/' + selectedGroup).update({
-          status: 'waiting',
-          answer: answer,
-          finish_order: countWaiting + 1
+        // Ambil data berapa kelompok yang SUDAH LOLOS (ACC) di ronde ini sebelumnya
+        db.ref('round_passed_count/' + myCurrentRound).once('value', (passedSnap) => {
+          const passedCount = passedSnap.val() || 0;
+          
+          // Urutan baru = kelompok yang sudah lolos + kelompok yang sedang antri + 1
+          const calculatedOrder = passedCount + countWaitingInRound + 1;
+
+          db.ref('groups/' + selectedGroup).update({
+            status: 'waiting',
+            answer: answer,
+            finish_order: calculatedOrder
+          });
         });
       });
     }
