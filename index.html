@@ -5,13 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Kuis Interaktif Kelompok</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Firebase App & Database (SDK v8) -->
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 </head>
 <body class="bg-slate-900 text-white min-h-screen flex flex-col items-center justify-center p-4">
 
-  <div id="login-screen" class="bg-slate-800 p-6 rounded-2xl shadow-xl w-full max-full max-w-md text-center border border-slate-700">
+  <!-- Layar Pilih Kelompok (Login) -->
+  <div id="login-screen" class="bg-slate-800 p-6 rounded-2xl shadow-xl w-full max-w-md text-center border border-slate-700">
     <h1 class="text-2xl font-bold mb-4 text-emerald-400">Selamat Datang di Kuis!</h1>
     <p class="text-slate-300 mb-6 text-sm">Pilih kelompok kamu untuk memulai permainan:</p>
     <div class="space-y-3">
@@ -23,13 +23,14 @@
     </div>
   </div>
 
+  <!-- Layar Aplikasi Kuis -->
   <div id="app-screen" class="hidden w-full max-w-lg bg-slate-800 p-6 rounded-2xl shadow-xl border border-slate-700">
     <div class="flex justify-between items-center mb-6 border-b border-slate-700 pb-4">
       <span id="group-name-display" class="text-lg font-bold text-emerald-400"></span>
       <span id="score-display" class="bg-emerald-500/20 text-emerald-300 text-sm font-semibold px-3 py-1 rounded-full border border-emerald-500/30">Total Skor: 0</span>
     </div>
 
-    <!-- Status Tampilan -->
+    <!-- Tampilan Soal & Form Jawaban -->
     <div id="quiz-box">
       <div class="flex justify-between items-center mb-3">
         <span id="round-badge" class="bg-indigo-500/20 text-indigo-300 text-xs font-bold px-2.5 py-1 rounded-md border border-indigo-500/30">Ronde 1</span>
@@ -43,6 +44,7 @@
       <button onclick="submitAnswer()" class="w-full py-3.5 bg-emerald-600 hover:bg-emerald-500 font-bold rounded-xl shadow-lg transition">Kirim Jawaban</button>
     </div>
 
+    <!-- Tampilan Menunggu Verifikasi Guru -->
     <div id="waiting-box" class="hidden text-center py-8">
       <div class="animate-spin w-12 h-12 border-4 border-indigo-500 border-t-transparent rounded-full mx-auto mb-4"></div>
       <h2 class="text-xl font-bold mb-2 text-amber-400">Jawaban Terkirim!</h2>
@@ -50,6 +52,7 @@
       <div id="finish-order-badge" class="inline-block bg-slate-700 text-slate-200 text-xs px-3 py-1.5 rounded-lg border border-slate-600"></div>
     </div>
 
+    <!-- Tampilan Selesai Semua Ronde -->
     <div id="finished-all-box" class="hidden text-center py-8">
       <div class="text-5xl mb-4">🎉</div>
       <h2 class="text-2xl font-bold text-emerald-400 mb-2">Selamat!</h2>
@@ -58,7 +61,6 @@
   </div>
 
   <script>
-    // MASUKKAN KONFIGURASI FIREBASE KAMU DI SINI
     const firebaseConfig = {
       apiKey: "AIzaSyDHNH2OpGV1xVyr3vn1KDr4XZILGMXKZEE",
       authDomain: "kuis-interaktif-98daa.firebaseapp.com",
@@ -87,25 +89,31 @@
       document.getElementById('app-screen').classList.remove('hidden');
       document.getElementById('group-name-display').innerText = groupId.replace('_', ' ').toUpperCase();
 
-      // Listen perubahan data kelompok
-      db.ref(`groups/${selectedGroup}`).on('value', (snapshot) => {
+      // Listener Real-time
+      db.ref('groups/' + selectedGroup).on('value', (snapshot) => {
         const data = snapshot.val();
         if (!data) return;
 
-        document.getElementById('score-display').innerText = `Total Skor: ${data.total_score || 0}`;
+        // Update Skor
+        document.getElementById('score-display').innerText = 'Total Skor: ' + (data.total_score || 0);
 
+        // Jika status answering (termasuk setelah di-Reset oleh Guru)
         if (data.status === 'answering') {
           document.getElementById('quiz-box').classList.remove('hidden');
           document.getElementById('waiting-box').classList.add('hidden');
           document.getElementById('finished-all-box').classList.add('hidden');
-          document.getElementById('round-badge').innerText = `Ronde ${data.current_round}`;
-          document.getElementById('question-text').innerText = questions[data.current_round] || "Soal tidak ditemukan";
-          document.getElementById('answer-input').value = "";
+          document.getElementById('round-badge').innerText = 'Ronde ' + (data.current_round || 1);
+          document.getElementById('question-text').innerText = questions[data.current_round || 1] || "Soal tidak ditemukan";
+          
+          // Kosongkan textarea jika data jawaban di Firebase kosong (misal saat di-reset)
+          if (!data.answer) {
+            document.getElementById('answer-input').value = "";
+          }
         } else if (data.status === 'waiting') {
           document.getElementById('quiz-box').classList.add('hidden');
           document.getElementById('waiting-box').classList.remove('hidden');
           document.getElementById('finished-all-box').classList.add('hidden');
-          document.getElementById('finish-order-badge').innerText = `Urutan Selesai: #${data.finish_order || '-'}`;
+          document.getElementById('finish-order-badge').innerText = 'Urutan Selesai: #' + (data.finish_order || '-');
         } else if (data.status === 'completed') {
           document.getElementById('quiz-box').classList.add('hidden');
           document.getElementById('waiting-box').classList.add('hidden');
@@ -121,17 +129,22 @@
         return;
       }
 
-      db.ref('finish_counter').transaction((current) => {
-        return (current || 0) + 1;
-      }, (error, committed, snapshot) => {
-        if (committed) {
-          const order = snapshot.val();
-          db.ref(`groups/${selectedGroup}`).update({
-            status: 'waiting',
-            answer: answer,
-            finish_order: order
-          });
+      db.ref('groups').once('value', (snapshot) => {
+        const groups = snapshot.val() || {};
+        let myCurrentRound = groups[selectedGroup] ? groups[selectedGroup].current_round : 1;
+        
+        let countWaiting = 0;
+        for (let key in groups) {
+          if (groups[key].current_round === myCurrentRound && groups[key].finish_order) {
+            countWaiting++;
+          }
         }
+
+        db.ref('groups/' + selectedGroup).update({
+          status: 'waiting',
+          answer: answer,
+          finish_order: countWaiting + 1
+        });
       });
     }
   </script>
