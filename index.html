@@ -509,7 +509,7 @@
             </div>
             <div>
               ${group.status === 'waiting' ? `
-                <button type="button" onclick="approveGroup('${groupId}',${group.current_round || 1}, ${group.total_score \vert{}\vert{} 0},${scoreEarned})" class="w-full py-2 bg-emerald-600 font-bold rounded-xl text-sm mb-2">✅ ACC (+${scoreEarned} Poin)</button>
+                <button type="button" onclick="approveGroup('${groupId}', ${group.current_round || 1}, ${group.total_score || 0}, ${scoreEarned})" class="w-full py-2 bg-emerald-600 font-bold rounded-xl text-sm mb-2">✅ ACC (+${scoreEarned} Poin)</button>
                 <button type="button" onclick="rejectGroup('${groupId}')" class="w-full py-1.5 bg-rose-600/30 text-rose-300 font-bold rounded-xl text-xs">❌ Suruh Diskusi Ulang</button>
               ` : `<button type="button" disabled class="w-full py-2 bg-slate-700 text-slate-500 font-semibold rounded-xl text-xs">Menunggu...</button>`}
             </div>
