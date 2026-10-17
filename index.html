@@ -25,11 +25,16 @@
     .bg-round-2 { background: linear-gradient(to bottom, #7c3aed, #431407, #0f172a); }
     .bg-round-3 { background: linear-gradient(to bottom, #4c1d95, #831843, #0f172a); }
     .bg-round-4 { background: linear-gradient(to bottom, #b45309, #701a75, #0f172a); }
+    
+    /* Animasi Diagram Batang Vertikal */
+    .bar-grow {
+      transition: height 1.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
   </style>
 </head>
 <body id="dynamic-bg" class="bg-round-1 text-white min-h-screen flex flex-col items-center justify-center p-4 relative overflow-x-hidden transition-all duration-1000">
 
-  <!-- Awan Melayang -->
+  <!-- Visual Awan Melayang -->
   <div class="fixed inset-0 pointer-events-none z-0 opacity-25">
     <svg class="absolute top-10 left-5 w-72 h-44 animate-cloud-slow fill-sky-200" viewBox="0 0 24 24"><path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96z"/></svg>
     <svg class="absolute top-1/3 right-10 w-96 h-56 animate-cloud-fast fill-amber-200" viewBox="0 0 24 24"><path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96z"/></svg>
@@ -111,18 +116,19 @@
     </div>
 
     <div id="quiz-content-wrapper" class="hidden glass-card p-6 rounded-3xl border border-sky-500/20">
-      <!-- Kotak Soal Mengerjakan -->
       <div id="quiz-box">
         <div class="flex justify-between items-center mb-3">
           <span id="round-badge" class="bg-indigo-500/20 text-indigo-300 text-xs font-bold px-3 py-1 rounded-lg border border-indigo-500/30">Ronde 1</span>
           <span class="text-xs text-slate-400 bg-slate-800/80 px-2.5 py-1 rounded-md">💡 Diskusi Kelompok</span>
         </div>
-        <div id="question-text" class="text-lg font-medium mb-6 leading-relaxed text-slate-100"></div>
-        <textarea id="answer-input" rows="3" placeholder="Tuliskan jawaban hasil diskusi kelompok..." class="w-full bg-slate-900/90 border border-slate-700 rounded-xl p-3.5 text-white text-sm mb-6"></textarea>
+        <div id="question-text" class="text-lg font-medium mb-4 leading-relaxed text-slate-100"></div>
+
+        <!-- Input Jawaban Uraian / PG -->
+        <div id="answer-container" class="mb-6 space-y-3"></div>
+
         <button type="button" onclick="submitAnswer()" class="w-full py-4 bg-gradient-to-r from-emerald-600 to-teal-600 font-bold rounded-2xl shadow-lg">Kirim Jawaban Kelompok</button>
       </div>
 
-      <!-- Kotak Menunggu Verifikasi Guru -->
       <div id="waiting-box" class="hidden text-center py-8">
         <div class="animate-spin w-12 h-12 border-4 border-sky-400 border-t-transparent rounded-full mx-auto mb-4"></div>
         <h2 class="text-xl font-bold mb-2 text-amber-300">Jawaban Terkirim!</h2>
@@ -135,31 +141,27 @@
         </div>
       </div>
 
-      <!-- Selesai Seluruh Kuis -->
       <div id="finished-all-box" class="hidden text-center py-6">
         <div class="text-6xl mb-3">🎉</div>
         <h2 class="text-2xl font-bold text-emerald-300 mb-2">Luar Biasa!</h2>
         <p class="text-slate-300 text-sm mb-6">Kelompokmu telah menyelesaikan seluruh soal kuis!</p>
         <button type="button" onclick="toggleExplanations()" class="px-5 py-3 bg-sky-600 hover:bg-sky-500 font-bold text-xs rounded-xl shadow-lg transition">
-          📖 Lihat / Sembunyikan Kunci & Pembahasan
+          📖 Lihat / Sembunyikan Pembahasan
         </button>
         <div id="explanations-container" class="hidden mt-6 text-left space-y-3 bg-slate-900/90 p-4 rounded-2xl border border-slate-800 text-xs text-slate-300">
-          <h4 class="font-bold text-sky-300 border-b border-slate-700 pb-2">Pembahasan Resmi Guru:</h4>
-          <p id="exp-1"><strong>Soal Ronde 1:</strong> Memerlukan verifikasi langkah logis pertama.</p>
-          <p id="exp-2"><strong>Soal Ronde 2:</strong> Evaluasi rumus dan perhitungan komutatif.</p>
-          <p id="exp-3"><strong>Soal Ronde 3:</strong> Penerapan analisis pada kasus ketiga.</p>
-          <p id="exp-4"><strong>Soal Ronde 4:</strong> Penarikan kesimpulan akhir tantangan.</p>
+          <h4 class="font-bold text-sky-300 border-b border-slate-700 pb-2">Pembahasan Jawaban Soal:</h4>
+          <div id="explanation-list" class="space-y-2"></div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- 4. DASHBOARD KONTROL GURU & PODIUM -->
+  <!-- 4. DASHBOARD GURU & DIAGRAM BATANG VERTIKAL -->
   <div id="teacher-dashboard-screen" class="hidden w-full max-w-6xl z-10 my-6 space-y-6">
     <div class="glass-card p-6 rounded-3xl border border-sky-500/20 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
       <div>
         <h1 class="text-3xl font-extrabold text-sky-300">🏆 Dashboard Kontrol Guru</h1>
-        <p class="text-slate-400 text-xs mt-1">Verifikasi jawaban, kelola bank soal dinamis, dan pantau kuis.</p>
+        <p class="text-slate-400 text-xs mt-1">Kelola bank soal tersimpan & verifikasi poin kuis.</p>
       </div>
       <div class="flex flex-wrap items-center gap-3">
         <div id="quiz-status-indicator" class="px-3.5 py-2 rounded-xl text-xs font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">
@@ -171,30 +173,38 @@
       </div>
     </div>
 
-    <!-- PENGATURAN BANK SOAL DINAMIS GURU -->
+    <!-- PENGATURAN BANK SOAL DINAMIS & SIMPANAN PRESET -->
     <div class="glass-card p-6 rounded-3xl border border-sky-500/20 space-y-4">
-      <div class="flex justify-between items-center border-b border-slate-700 pb-3">
-        <h3 class="text-lg font-bold text-sky-300">✏️ Pengaturan Bank Soal Kuis (Bisa Diganti)</h3>
-        <button type="button" onclick="saveCustomQuestions()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 font-bold rounded-xl text-xs shadow-lg">💾 Simpan Perubahan Soal</button>
-      </div>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+      <div class="flex flex-wrap justify-between items-center gap-3 border-b border-slate-700 pb-3">
         <div>
-          <label class="block font-bold text-amber-300 mb-1">Soal Ronde 1:</label>
-          <textarea id="edit-q1" rows="2" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-white"></textarea>
+          <h3 class="text-lg font-bold text-sky-300">✏️ Pengaturan & Simpanan Bank Soal</h3>
+          <p class="text-xs text-slate-400">Atur jumlah soal (1-10), tipe uraian/PG, dan simpan preset.</p>
         </div>
-        <div>
-          <label class="block font-bold text-amber-300 mb-1">Soal Ronde 2:</label>
-          <textarea id="edit-q2" rows="2" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-white"></textarea>
-        </div>
-        <div>
-          <label class="block font-bold text-amber-300 mb-1">Soal Ronde 3:</label>
-          <textarea id="edit-q3" rows="2" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-white"></textarea>
-        </div>
-        <div>
-          <label class="block font-bold text-amber-300 mb-1">Soal Ronde 4:</label>
-          <textarea id="edit-q4" rows="2" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-white"></textarea>
+        <div class="flex items-center gap-2">
+          <select id="preset-selector" onchange="loadSelectedPreset(this.value)" class="bg-slate-900 border border-slate-700 text-xs rounded-xl p-2 text-white">
+            <option value="default">Bank Soal Utama (Default)</option>
+          </select>
+          <button type="button" onclick="saveAsNewPreset()" class="px-3.5 py-2 bg-indigo-600 hover:bg-indigo-500 font-bold rounded-xl text-xs">💾 Simpan Preset Baru</button>
         </div>
       </div>
+
+      <!-- Pilihan Jumlah Soal -->
+      <div class="flex items-center gap-3 text-xs">
+        <label class="font-bold text-amber-300">Jumlah Soal Kuis:</label>
+        <select id="total-questions-select" onchange="generateQuestionInputs(this.value)" class="bg-slate-900 border border-slate-700 rounded-lg p-1.5 text-white">
+          <option value="4">4 Soal</option>
+          <option value="5">5 Soal</option>
+          <option value="6">6 Soal</option>
+          <option value="7">7 Soal</option>
+          <option value="8">8 Soal</option>
+          <option value="9">9 Soal</option>
+          <option value="10">10 Soal</option>
+        </select>
+        <button type="button" onclick="publishActiveQuestions()" class="ml-auto px-4 py-2 bg-emerald-600 hover:bg-emerald-500 font-bold rounded-xl text-xs shadow-lg">🚀 Terapkan Soal ke Siswa</button>
+      </div>
+
+      <!-- Area Form Editor Soal Dinamis -->
+      <div id="question-editor-container" class="space-y-4 max-h-96 overflow-y-auto pr-2"></div>
     </div>
 
     <!-- PODIUM JUARA 1 -->
@@ -209,10 +219,12 @@
       </div>
     </div>
 
-    <!-- DIAGRAM BATANG SKOR -->
+    <!-- DIAGRAM BATANG VERTIKAL (NGARET KE ATAS) -->
     <div class="glass-card p-6 rounded-3xl border border-sky-500/20 space-y-4">
-      <h3 class="text-lg font-bold text-amber-300">📊 Papan Peringkat Real-Time</h3>
-      <div id="leaderboard-bars" class="space-y-4 pt-2"></div>
+      <h3 class="text-lg font-bold text-amber-300 flex items-center gap-2">📊 Papan Peringkat Diagram Batang Vertikal</h3>
+      
+      <!-- Wadah Batang Grafik Berdiri Tegak -->
+      <div id="vertical-leaderboard-container" class="flex justify-around items-end h-64 bg-slate-900/80 rounded-2xl p-4 border border-slate-800"></div>
     </div>
 
     <!-- KARTU VERIFIKASI KELOMPOK -->
@@ -223,6 +235,7 @@
   <script>
     let capturedPhotoData = null;
     let selectedGroup = null;
+    let currentSelectedAnswer = "";
 
     const firebaseConfig = {
       apiKey: "AIzaSyDHNH2OpGV1xVyr3vn1KDr4XZILGMXKZEE",
@@ -238,12 +251,13 @@
     const db = firebase.database();
 
     const scoreTable = { 1: 140, 2: 130, 3: 120, 4: 110, 5: 100 };
-    let activeQuestions = {
-      1: "Soal Ronde 1: Apa jawaban hasil diskusi kelompok kalian untuk kasus pertama?",
-      2: "Soal Ronde 2: Berapa hasil perhitungan untuk permasalahan kedua?",
-      3: "Soal Ronde 3: Jelaskan analisis kelompok kalian mengenai pertanyaan ketiga?",
-      4: "Soal Ronde 4: Apa kesimpulan akhir dari tantangan ronde keempat?"
-    };
+    
+    let activeQuestions = [
+      { text: "Soal Ronde 1: Apa jawaban hasil diskusi kelompok kalian?", type: "uraian", explanation: "Penjelasan Soal 1" },
+      { text: "Soal Ronde 2: Berapakah hasil dari 15 + 25 x 2?", type: "pg", options: ["A. 80", "B. 65", "C. 50", "D. 90"], explanation: "Perkalian dahulukan: 25x2=50 + 15 = 65" },
+      { text: "Soal Ronde 3: Jelaskan analisis kelompok kalian mengenai pertanyaan ketiga?", type: "uraian", explanation: "Penjelasan Soal 3" },
+      { text: "Soal Ronde 4: Apa kesimpulan akhir tantangan kelompok?", type: "uraian", explanation: "Penjelasan Soal 4" }
+    ];
 
     function triggerConfetti() {
       if (typeof confetti === 'function') {
@@ -316,29 +330,112 @@
       document.getElementById('explanations-container').classList.toggle('hidden');
     }
 
-    // PENGATURAN SOAL DINAMIS GURU
-    function loadQuestionsFromDB() {
-      db.ref('custom_questions').on('value', (snapshot) => {
-        const data = snapshot.val();
-        if (data) {
-          activeQuestions = data;
+    // EDITOR SOAL DINAMIS & PRESET
+    function generateQuestionInputs(count) {
+      const container = document.getElementById('question-editor-container');
+      container.innerHTML = '';
+
+      for (let i = 0; i < count; i++) {
+        const q = activeQuestions[i] || { text: `Soal Ronde ${i+1}: ...`, type: 'uraian', options: ['A.', 'B.', 'C.', 'D.'], explanation: '' };
+        
+        const div = document.createElement('div');
+        div.className = "bg-slate-900/90 p-4 rounded-2xl border border-slate-800 space-y-2 text-xs";
+        div.innerHTML = `
+          <div class="flex justify-between items-center">
+            <span class="font-bold text-amber-300">Soal Ronde ${i+1}</span>
+            <select onchange="toggleOptionInputs(${i}, this.value)" id="q-type-${i}" class="bg-slate-800 border border-slate-700 rounded-lg p-1 text-white">
+              <option value="uraian" ${q.type === 'uraian' ? 'selected' : ''}>Uraian / Isian</option>
+              <option value="pg" ${q.type === 'pg' ? 'selected' : ''}>Pilihan Ganda (PG)</option>
+            </select>
+          </div>
+          <textarea id="q-text-${i}" rows="2" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2 text-white" placeholder="Teks Soal...">${q.text || ''}</textarea>
+          
+          <div id="pg-box-${i}" class="${q.type === 'pg' ? '' : 'hidden'} grid grid-cols-2 gap-2 pt-1">
+            <input id="q-opt-${i}-0" type="text" value="${q.options ? q.options[0] : 'A.'}" class="bg-slate-950 border border-slate-800 rounded-lg p-1.5 text-white" />
+            <input id="q-opt-${i}-1" type="text" value="${q.options ? q.options[1] : 'B.'}" class="bg-slate-950 border border-slate-800 rounded-lg p-1.5 text-white" />
+            <input id="q-opt-${i}-2" type="text" value="${q.options ? q.options[2] : 'C.'}" class="bg-slate-950 border border-slate-800 rounded-lg p-1.5 text-white" />
+            <input id="q-opt-${i}-3" type="text" value="${q.options ? q.options[3] : 'D.'}" class="bg-slate-950 border border-slate-800 rounded-lg p-1.5 text-white" />
+          </div>
+
+          <input id="q-exp-${i}" type="text" value="${q.explanation || ''}" placeholder="Pembahasan Singkat Soal Ini..." class="w-full bg-slate-950 border border-slate-800 rounded-lg p-1.5 text-slate-300 italic" />
+        `;
+        container.appendChild(div);
+      }
+    }
+
+    function toggleOptionInputs(index, type) {
+      document.getElementById(`pg-box-${index}`).classList.toggle('hidden', type !== 'pg');
+    }
+
+    function collectQuestionsFromEditor() {
+      const count = parseInt(document.getElementById('total-questions-select').value);
+      let newQuestions = [];
+
+      for (let i = 0; i < count; i++) {
+        const type = document.getElementById(`q-type-${i}`).value;
+        const text = document.getElementById(`q-text-${i}`).value;
+        const explanation = document.getElementById(`q-exp-${i}`).value;
+
+        let options = [];
+        if (type === 'pg') {
+          options = [
+            document.getElementById(`q-opt-${i}-0`).value,
+            document.getElementById(`q-opt-${i}-1`).value,
+            document.getElementById(`q-opt-${i}-2`).value,
+            document.getElementById(`q-opt-${i}-3`).value
+          ];
         }
-        document.getElementById('edit-q1').value = activeQuestions[1] || "";
-        document.getElementById('edit-q2').value = activeQuestions[2] || "";
-        document.getElementById('edit-q3').value = activeQuestions[3] || "";
-        document.getElementById('edit-q4').value = activeQuestions[4] || "";
+
+        newQuestions.push({ text, type, options, explanation });
+      }
+      return newQuestions;
+    }
+
+    function publishActiveQuestions() {
+      activeQuestions = collectQuestionsFromEditor();
+      db.ref('active_quiz_questions').set(activeQuestions, () => {
+        alert("Soal berhasil diterbitkan secara live ke seluruh siswa!");
       });
     }
 
-    function saveCustomQuestions() {
-      const q1 = document.getElementById('edit-q1').value;
-      const q2 = document.getElementById('edit-q2').value;
-      const q3 = document.getElementById('edit-q3').value;
-      const q4 = document.getElementById('edit-q4').value;
+    function saveAsNewPreset() {
+      const presetName = prompt("Masukkan nama simpanan bank soal ini (contoh: Ulangan Bab 1):");
+      if (!presetName) return;
 
-      db.ref('custom_questions').set({
-        1: q1, 2: q2, 3: q3, 4: q4
-      }, () => alert("Soal berhasil diperbarui di seluruh siswa!"));
+      const questionsToSave = collectQuestionsFromEditor();
+      const key = presetName.replace(/[^a-zA-Z0-9]/g, '_');
+
+      db.ref('question_presets/' + key).set({
+        title: presetName,
+        questions: questionsToSave
+      }, () => alert("Preset soal berhasil disimpan!"));
+    }
+
+    function loadPresetsList() {
+      db.ref('question_presets').on('value', (snapshot) => {
+        const data = snapshot.val() || {};
+        const selector = document.getElementById('preset-selector');
+        selector.innerHTML = '<option value="default">Bank Soal Utama (Default)</option>';
+
+        Object.keys(data).forEach(key => {
+          const option = document.createElement('option');
+          option.value = key;
+          option.innerText = data[key].title;
+          selector.appendChild(option);
+        });
+      });
+    }
+
+    function loadSelectedPreset(presetKey) {
+      if (presetKey === "default") return;
+      db.ref('question_presets/' + presetKey).once('value', (snapshot) => {
+        const data = snapshot.val();
+        if (data && data.questions) {
+          activeQuestions = data.questions;
+          document.getElementById('total-questions-select').value = activeQuestions.length;
+          generateQuestionInputs(activeQuestions.length);
+        }
+      });
     }
 
     // LOGIKA SISWA
@@ -373,7 +470,7 @@
     }
 
     function attachStudentListener() {
-      db.ref('custom_questions').on('value', (snapshot) => {
+      db.ref('active_quiz_questions').on('value', (snapshot) => {
         if (snapshot.val()) activeQuestions = snapshot.val();
       });
 
@@ -387,8 +484,10 @@
         const data = snapshot.val();
         if (!data) return;
 
-        const round = data.current_round || 1;
-        document.getElementById('dynamic-bg').className = `bg-round-${round} text-white min-h-screen flex flex-col items-center justify-center p-4 relative overflow-x-hidden transition-all duration-1000`;
+        const roundIndex = (data.current_round || 1) - 1;
+        const totalRounds = activeQuestions.length;
+
+        document.getElementById('dynamic-bg').className = `bg-round-${(roundIndex % 4) + 1} text-white min-h-screen flex flex-col items-center justify-center p-4 relative overflow-x-hidden transition-all duration-1000`;
         document.getElementById('score-display').innerText = 'Total Skor: ' + (data.total_score || 0);
         if (data.members) document.getElementById('group-members-display').innerText = 'Anggota: ' + data.members.join(', ');
 
@@ -396,9 +495,37 @@
           document.getElementById('quiz-box').classList.remove('hidden');
           document.getElementById('waiting-box').classList.add('hidden');
           document.getElementById('finished-all-box').classList.add('hidden');
-          document.getElementById('round-badge').innerText = 'Ronde ' + round;
-          document.getElementById('question-text').innerText = activeQuestions[round] || "Soal tidak ditemukan";
-          if (!data.answer) document.getElementById('answer-input').value = "";
+          document.getElementById('round-badge').innerText = `Soal ${roundIndex + 1} / ${totalRounds}`;
+
+          const currentQ = activeQuestions[roundIndex] || { text: "Soal tidak ditemukan", type: "uraian" };
+          document.getElementById('question-text').innerText = currentQ.text;
+
+          // Render Input Uraian atau PG
+          const answerContainer = document.getElementById('answer-container');
+          answerContainer.innerHTML = '';
+
+          if (currentQ.type === 'pg' && currentQ.options) {
+            currentQ.options.forEach((opt) => {
+              const optBtn = document.createElement('button');
+              optBtn.type = "button";
+              optBtn.className = "w-full p-3 bg-slate-900 hover:bg-slate-800 border border-slate-700 rounded-xl text-left text-xs font-semibold focus:border-sky-400";
+              optBtn.innerText = opt;
+              optBtn.onclick = () => {
+                currentSelectedAnswer = opt;
+                Array.from(answerContainer.children).forEach(c => c.classList.remove('border-emerald-500', 'bg-emerald-950/40'));
+                optBtn.classList.add('border-emerald-500', 'bg-emerald-950/40');
+              };
+              answerContainer.appendChild(optBtn);
+            });
+          } else {
+            const textarea = document.createElement('textarea');
+            textarea.id = "text-answer-input";
+            textarea.rows = 3;
+            textarea.placeholder = "Tuliskan jawaban hasil diskusi kelompok...";
+            textarea.className = "w-full bg-slate-900/90 border border-slate-700 rounded-xl p-3.5 text-white text-sm";
+            answerContainer.appendChild(textarea);
+          }
+
         } else if (data.status === 'waiting') {
           document.getElementById('quiz-box').classList.add('hidden');
           document.getElementById('waiting-box').classList.remove('hidden');
@@ -416,14 +543,26 @@
           document.getElementById('quiz-box').classList.add('hidden');
           document.getElementById('waiting-box').classList.add('hidden');
           document.getElementById('finished-all-box').classList.remove('hidden');
+
+          const expList = document.getElementById('explanation-list');
+          expList.innerHTML = '';
+          activeQuestions.forEach((q, idx) => {
+            const p = document.createElement('p');
+            p.innerHTML = `<strong>Soal ${idx+1}:</strong> ${q.explanation || 'Pembahasan tersedia di papan tulis guru.'}`;
+            expList.appendChild(p);
+          });
+
           triggerConfetti();
         }
       });
     }
 
     function submitAnswer() {
-      const answer = document.getElementById('answer-input').value;
-      if (!answer.trim()) return alert("Isi jawaban dulu!");
+      let finalAnswer = currentSelectedAnswer;
+      const textInput = document.getElementById('text-answer-input');
+      if (textInput) finalAnswer = textInput.value;
+
+      if (!finalAnswer.trim()) return alert("Pilih atau isi jawaban kelompokmu dulu!");
 
       db.ref('groups').once('value', (snapshot) => {
         const groups = snapshot.val() || {};
@@ -437,17 +576,26 @@
           const passedCount = passedSnap.val() || 0;
           db.ref('groups/' + selectedGroup).update({
             status: 'waiting',
-            answer: answer,
+            answer: finalAnswer,
             finish_order: passedCount + countWaiting + 1,
             picked_member: null
           });
+          currentSelectedAnswer = "";
         });
       });
     }
 
     // DASHBOARD GURU
     function initTeacherDashboard() {
-      loadQuestionsFromDB();
+      db.ref('active_quiz_questions').once('value', (snapshot) => {
+        if (snapshot.val()) {
+          activeQuestions = snapshot.val();
+        }
+        document.getElementById('total-questions-select').value = activeQuestions.length;
+        generateQuestionInputs(activeQuestions.length);
+      });
+
+      loadPresetsList();
 
       db.ref('quiz_started').on('value', (snapshot) => {
         const started = snapshot.val() === true;
@@ -467,11 +615,11 @@
       db.ref('groups').on('value', (snapshot) => {
         const data = snapshot.val() || {};
         const container = document.getElementById('groups-container');
-        const leaderboardContainer = document.getElementById('leaderboard-bars');
+        const verticalLeaderboardContainer = document.getElementById('vertical-leaderboard-container');
         const winnerPodiumSection = document.getElementById('winner-podium-section');
 
         container.innerHTML = '';
-        leaderboardContainer.innerHTML = '';
+        verticalLeaderboardContainer.innerHTML = '';
 
         let groupList = [];
         for (let i = 1; i <= 5; i++) {
@@ -506,7 +654,7 @@
               <p class="text-xs text-slate-400 italic mb-3">Anggota: ${group.members ? group.members.join(', ') : 'Belum mendaftar'}</p>
               <div class="text-sm text-slate-300 space-y-1 mb-4">
                 <p>Ronde Sekarang: <strong class="text-indigo-400">Ronde ${group.current_round || 1}</strong></p>
-                <p>Total Skor: <strong class="text-emerald-400">${group.total_score || 0}</strong></p>
+                <p>Total Skor: <strong class="text-emerald-400">${group.total_score || 0} Poin</strong></p>
               </div>
               ${group.status === 'waiting' ? `<div class="bg-slate-900/80 p-3 rounded-xl mb-4"><p class="text-xs text-slate-400">Jawaban Siswa:</p><p class="text-sm text-slate-200 italic font-semibold">"${group.answer || '-'}"</p></div>` : ''}
               <div class="bg-slate-900/50 p-3 rounded-xl mb-4 text-center">
@@ -516,7 +664,7 @@
             </div>
             <div>
               ${group.status === 'waiting' ? `
-                <button type="button" onclick="approveGroup('${groupId}',${group.current_round || 1}, ${group.total_score || 0},${scoreEarned})" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 font-bold rounded-xl text-sm mb-2 shadow-lg">✅ ACC & Lanjut Ronde berikutnya (+${scoreEarned} Poin)</button>
+                <button type="button" onclick="approveGroup('${groupId}',${group.current_round || 1}, ${group.total_score \vert{}\vert{} 0},${scoreEarned})" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 font-bold rounded-xl text-sm mb-2 shadow-lg">✅ ACC & Tambah +${scoreEarned} Poin</button>
                 <button type="button" onclick="rejectGroup('${groupId}')" class="w-full py-1.5 bg-rose-600/30 text-rose-300 font-bold rounded-xl text-xs">❌ Diskusi Ulang</button>
               ` : `<button type="button" disabled class="w-full py-2 bg-slate-700 text-slate-500 font-semibold rounded-xl text-xs">Menunggu Jawaban Siswa...</button>`}
             </div>
@@ -525,8 +673,9 @@
         }
 
         groupList.sort((a, b) => b.score - a.score);
-        const maxScore = Math.max(...groupList.map(g => g.score), 500);
+        const maxScore = Math.max(...groupList.map(g => g.score), 600);
 
+        // CEK PODIUM
         const activeGroups = groupList.filter(g => g.members && g.members.length > 0);
         const isAllFinished = activeGroups.length > 0 && activeGroups.every(g => g.status === 'completed');
 
@@ -549,20 +698,22 @@
           winnerPodiumSection.classList.add('hidden');
         }
 
-        groupList.forEach((item, index) => {
-          const widthPercent = Math.max((item.score / maxScore) * 100, 10);
-          const bar = document.createElement('div');
-          bar.className = "flex items-center gap-3";
-          bar.innerHTML = `
-            <span class="w-24 text-xs font-bold text-slate-300">${item.name}</span>
-            <div class="flex-1 bg-slate-900 rounded-xl h-8 overflow-hidden border border-slate-700 p-1 flex items-center">
-              <div class="h-full bg-gradient-to-r from-sky-500 to-indigo-500 rounded-lg transition-all duration-1000 flex items-center justify-end px-2" style="width: ${widthPercent}%">
-                <span class="text-xs font-extrabold text-slate-950">${item.score} Poin</span>
+        // RENDERING DIAGRAM BATANG VERTIKAL (BERGERAK NAIK DARI BAWAH KE ATAS)
+        groupList.forEach((item) => {
+          const heightPercent = Math.max((item.score / maxScore) * 100, 8);
+
+          const barCol = document.createElement('div');
+          barCol.className = "flex flex-col items-center h-full justify-end w-16";
+          barCol.innerHTML = `
+            <span class="text-xs font-extrabold text-amber-300 mb-1">${item.score}</span>
+            <div class="w-full bg-slate-950 rounded-t-2xl p-1 flex flex-col justify-end h-full border border-slate-700 overflow-hidden">
+              <div class="w-full bg-gradient-to-t from-indigo-600 via-sky-500 to-amber-300 rounded-t-xl bar-grow flex justify-center items-start pt-1" style="height: ${heightPercent}%">
+                ${item.photo ? `<img src="${item.photo}" class="w-6 h-6 rounded-full object-cover border border-white" />` : ''}
               </div>
             </div>
-            ${item.photo ? `<img src="${item.photo}" class="w-8 h-8 rounded-full object-cover border-2 border-sky-400" />` : ''}
+            <span class="text-[11px] font-bold text-slate-300 mt-2 text-center">${item.name}</span>
           `;
-          leaderboardContainer.appendChild(bar);
+          verticalLeaderboardContainer.appendChild(barCol);
         });
       });
     }
@@ -584,7 +735,7 @@
 
     function approveGroup(groupId, currentRound, currentScore, addedScore) {
       const nextRound = currentRound + 1;
-      const isCompleted = nextRound > 4;
+      const isCompleted = nextRound > activeQuestions.length;
       db.ref('round_passed_count/' + currentRound).transaction((count) => (count || 0) + 1);
       db.ref('groups/' + groupId).update({
         current_round: isCompleted ? currentRound : nextRound,
