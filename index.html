@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kuis Interaktif Kelompok</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Firebase App & Database (SDK v8) -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+</head>
+<body class="bg-slate-900 text-white min-h-screen flex flex-col items-center justify-center p-4">
+
+  <div id="login-screen" class="bg-slate-800 p-6 rounded-2xl shadow-xl w-full max-full max-w-md text-center border border-slate-700">
+    <h1 class="text-2xl font-bold mb-4 text-emerald-400">Selamat Datang di Kuis!</h1>
+    <p class="text-slate-300 mb-6 text-sm">Pilih kelompok kamu untuk memulai permainan:</p>
+    <div class="space-y-3">
+      <button onclick="selectGroup('kelompok_1')" class="w-full py-3 bg-indigo-600 hover:bg-indigo-500 font-semibold rounded-xl transition">Kelompok 1</button>
+      <button onclick="selectGroup('kelompok_2')" class="w-full py-3 bg-indigo-600 hover:bg-indigo-500 font-semibold rounded-xl transition">Kelompok 2</button>
+      <button onclick="selectGroup('kelompok_3')" class="w-full py-3 bg-indigo-600 hover:bg-indigo-500 font-semibold rounded-xl transition">Kelompok 3</button>
+      <button onclick="selectGroup('kelompok_4')" class="w-full py-3 bg-indigo-600 hover:bg-indigo-500 font-semibold rounded-xl transition">Kelompok 4</button>
+      <button onclick="selectGroup('kelompok_5')" class="w-full py-3 bg-indigo-600 hover:bg-indigo-500 font-semibold rounded-xl transition">Kelompok 5</button>
+    </div>
+  </div>
+
+  <div id="app-screen" class="hidden w-full max-w-lg bg-slate-800 p-6 rounded-2xl shadow-xl border border-slate-700">
+    <div class="flex justify-between items-center mb-6 border-b border-slate-700 pb-4">
+      <span id="group-name-display" class="text-lg font-bold text-emerald-400"></span>
+      <span id="score-display" class="bg-emerald-500/20 text-emerald-300 text-sm font-semibold px-3 py-1 rounded-full border border-emerald-500/30">Total Skor: 0</span>
+    </div>
+
+    <!-- Status Tampilan -->
+    <div id="quiz-box">
+      <div class="flex justify-between items-center mb-3">
+        <span id="round-badge" class="bg-indigo-500/20 text-indigo-300 text-xs font-bold px-2.5 py-1 rounded-md border border-indigo-500/30">Ronde 1</span>
+      </div>
+      <div id="question-text" class="text-lg font-medium mb-6 leading-relaxed"></div>
+
+      <div class="space-y-3 mb-6">
+        <textarea id="answer-input" rows="3" placeholder="Tuliskan jawaban kelompok di sini..." class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-white focus:outline-none focus:border-indigo-500"></textarea>
+      </div>
+
+      <button onclick="submitAnswer()" class="w-full py-3.5 bg-emerald-600 hover:bg-emerald-500 font-bold rounded-xl shadow-lg transition">Kirim Jawaban</button>
+    </div>
+
+    <div id="waiting-box" class="hidden text-center py-8">
+      <div class="animate-spin w-12 h-12 border-4 border-indigo-500 border-t-transparent rounded-full mx-auto mb-4"></div>
+      <h2 class="text-xl font-bold mb-2 text-amber-400">Jawaban Terkirim!</h2>
+      <p class="text-slate-300 text-sm mb-4">Tunggu Guru memanggil & memverifikasi penjelasan dari anggota kelompokmu ya.</p>
+      <div id="finish-order-badge" class="inline-block bg-slate-700 text-slate-200 text-xs px-3 py-1.5 rounded-lg border border-slate-600"></div>
+    </div>
+
+    <div id="finished-all-box" class="hidden text-center py-8">
+      <div class="text-5xl mb-4">🎉</div>
+      <h2 class="text-2xl font-bold text-emerald-400 mb-2">Selamat!</h2>
+      <p class="text-slate-300 text-sm">Kelompokmu telah menyelesaikan seluruh ronde kuis!</p>
+    </div>
+  </div>
+
+  <script>
+    // MASUKKAN KONFIGURASI FIREBASE KAMU DI SINI
+    const firebaseConfig = {
+      apiKey: "AIzaSyDHNH2OpGV1xVyr3vn1KDr4XZILGMXKZEE",
+      authDomain: "kuis-interaktif-98daa.firebaseapp.com",
+      databaseURL: "https://kuis-interaktif-98daa-default-rtdb.firebaseio.com",
+      projectId: "kuis-interaktif-98daa",
+      storageBucket: "kuis-interaktif-98daa.firebasestorage.app",
+      messagingSenderId: "594426602679",
+      appId: "1:594426602679:web:459a7ec114a7d733b09932"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    const questions = {
+      1: "Soal Ronde 1: Apa jawaban hasil diskusi kelompok kalian untuk kasus pertama?",
+      2: "Soal Ronde 2: Berapa hasil perhitungan untuk permasalahan kedua?",
+      3: "Soal Ronde 3: Jelaskan analisis kelompok kalian mengenai pertanyaan ketiga?",
+      4: "Soal Ronde 4: Apa kesimpulan akhir dari tantangan ronde keempat?"
+    };
+
+    let selectedGroup = null;
+
+    function selectGroup(groupId) {
+      selectedGroup = groupId;
+      document.getElementById('login-screen').classList.add('hidden');
+      document.getElementById('app-screen').classList.remove('hidden');
+      document.getElementById('group-name-display').innerText = groupId.replace('_', ' ').toUpperCase();
+
+      // Listen perubahan data kelompok
+      db.ref(`groups/${selectedGroup}`).on('value', (snapshot) => {
+        const data = snapshot.val();
+        if (!data) return;
+
+        document.getElementById('score-display').innerText = `Total Skor: ${data.total_score || 0}`;
+
+        if (data.status === 'answering') {
+          document.getElementById('quiz-box').classList.remove('hidden');
+          document.getElementById('waiting-box').classList.add('hidden');
+          document.getElementById('finished-all-box').classList.add('hidden');
+          document.getElementById('round-badge').innerText = `Ronde ${data.current_round}`;
+          document.getElementById('question-text').innerText = questions[data.current_round] || "Soal tidak ditemukan";
+          document.getElementById('answer-input').value = "";
+        } else if (data.status === 'waiting') {
+          document.getElementById('quiz-box').classList.add('hidden');
+          document.getElementById('waiting-box').classList.remove('hidden');
+          document.getElementById('finished-all-box').classList.add('hidden');
+          document.getElementById('finish-order-badge').innerText = `Urutan Selesai: #${data.finish_order || '-'}`;
+        } else if (data.status === 'completed') {
+          document.getElementById('quiz-box').classList.add('hidden');
+          document.getElementById('waiting-box').classList.add('hidden');
+          document.getElementById('finished-all-box').classList.remove('hidden');
+        }
+      });
+    }
+
+    function submitAnswer() {
+      const answer = document.getElementById('answer-input').value;
+      if (!answer.trim()) {
+        alert("Isi jawaban dulu ya!");
+        return;
+      }
+
+      db.ref('finish_counter').transaction((current) => {
+        return (current || 0) + 1;
+      }, (error, committed, snapshot) => {
+        if (committed) {
+          const order = snapshot.val();
+          db.ref(`groups/${selectedGroup}`).update({
+            status: 'waiting',
+            answer: answer,
+            finish_order: order
+          });
+        }
+      });
+    }
+  </script>
+</body>
+</html>
