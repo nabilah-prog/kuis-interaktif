@@ -61,7 +61,7 @@
     <h1 class="text-3xl font-extrabold mb-2 bg-gradient-to-r from-sky-300 via-indigo-200 to-emerald-300 bg-clip-text text-transparent">Kuis Interaktif Kelompok</h1>
     <p class="text-slate-300 mb-6 text-sm">Portal Kuis Real-Time Multi-Kelas</p>
     
-    <!-- Input Kode Ruangan / Kode Kelas -->
+    <!-- Input Kode Ruangan -->
     <div class="mb-6 bg-slate-900/80 p-4 rounded-2xl border border-slate-700 text-left">
       <label class="block text-xs font-bold text-amber-300 mb-1">🔑 Kode Ruang Kuis:</label>
       <input type="text" id="room-code-input" placeholder="Contoh: KELAS10A" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-white font-bold uppercase text-center focus:outline-none focus:border-sky-400" />
@@ -69,12 +69,12 @@
     </div>
 
     <div class="space-y-3">
-      <button type="button" onclick="showStudentSetup()" class="w-full py-3.5 bg-gradient-to-r from-indigo-600 to-sky-600 hover:from-indigo-500 hover:to-sky-500 font-bold rounded-2xl transition text-sm shadow-lg">👨‍🎓 Masuk sebagai Siswa</button>
-      <button type="button" onclick="showTeacherLogin()" class="w-full py-3 bg-slate-800/80 hover:bg-slate-700/80 font-semibold text-slate-300 rounded-2xl transition text-sm border border-slate-700">👨‍🏫 Masuk sebagai Guru</button>
+      <button type="button" onclick="playClickSound(); showStudentSetup();" class="w-full py-3.5 bg-gradient-to-r from-indigo-600 to-sky-600 hover:from-indigo-500 hover:to-sky-500 font-bold rounded-2xl transition text-sm shadow-lg">👨‍🎓 Masuk sebagai Siswa</button>
+      <button type="button" onclick="playClickSound(); showTeacherLogin();" class="w-full py-3 bg-slate-800/80 hover:bg-slate-700/80 font-semibold text-slate-300 rounded-2xl transition text-sm border border-slate-700">👨‍🏫 Masuk sebagai Guru</button>
     </div>
   </div>
 
-  <!-- MODAL QR CODE BESAR UNTUK DIPAPARKAN GURU ATAS PAPAN TULIS/PROYEKTOR -->
+  <!-- MODAL QR CODE BESAR UNTUK DIPAPARKAN GURU -->
   <div id="qr-modal" class="hidden fixed inset-0 bg-black/90 backdrop-blur-md flex items-center justify-center p-4 z-50">
     <div class="glass-card p-8 rounded-3xl border-2 border-amber-400 max-w-sm w-full text-center shadow-2xl">
       <h2 class="text-2xl font-extrabold text-amber-300 mb-1">📱 Scan QR Code Kuis</h2>
@@ -85,7 +85,7 @@
       </div>
       
       <p class="text-xs text-slate-400 mb-4">Minta siswa mengarahkan kamera HP ke QR Code di atas untuk langsung bergabung!</p>
-      <button type="button" onclick="closeQRModal()" class="w-full py-3 bg-rose-600 font-bold rounded-xl text-xs shadow-lg">Tutup QR Code</button>
+      <button type="button" onclick="playClickSound(); closeQRModal();" class="w-full py-3 bg-rose-600 font-bold rounded-xl text-xs shadow-lg">Tutup QR Code</button>
     </div>
   </div>
 
@@ -95,15 +95,15 @@
       <h2 class="text-xl font-bold text-sky-300 mb-2">Akses Dashboard Guru</h2>
       <input type="password" id="teacher-pass-input" placeholder="Kode Rahasia Guru" class="w-full bg-slate-900/90 border border-slate-700 rounded-xl p-3 text-white text-center font-bold mb-4 focus:outline-none focus:border-sky-400" />
       <div class="flex gap-2">
-        <button type="button" onclick="closeTeacherLogin()" class="w-1/2 py-2.5 bg-slate-700 font-semibold rounded-xl text-xs">Batal</button>
-        <button type="button" onclick="verifyTeacher()" class="w-1/2 py-2.5 bg-sky-600 font-bold rounded-xl text-xs">Masuk Ruang</button>
+        <button type="button" onclick="playClickSound(); closeTeacherLogin();" class="w-1/2 py-2.5 bg-slate-700 font-semibold rounded-xl text-xs">Batal</button>
+        <button type="button" onclick="playClickSound(); verifyTeacher();" class="w-1/2 py-2.5 bg-sky-600 font-bold rounded-xl text-xs">Masuk Ruang</button>
       </div>
     </div>
   </div>
 
   <!-- 2. REGISTRASI SISWA + WAJIB SELFIE -->
   <div id="student-setup-screen" class="hidden glass-card p-8 rounded-3xl shadow-2xl w-full max-w-md z-10 border border-sky-500/20">
-    <button type="button" onclick="backToRole()" class="text-xs text-sky-300 hover:underline mb-4 flex items-center gap-1">← Halaman Utama</button>
+    <button type="button" onclick="playClickSound(); backToRole();" class="text-xs text-sky-300 hover:underline mb-4 flex items-center gap-1">← Halaman Utama</button>
     <div class="flex justify-between items-center mb-2">
       <h2 class="text-2xl font-bold text-sky-300">Registrasi Kelompok</h2>
       <span id="room-display-badge" class="bg-indigo-500/20 text-indigo-300 text-xs font-bold px-2.5 py-1 rounded-lg border border-indigo-500/30">Ruang: -</span>
@@ -125,7 +125,7 @@
         <div class="relative bg-slate-900 rounded-2xl overflow-hidden border border-slate-700 aspect-video flex flex-col items-center justify-center">
           <video id="webcam-preview" autoplay playsinline class="w-full h-full object-cover hidden"></video>
           <img id="selfie-photo-result" class="w-full h-full object-cover hidden" />
-          <button type="button" id="start-cam-btn" onclick="startCamera()" class="px-3 py-1.5 bg-slate-800 text-xs font-bold rounded-lg border border-slate-700 text-sky-300">📷 Nyalakan Kamera</button>
+          <button type="button" id="start-cam-btn" onclick="playClickSound(); startCamera();" class="px-3 py-1.5 bg-slate-800 text-xs font-bold rounded-lg border border-slate-700 text-sky-300">📷 Nyalakan Kamera</button>
           <button type="button" id="take-photo-btn" onclick="takePhoto()" class="hidden absolute bottom-3 px-4 py-1.5 bg-emerald-600 text-xs font-bold rounded-xl shadow-lg">📸 Ambil Foto Selfie</button>
         </div>
         <p id="photo-status-msg" class="text-[11px] text-rose-400 mt-1 italic font-semibold">*Ambil foto kelompok dulu sebelum masuk kuis</p>
@@ -180,10 +180,10 @@
         <p class="text-slate-300 text-sm mb-6">Kelompokmu telah menyelesaikan seluruh soal kuis!</p>
 
         <div class="space-y-3">
-          <button type="button" onclick="toggleExplanations()" class="w-full py-3 bg-sky-600 hover:bg-sky-500 font-bold text-xs rounded-xl shadow-lg transition">
+          <button type="button" onclick="playClickSound(); toggleExplanations();" class="w-full py-3 bg-sky-600 hover:bg-sky-500 font-bold text-xs rounded-xl shadow-lg transition">
             📖 Lihat / Sembunyikan Pembahasan
           </button>
-          <button type="button" onclick="location.href=location.pathname" class="w-full py-3 bg-slate-800 hover:bg-slate-700 font-bold text-xs rounded-xl border border-slate-700 transition text-slate-300">
+          <button type="button" onclick="playClickSound(); location.href=location.pathname;" class="w-full py-3 bg-slate-800 hover:bg-slate-700 font-bold text-xs rounded-xl border border-slate-700 transition text-slate-300">
             🏠 Kembali ke Halaman Utama
           </button>
         </div>
@@ -203,7 +203,7 @@
         <div class="flex items-center gap-2">
           <h1 class="text-3xl font-extrabold text-sky-300">🏆 Dashboard Kontrol Guru</h1>
           <span id="teacher-room-badge" class="bg-amber-500/20 text-amber-300 text-xs font-bold px-3 py-1 rounded-lg border border-amber-500/30">Ruang: -</span>
-          <button type="button" onclick="openQRModal()" class="px-3 py-1 bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold text-xs rounded-lg shadow-md flex items-center gap-1">📱 Tampilkan QR Code</button>
+          <button type="button" onclick="playClickSound(); openQRModal();" class="px-3 py-1 bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold text-xs rounded-lg shadow-md flex items-center gap-1">📱 Tampilkan QR Code</button>
         </div>
         <p class="text-slate-400 text-xs mt-1">Kelola kelompok, bank soal tersimpan, & ACC nilai kuis.</p>
       </div>
@@ -212,7 +212,7 @@
           Status: Belum Dimulai
         </div>
         <button type="button" id="toggle-quiz-btn" onclick="toggleQuizState()" class="px-5 py-2.5 bg-emerald-600 font-bold rounded-xl text-xs">🚀 Mulai Kuis</button>
-        <button type="button" onclick="location.href=location.pathname" class="px-3.5 py-2.5 bg-slate-800 rounded-xl text-xs font-bold">← Keluar</button>
+        <button type="button" onclick="playClickSound(); location.href=location.pathname;" class="px-3.5 py-2.5 bg-slate-800 rounded-xl text-xs font-bold">← Keluar</button>
         <button type="button" onclick="resetAllGame()" class="px-3.5 py-2.5 bg-rose-600/80 font-bold rounded-xl text-xs">🔄 Reset Kuis</button>
       </div>
     </div>
@@ -228,7 +228,7 @@
           <select id="preset-selector" onchange="loadSelectedPreset(this.value)" class="bg-slate-900 border border-slate-700 text-xs rounded-xl p-2 text-white">
             <option value="default">Bank Soal Utama (Default)</option>
           </select>
-          <button type="button" onclick="saveAsNewPreset()" class="px-3.5 py-2 bg-indigo-600 hover:bg-indigo-500 font-bold rounded-xl text-xs">💾 Simpan Preset Baru</button>
+          <button type="button" onclick="playClickSound(); saveAsNewPreset();" class="px-3.5 py-2 bg-indigo-600 hover:bg-indigo-500 font-bold rounded-xl text-xs">💾 Simpan Preset Baru</button>
         </div>
       </div>
 
@@ -272,13 +272,133 @@
     <div id="groups-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
   </div>
 
-  <!-- FIREBASE & LOGIKA DENGAN FITUR QR CODE -->
+  <!-- FIREBASE & LOGIKA EFEK SUARA -->
   <script>
     let capturedPhotoData = null;
     let selectedGroup = null;
     let currentSelectedAnswer = "";
     let totalConfiguredGroups = 5;
     let currentRoomCode = "DEFAULT";
+
+    // WEB AUDIO API UNTUK SUARA INTERAKTIF TANPA DEPENDENSI FILE
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+    function playClickSound() {
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(600, audioCtx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(200, audioCtx.currentTime + 0.08);
+      gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+      gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.08);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start();
+      osc.stop(audioCtx.currentTime + 0.08);
+    }
+
+    function playCameraShutterSound() {
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(1200, audioCtx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(300, audioCtx.currentTime + 0.12);
+      gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+      gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.12);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start();
+      osc.stop(audioCtx.currentTime + 0.12);
+    }
+
+    function playStartQuizFanfare() {
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+      const notes = [440, 554.37, 659.25, 880];
+      notes.forEach((freq, i) => {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(freq, audioCtx.currentTime + i * 0.1);
+        gain.gain.setValueAtTime(0.2, audioCtx.currentTime + i * 0.1);
+        gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + i * 0.1 + 0.25);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start(audioCtx.currentTime + i * 0.1);
+        osc.stop(audioCtx.currentTime + i * 0.1 + 0.25);
+      });
+    }
+
+    function playSubmitAnswerSound() {
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(400, audioCtx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(900, audioCtx.currentTime + 0.15);
+      gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+      gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.15);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start();
+      osc.stop(audioCtx.currentTime + 0.15);
+    }
+
+    function playApproveScoreSound() {
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+      const notes = [523.25, 659.25, 783.99];
+      notes.forEach((freq, i) => {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(freq, audioCtx.currentTime + i * 0.08);
+        gain.gain.setValueAtTime(0.2, audioCtx.currentTime + i * 0.08);
+        gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + i * 0.08 + 0.2);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start(audioCtx.currentTime + i * 0.08);
+        osc.stop(audioCtx.currentTime + i * 0.08 + 0.2);
+      });
+    }
+
+    function playDiceRollSound() {
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+      for (let i = 0; i < 6; i++) {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'square';
+        osc.frequency.setValueAtTime(200 + Math.random() * 400, audioCtx.currentTime + i * 0.05);
+        gain.gain.setValueAtTime(0.1, audioCtx.currentTime + i * 0.05);
+        gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + i * 0.05 + 0.04);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start(audioCtx.currentTime + i * 0.05);
+        osc.stop(audioCtx.currentTime + i * 0.05 + 0.04);
+      }
+    }
+
+    function playWinnerVictorySound() {
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+      const melody = [
+        { f: 523.25, d: 0.15 }, { f: 659.25, d: 0.15 }, { f: 783.99, d: 0.15 },
+        { f: 1046.50, d: 0.4 }
+      ];
+      let now = audioCtx.currentTime;
+      melody.forEach(item => {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(item.f, now);
+        gain.gain.setValueAtTime(0.25, now);
+        gain.gain.linearRampToValueAtTime(0.01, now + item.d);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start(now);
+        osc.stop(now + item.d);
+        now += item.d;
+      });
+    }
 
     const firebaseConfig = {
       apiKey: "AIzaSyDHNH2OpGV1xVyr3vn1KDr4XZILGMXKZEE",
@@ -302,7 +422,6 @@
       { text: "Soal Ronde 4: Apa kesimpulan akhir tantangan kelompok?", type: "uraian", explanation: "Penjelasan Soal 4" }
     ];
 
-    // OOTOMATIS BACA URL UNTUK SCAN QR CODE SISWA
     window.addEventListener('DOMContentLoaded', () => {
       const urlParams = new URLSearchParams(window.location.search);
       const roomFromUrl = urlParams.get('room');
@@ -316,7 +435,6 @@
       return input ? input.toUpperCase().replace(/[^A-Z0-9]/g, '_') : 'DEFAULT';
     }
 
-    // FUNGSI MODAL QR CODE
     function openQRModal() {
       const modal = document.getElementById('qr-modal');
       const container = document.getElementById('modal-qrcode');
@@ -339,6 +457,7 @@
     }
 
     function triggerConfetti() {
+      playWinnerVictorySound();
       if (typeof confetti === 'function') {
         confetti({ particleCount: 200, spread: 100, origin: { y: 0.4 } });
       }
@@ -355,6 +474,7 @@
     }
 
     function takePhoto() {
+      playCameraShutterSound();
       const video = document.getElementById('webcam-preview');
       const canvas = document.createElement('canvas');
       canvas.width = 320;
@@ -490,6 +610,7 @@
     }
 
     function publishActiveQuestions() {
+      playClickSound();
       activeQuestions = collectQuestionsFromEditor();
       totalConfiguredGroups = parseInt(document.getElementById('total-groups-input').value);
 
@@ -541,6 +662,7 @@
 
     // LOGIKA SISWA
     function startStudentQuiz() {
+      playClickSound();
       if (!capturedPhotoData) return alert("Wajib swafoto bersama kelompok dulu!");
 
       selectedGroup = document.getElementById('group-select').value;
@@ -579,6 +701,7 @@
 
       db.ref(`rooms/${currentRoomCode}/quiz_started`).on('value', (snapshot) => {
         const started = snapshot.val() === true;
+        if (started) playStartQuizFanfare();
         document.getElementById('quiz-lobby-box').classList.toggle('hidden', started);
         document.getElementById('quiz-content-wrapper').classList.toggle('hidden', !started);
       });
@@ -613,6 +736,7 @@
               optBtn.className = "w-full p-3 bg-slate-900 hover:bg-slate-800 border border-slate-700 rounded-xl text-left text-xs font-semibold focus:border-sky-400";
               optBtn.innerText = opt;
               optBtn.onclick = () => {
+                playClickSound();
                 currentSelectedAnswer = opt;
                 Array.from(answerContainer.children).forEach(c => c.classList.remove('border-emerald-500', 'bg-emerald-950/40'));
                 optBtn.classList.add('border-emerald-500', 'bg-emerald-950/40');
@@ -660,6 +784,7 @@
     }
 
     function submitAnswer() {
+      playSubmitAnswerSound();
       let finalAnswer = currentSelectedAnswer;
       const textInput = document.getElementById('text-answer-input');
       if (textInput) finalAnswer = textInput.value;
@@ -769,7 +894,7 @@
             </div>
             <div>
               ${group.status === 'waiting' ? `
-                <button type="button" onclick="approveGroup('${groupId}',${group.current_round || 1}, ${group.total_score || 0},${scoreEarned})" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 font-bold rounded-xl text-sm mb-2 shadow-lg">✅ ACC & Tambah +${scoreEarned} Poin</button>
+                <button type="button" onclick="approveGroup('${groupId}',${group.current_round || 1}, ${group.total_score \vert{}\vert{} 0},${scoreEarned})" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 font-bold rounded-xl text-sm mb-2 shadow-lg">✅ ACC & Tambah +${scoreEarned} Poin</button>
                 <button type="button" onclick="rejectGroup('${groupId}')" class="w-full py-1.5 bg-rose-600/30 text-rose-300 font-bold rounded-xl text-xs">❌ Diskusi Ulang</button>
               ` : `<button type="button" disabled class="w-full py-2 bg-slate-700 text-slate-500 font-semibold rounded-xl text-xs">Menunggu Jawaban Siswa...</button>`}
             </div>
@@ -822,12 +947,14 @@
     }
 
     function toggleQuizState() {
+      playClickSound();
       db.ref(`rooms/${currentRoomCode}/quiz_started`).once('value', (snapshot) => {
         db.ref(`rooms/${currentRoomCode}/quiz_started`).set(snapshot.val() !== true);
       });
     }
 
     function pickRandomMember(groupId) {
+      playDiceRollSound();
       db.ref(`rooms/${currentRoomCode}/groups/${groupId}`).once('value', (snapshot) => {
         const group = snapshot.val();
         if (!group || !group.members || group.members.length === 0) return alert("Belum ada nama anggota!");
@@ -837,6 +964,7 @@
     }
 
     function approveGroup(groupId, currentRound, currentScore, addedScore) {
+      playApproveScoreSound();
       const nextRound = currentRound + 1;
       const isCompleted = nextRound > activeQuestions.length;
       db.ref(`rooms/${currentRoomCode}/round_passed_count/${currentRound}`).transaction((count) => (count || 0) + 1);
@@ -851,6 +979,7 @@
     }
 
     function rejectGroup(rejectedGroupId) {
+      playClickSound();
       if (!confirm("Tolak jawaban kelompok ini?")) return;
       db.ref(`rooms/${currentRoomCode}/groups`).once('value', (snapshot) => {
         const groups = snapshot.val() || {};
@@ -875,6 +1004,7 @@
     }
 
     function resetAllGame() {
+      playClickSound();
       if (!confirm("Yakin ingin mereset seluruh kuis di ruangan ini?")) return;
       db.ref(`rooms/${currentRoomCode}/quiz_started`).set(false);
       db.ref(`rooms/${currentRoomCode}/round_passed_count`).remove();
