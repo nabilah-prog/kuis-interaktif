@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Kuis & Media Pembelajaran Interaktif</title>
+  <title>Kuis Interaktif Kelompok</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
@@ -29,7 +29,7 @@
 </head>
 <body id="dynamic-bg" class="bg-round-1 text-white min-h-screen flex flex-col items-center justify-center p-4 relative overflow-x-hidden transition-all duration-1000">
 
-  <!-- Visual Awan Melayang -->
+  <!-- Awan Melayang -->
   <div class="fixed inset-0 pointer-events-none z-0 opacity-25">
     <svg class="absolute top-10 left-5 w-72 h-44 animate-cloud-slow fill-sky-200" viewBox="0 0 24 24"><path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96z"/></svg>
     <svg class="absolute top-1/3 right-10 w-96 h-56 animate-cloud-fast fill-amber-200" viewBox="0 0 24 24"><path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96z"/></svg>
@@ -38,10 +38,10 @@
   <!-- 1. HALAMAN UTAMA -->
   <div id="role-screen" class="glass-card p-8 rounded-3xl shadow-2xl w-full max-w-md text-center z-10 border border-sky-500/20">
     <div class="text-5xl mb-3">☁️✨</div>
-    <h1 class="text-3xl font-extrabold mb-2 bg-gradient-to-r from-sky-300 via-indigo-200 to-emerald-300 bg-clip-text text-transparent">Kuis & Media Belajar</h1>
-    <p class="text-slate-300 mb-8 text-sm">Portal Belajar Mandiri & Kuis Interaktif</p>
+    <h1 class="text-3xl font-extrabold mb-2 bg-gradient-to-r from-sky-300 via-indigo-200 to-emerald-300 bg-clip-text text-transparent">Kuis Interaktif Kelompok</h1>
+    <p class="text-slate-300 mb-8 text-sm">Portal Kuis Real-Time Kelas Interaktif</p>
     <div class="space-y-4">
-      <button type="button" onclick="showStudentMenu()" class="w-full py-4 bg-gradient-to-r from-indigo-600 to-sky-600 hover:from-indigo-500 hover:to-sky-500 font-bold rounded-2xl transition text-base shadow-lg">👨‍🎓 Masuk sebagai Siswa</button>
+      <button type="button" onclick="showStudentSetup()" class="w-full py-4 bg-gradient-to-r from-indigo-600 to-sky-600 hover:from-indigo-500 hover:to-sky-500 font-bold rounded-2xl transition text-base shadow-lg">👨‍🎓 Masuk sebagai Siswa</button>
       <button type="button" onclick="showTeacherLogin()" class="w-full py-3 bg-slate-800/80 hover:bg-slate-700/80 font-semibold text-slate-300 rounded-2xl transition text-sm border border-slate-700">👨‍🏫 Masuk sebagai Guru</button>
     </div>
   </div>
@@ -58,136 +58,12 @@
     </div>
   </div>
 
-  <!-- 2. PILIHAN MODE GURU -->
-  <div id="teacher-menu-screen" class="hidden glass-card p-8 rounded-3xl shadow-2xl w-full max-w-md z-10 border border-sky-500/20 text-center">
-    <button type="button" onclick="location.reload()" class="text-xs text-sky-300 hover:underline mb-4 flex items-center gap-1">← Halaman Utama</button>
-    <h2 class="text-2xl font-bold mb-2 text-sky-300">Menu Kontrol Guru</h2>
-    <div class="space-y-4">
-      <button type="button" onclick="openTeacherQuizDashboard()" class="w-full p-4 bg-slate-800/90 hover:bg-slate-700/90 border border-indigo-500/30 rounded-2xl text-left flex items-center gap-4">
-        <div class="text-3xl bg-indigo-500/20 p-2.5 rounded-xl border border-indigo-500/30">🏆</div>
-        <div>
-          <h3 class="font-bold text-indigo-300 text-sm">Dashboard Kuis Kelompok</h3>
-          <p class="text-xs text-slate-400 mt-0.5">Kontrol kuis & Podium Selfie Juara.</p>
-        </div>
-      </button>
-
-      <button type="button" onclick="openTeacherAnalyticsDashboard()" class="w-full p-4 bg-slate-800/90 hover:bg-slate-700/90 border border-emerald-500/30 rounded-2xl text-left flex items-center gap-4">
-        <div class="text-3xl bg-emerald-500/20 p-2.5 rounded-xl border border-emerald-500/30">📊</div>
-        <div>
-          <h3 class="font-bold text-emerald-300 text-sm">Pantau Belajar Mandiri</h3>
-          <p class="text-xs text-slate-400 mt-0.5">Pantau latihan & progres siswa.</p>
-        </div>
-      </button>
-    </div>
-  </div>
-
-  <!-- 3. MENU SISWA -->
-  <div id="student-menu-screen" class="hidden glass-card p-8 rounded-3xl shadow-2xl w-full max-w-md z-10 border border-sky-500/20 text-center">
-    <button type="button" onclick="backToRole()" class="text-xs text-sky-300 hover:underline mb-4 flex items-center gap-1">← Halaman Utama</button>
-    <h2 class="text-2xl font-bold mb-2 text-sky-300">Menu Siswa</h2>
-    <div class="space-y-4">
-      <button type="button" onclick="openSelfStudySetup()" class="w-full p-4 bg-slate-800/90 hover:bg-slate-700/90 border border-sky-500/30 rounded-2xl text-left flex items-center gap-4">
-        <div class="text-3xl bg-sky-500/20 p-2.5 rounded-xl">📖</div>
-        <div>
-          <h3 class="font-bold text-sky-300 text-sm">Mode Belajar Mandiri</h3>
-          <p class="text-xs text-slate-400">Materi Lengkap & Latihan Soal Mandiri.</p>
-        </div>
-      </button>
-
-      <button type="button" onclick="openGroupQuizSetup()" class="w-full p-4 bg-slate-800/90 hover:bg-slate-700/90 border border-indigo-500/30 rounded-2xl text-left flex items-center gap-4">
-        <div class="text-3xl bg-indigo-500/20 p-2.5 rounded-xl">🏆</div>
-        <div>
-          <h3 class="font-bold text-indigo-300 text-sm">Mode Kuis Kelompok</h3>
-          <p class="text-xs text-slate-400">Digunakan di sekolah bersama kelompok.</p>
-        </div>
-      </button>
-    </div>
-  </div>
-
-  <!-- REGISTRASI BELAJAR MANDIRI SISWA -->
-  <div id="self-study-setup-screen" class="hidden glass-card p-8 rounded-3xl shadow-2xl w-full max-w-md z-10 border border-sky-500/20">
-    <button type="button" onclick="backToStudentMenu()" class="text-xs text-sky-300 hover:underline mb-4 flex items-center gap-1">← Kembali</button>
-    <h2 class="text-2xl font-bold mb-1 text-sky-300 text-center">Masuk Belajar Mandiri</h2>
-    <div class="space-y-4">
-      <input type="text" id="student-single-name" placeholder="Nama Lengkap Siswa" class="w-full bg-slate-900/90 border border-slate-700 rounded-xl p-3 text-white focus:outline-none focus:border-sky-400 text-sm" />
-      <button type="button" onclick="startSelfStudy()" class="w-full py-4 bg-gradient-to-r from-sky-600 to-emerald-600 font-bold rounded-2xl shadow-lg">Mulai Belajar</button>
-    </div>
-  </div>
-
-  <!-- RUANG BELAJAR MANDIRI LENGKAP WITH MATERI & LATIHAN -->
-  <div id="self-study-screen" class="hidden w-full max-w-3xl z-10 space-y-6 my-6">
-    <div class="glass-card p-5 rounded-3xl flex justify-between items-center border border-sky-500/20">
-      <div>
-        <h2 class="text-xl font-extrabold text-sky-300">📖 Ruang Belajar Mandiri</h2>
-        <p id="self-student-display" class="text-xs text-emerald-400 font-semibold"></p>
-      </div>
-      <button type="button" onclick="backToStudentMenu()" class="px-3.5 py-2 bg-slate-800 rounded-xl text-xs font-semibold">← Keluar</button>
-    </div>
-
-    <!-- Video Pembelajaran -->
-    <div class="glass-card p-6 rounded-3xl border border-sky-500/20 space-y-4">
-      <h3 class="text-base font-bold text-sky-300 flex items-center gap-2">📺 Video Pembelajaran Konsep Interaktif</h3>
-      <div class="aspect-video w-full rounded-2xl overflow-hidden border border-slate-700 bg-black">
-        <iframe class="w-full h-full" src="https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ" title="Video" allowfullscreen></iframe>
-      </div>
-    </div>
-
-    <!-- Modul Rangkuman Materi Ajar -->
-    <div class="glass-card p-6 rounded-3xl border border-sky-500/20 space-y-4">
-      <h3 class="text-base font-bold text-amber-300 flex items-center gap-2">📌 Modul Rangkuman Ringkasan Materi</h3>
-      <div class="bg-slate-900/90 p-5 rounded-2xl border border-slate-800 space-y-3 text-xs text-slate-300 leading-relaxed">
-        <div class="border-b border-slate-800 pb-2">
-          <h4 class="font-bold text-sky-300 text-sm">1. Definisi & Konsep Dasar</h4>
-          <p class="mt-1">Pahami bahwa setiap konsep matematika didasari oleh pola dan penalaran logis. Bacalah penjelasan di video di atas secara seksama.</p>
-        </div>
-        <div class="border-b border-slate-800 pb-2">
-          <h4 class="font-bold text-sky-300 text-sm">2. Rumus Kunci & Poin Penting</h4>
-          <p class="mt-1">• Perhatikan urutan operasi hitung matematika (Prioritas Perkalian/Pembagian dibanding Penjumlahan/Pengurangan).</p>
-          <p>• Selalu periksa kembali variabel dan angka masukan sebelum menyelesaikan masalah.</p>
-        </div>
-        <div>
-          <h4 class="font-bold text-sky-300 text-sm">3. Tips Diskusi Kelompok</h4>
-          <p class="mt-1">Gunakan pemahaman dari modul mandiri ini untuk membantu kelompokmu memenangkan Kuis Kelompok di kelas!</p>
-        </div>
-      </div>
-    </div>
-
-    <!-- Latihan Soal Mandiri Interaktif -->
-    <div class="glass-card p-6 rounded-3xl border border-sky-500/20 space-y-4">
-      <h3 class="text-base font-bold text-emerald-300 flex items-center gap-2">✍️ Latihan Soal Mandiri Interaktif</h3>
-      
-      <!-- Soal 1 -->
-      <div class="bg-slate-900/90 p-4 rounded-2xl border border-slate-800 space-y-3">
-        <p class="text-sm font-semibold text-slate-200">Soal 1: Berapakah hasil dari $15 + 25 \times 2$?</p>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs">
-          <button type="button" onclick="checkPractice(this, false, 'Soal 1')" class="p-3 bg-slate-800 hover:bg-slate-700 rounded-xl text-left">A. 80</button>
-          <button type="button" onclick="checkPractice(this, true, 'Soal 1')" class="p-3 bg-slate-800 hover:bg-slate-700 rounded-xl text-left">B. 65</button>
-          <button type="button" onclick="checkPractice(this, false, 'Soal 1')" class="p-3 bg-slate-800 hover:bg-slate-700 rounded-xl text-left">C. 50</button>
-          <button type="button" onclick="checkPractice(this, false, 'Soal 1')" class="p-3 bg-slate-800 hover:bg-slate-700 rounded-xl text-left">D. 90</button>
-        </div>
-        <div class="feedback-text text-xs font-bold hidden mt-2"></div>
-      </div>
-
-      <!-- Soal 2 -->
-      <div class="bg-slate-900/90 p-4 rounded-2xl border border-slate-800 space-y-3">
-        <p class="text-sm font-semibold text-slate-200">Soal 2: Manakah di antara pilihan berikut yang merupakan sifat komutatif?</p>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs">
-          <button type="button" onclick="checkPractice(this, true, 'Soal 2')" class="p-3 bg-slate-800 hover:bg-slate-700 rounded-xl text-left">A. $a + b = b + a$</button>
-          <button type="button" onclick="checkPractice(this, false, 'Soal 2')" class="p-3 bg-slate-800 hover:bg-slate-700 rounded-xl text-left">B. $a(b + c) = ab + ac$</button>
-          <button type="button" onclick="checkPractice(this, false, 'Soal 2')" class="p-3 bg-slate-800 hover:bg-slate-700 rounded-xl text-left">C. $(a + b) + c = a + (b + c)$</button>
-          <button type="button" onclick="checkPractice(this, false, 'Soal 2')" class="p-3 bg-slate-800 hover:bg-slate-700 rounded-xl text-left">D. $a \times 1 = a$</button>
-        </div>
-        <div class="feedback-text text-xs font-bold hidden mt-2"></div>
-      </div>
-    </div>
-  </div>
-
-  <!-- 4. SISWA: REGISTRASI KELOMPOK + SELFIE KELOMPOK -->
+  <!-- 2. REGISTRASI SISWA + SELFIE -->
   <div id="student-setup-screen" class="hidden glass-card p-8 rounded-3xl shadow-2xl w-full max-w-md z-10 border border-sky-500/20">
-    <button type="button" onclick="backToStudentMenu()" class="text-xs text-sky-300 hover:underline mb-4 flex items-center gap-1">← Kembali</button>
+    <button type="button" onclick="backToRole()" class="text-xs text-sky-300 hover:underline mb-4 flex items-center gap-1">← Halaman Utama</button>
     <h2 class="text-2xl font-bold mb-1 text-sky-300 text-center">Registrasi Kelompok</h2>
     
-    <div class="space-y-4">
+    <div class="space-y-4 mt-4">
       <div>
         <label class="block text-xs font-semibold text-slate-300 mb-1">Pilih Kelompok:</label>
         <select id="group-select" class="w-full bg-slate-900/90 border border-slate-700 rounded-xl p-3 text-white text-sm">
@@ -200,17 +76,16 @@
       </div>
 
       <div>
-        <label class="block text-xs font-semibold text-slate-300 mb-1">Daftar Nama Anggota (Pisahkan koma):</label>
+        <label class="block text-xs font-semibold text-slate-300 mb-1">Nama Anggota (Pisahkan koma):</label>
         <textarea id="members-input" rows="2" placeholder="Contoh: Abil, Budi, Cici" class="w-full bg-slate-900/90 border border-slate-700 rounded-xl p-3 text-white text-sm"></textarea>
       </div>
 
-      <!-- Kamera Swafoto Tim -->
       <div>
-        <label class="block text-xs font-semibold text-amber-300 mb-1">📸 Swafoto bersama Kelompok (Foto Juara):</label>
+        <label class="block text-xs font-semibold text-amber-300 mb-1">📸 Swafoto Bersama Kelompok (Foto Tim):</label>
         <div class="relative bg-slate-900 rounded-2xl overflow-hidden border border-slate-700 aspect-video flex flex-col items-center justify-center">
           <video id="webcam-preview" autoplay playsinline class="w-full h-full object-cover hidden"></video>
           <img id="selfie-photo-result" class="w-full h-full object-cover hidden" />
-          <button type="button" id="start-cam-btn" onclick="startCamera()" class="px-3 py-1.5 bg-slate-800 text-xs font-bold rounded-lg border border-slate-700 text-sky-300">📷 Nyalakan Kamera Kamera</button>
+          <button type="button" id="start-cam-btn" onclick="startCamera()" class="px-3 py-1.5 bg-slate-800 text-xs font-bold rounded-lg border border-slate-700 text-sky-300">📷 Nyalakan Kamera</button>
           <button type="button" id="take-photo-btn" onclick="takePhoto()" class="hidden absolute bottom-3 px-4 py-1.5 bg-emerald-600 text-xs font-bold rounded-xl shadow-lg">📸 Ambil Foto Selfie</button>
         </div>
       </div>
@@ -219,7 +94,7 @@
     </div>
   </div>
 
-  <!-- 5. SISWA: RUANG KUIS KELOMPOK -->
+  <!-- 3. RUANG KUIS SISWA -->
   <div id="student-quiz-screen" class="hidden w-full max-w-xl z-10 space-y-4">
     <div class="glass-card p-5 rounded-2xl flex justify-between items-center border border-sky-500/20">
       <div>
@@ -236,101 +111,139 @@
     </div>
 
     <div id="quiz-content-wrapper" class="hidden glass-card p-6 rounded-3xl border border-sky-500/20">
+      <!-- Kotak Soal Mengerjakan -->
       <div id="quiz-box">
         <div class="flex justify-between items-center mb-3">
           <span id="round-badge" class="bg-indigo-500/20 text-indigo-300 text-xs font-bold px-3 py-1 rounded-lg border border-indigo-500/30">Ronde 1</span>
-          <span class="text-xs text-slate-400 bg-slate-800/80 px-2.5 py-1 rounded-md">🔒 Bahan ajar dikunci</span>
+          <span class="text-xs text-slate-400 bg-slate-800/80 px-2.5 py-1 rounded-md">💡 Diskusi Kelompok</span>
         </div>
         <div id="question-text" class="text-lg font-medium mb-6 leading-relaxed text-slate-100"></div>
         <textarea id="answer-input" rows="3" placeholder="Tuliskan jawaban hasil diskusi kelompok..." class="w-full bg-slate-900/90 border border-slate-700 rounded-xl p-3.5 text-white text-sm mb-6"></textarea>
         <button type="button" onclick="submitAnswer()" class="w-full py-4 bg-gradient-to-r from-emerald-600 to-teal-600 font-bold rounded-2xl shadow-lg">Kirim Jawaban Kelompok</button>
       </div>
 
+      <!-- Kotak Menunggu Verifikasi Guru -->
       <div id="waiting-box" class="hidden text-center py-8">
         <div class="animate-spin w-12 h-12 border-4 border-sky-400 border-t-transparent rounded-full mx-auto mb-4"></div>
         <h2 class="text-xl font-bold mb-2 text-amber-300">Jawaban Terkirim!</h2>
+        <p class="text-xs text-slate-300 mb-4">Menunggu Verifikasi & ACC dari Guru untuk lanjut ke soal berikutnya...</p>
         <div id="finish-order-badge" class="inline-block bg-slate-800 text-slate-200 text-xs px-3.5 py-1.5 rounded-xl mb-4"></div>
-        <div id="picked-member-box" class="hidden bg-indigo-900/50 border border-indigo-400/40 p-4 rounded-2xl animate-bounce">
+        
+        <div id="picked-member-box" class="hidden bg-indigo-900/50 border border-indigo-400/40 p-4 rounded-2xl animate-bounce mt-2">
           <p class="text-xs text-indigo-300 uppercase font-bold mb-1">📢 Guru Memanggil:</p>
           <p id="picked-member-text" class="text-xl font-extrabold text-amber-300"></p>
         </div>
       </div>
 
+      <!-- Selesai Seluruh Kuis -->
       <div id="finished-all-box" class="hidden text-center py-6">
         <div class="text-6xl mb-3">🎉</div>
         <h2 class="text-2xl font-bold text-emerald-300 mb-2">Luar Biasa!</h2>
-        <p class="text-slate-300 text-sm mb-6">Kelompokmu telah menyelesaikan seluruh ronde kuis!</p>
+        <p class="text-slate-300 text-sm mb-6">Kelompokmu telah menyelesaikan seluruh soal kuis!</p>
         <button type="button" onclick="toggleExplanations()" class="px-5 py-3 bg-sky-600 hover:bg-sky-500 font-bold text-xs rounded-xl shadow-lg transition">
-          📖 Lihat / Sembunyikan Pembahasan Jawaban Soal
+          📖 Lihat / Sembunyikan Kunci & Pembahasan
         </button>
         <div id="explanations-container" class="hidden mt-6 text-left space-y-3 bg-slate-900/90 p-4 rounded-2xl border border-slate-800 text-xs text-slate-300">
-          <h4 class="font-bold text-sky-300 border-b border-slate-700 pb-2">Pembahasan Resmi Soal:</h4>
-          <p><strong>Soal Ronde 1:</strong> Perkalian harus didahulukan: 25 x 2 = 50. Kemudian ditambah 15: 15 + 50 = 65.</p>
-          <p><strong>Soal Ronde 2:</strong> Sifat Komutatif adalah sifat pertukaran posisi pada penjumlahan/perkalian: a + b = b + a.</p>
-          <p><strong>Soal Ronde 3:</strong> Evaluasi pernyataan berdasarkan kaidah logika komutatif dan asosiatif.</p>
-          <p><strong>Soal Ronde 4:</strong> Analisis akhir dari kasus gabungan konsep dasar.</p>
+          <h4 class="font-bold text-sky-300 border-b border-slate-700 pb-2">Pembahasan Resmi Guru:</h4>
+          <p id="exp-1"><strong>Soal Ronde 1:</strong> Memerlukan verifikasi langkah logis pertama.</p>
+          <p id="exp-2"><strong>Soal Ronde 2:</strong> Evaluasi rumus dan perhitungan komutatif.</p>
+          <p id="exp-3"><strong>Soal Ronde 3:</strong> Penerapan analisis pada kasus ketiga.</p>
+          <p id="exp-4"><strong>Soal Ronde 4:</strong> Penarikan kesimpulan akhir tantangan.</p>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- 6. GURU: DASHBOARD KONTROL KUIS & PODIUM JUARA -->
+  <!-- 4. DASHBOARD KONTROL GURU & PODIUM -->
   <div id="teacher-dashboard-screen" class="hidden w-full max-w-6xl z-10 my-6 space-y-6">
     <div class="glass-card p-6 rounded-3xl border border-sky-500/20 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
       <div>
-        <h1 class="text-3xl font-extrabold text-sky-300 flex items-center gap-2">🏆 Dashboard Kontrol & Papan Peringkat</h1>
-        <p class="text-slate-400 text-xs mt-1">Pantau kuis real-time, beri poin, dan tampilkan Podium Juara.</p>
+        <h1 class="text-3xl font-extrabold text-sky-300">🏆 Dashboard Kontrol Guru</h1>
+        <p class="text-slate-400 text-xs mt-1">Verifikasi jawaban, kelola bank soal dinamis, dan pantau kuis.</p>
       </div>
       <div class="flex flex-wrap items-center gap-3">
         <div id="quiz-status-indicator" class="px-3.5 py-2 rounded-xl text-xs font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">
-          Status: Kuis Belum Dimulai
+          Status: Belum Dimulai
         </div>
         <button type="button" id="toggle-quiz-btn" onclick="toggleQuizState()" class="px-5 py-2.5 bg-emerald-600 font-bold rounded-xl text-xs">🚀 Mulai Kuis</button>
-        <button type="button" onclick="backToTeacherMenu()" class="px-3.5 py-2.5 bg-slate-800 rounded-xl text-xs font-bold">← Kembali</button>
-        <button type="button" onclick="resetAllGame()" class="px-3.5 py-2.5 bg-rose-600/80 font-bold rounded-xl text-xs">🔄 Reset Game</button>
+        <button type="button" onclick="backToRole()" class="px-3.5 py-2.5 bg-slate-800 rounded-xl text-xs font-bold">← Keluar</button>
+        <button type="button" onclick="resetAllGame()" class="px-3.5 py-2.5 bg-rose-600/80 font-bold rounded-xl text-xs">🔄 Reset Kuis</button>
       </div>
     </div>
 
-    <!-- SEKSI PODIUM SELESAI KUIS (MUNCUL JIKA SEMUA TIM SELESAI) -->
+    <!-- PENGATURAN BANK SOAL DINAMIS GURU -->
+    <div class="glass-card p-6 rounded-3xl border border-sky-500/20 space-y-4">
+      <div class="flex justify-between items-center border-b border-slate-700 pb-3">
+        <h3 class="text-lg font-bold text-sky-300">✏️ Pengaturan Bank Soal Kuis (Bisa Diganti)</h3>
+        <button type="button" onclick="saveCustomQuestions()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 font-bold rounded-xl text-xs shadow-lg">💾 Simpan Perubahan Soal</button>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+        <div>
+          <label class="block font-bold text-amber-300 mb-1">Soal Ronde 1:</label>
+          <textarea id="edit-q1" rows="2" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-white"></textarea>
+        </div>
+        <div>
+          <label class="block font-bold text-amber-300 mb-1">Soal Ronde 2:</label>
+          <textarea id="edit-q2" rows="2" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-white"></textarea>
+        </div>
+        <div>
+          <label class="block font-bold text-amber-300 mb-1">Soal Ronde 3:</label>
+          <textarea id="edit-q3" rows="2" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-white"></textarea>
+        </div>
+        <div>
+          <label class="block font-bold text-amber-300 mb-1">Soal Ronde 4:</label>
+          <textarea id="edit-q4" rows="2" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-white"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- PODIUM JUARA 1 -->
     <div id="winner-podium-section" class="hidden glass-card p-8 rounded-3xl border border-amber-500/40 text-center bg-gradient-to-b from-indigo-900/60 to-slate-900/90 shadow-2xl">
-      <h2 class="text-3xl font-extrabold text-amber-300 mb-6 flex items-center justify-center gap-2">👑 SELEMAT KEPADA KELOMPOK JUARA 1 👑</h2>
-      
-      <div id="podium-winner-card" class="inline-block relative bg-slate-900/90 border-2 border-amber-400 rounded-3xl p-6 shadow-2xl max-w-md w-full">
+      <h2 class="text-3xl font-extrabold text-amber-300 mb-6 flex items-center justify-center gap-2">👑 SELAMAT KEPADA KELOMPOK JUARA 1 👑</h2>
+      <div class="inline-block relative bg-slate-900/90 border-2 border-amber-400 rounded-3xl p-6 shadow-2xl max-w-md w-full">
         <div class="absolute -top-7 left-1/2 -translate-x-1/2 text-5xl animate-bounce">👑</div>
-        <img id="winner-photo-img" src="" class="w-48 h-36 object-cover rounded-2xl mx-auto border-4 border-amber-300 shadow-xl mb-4 mt-2" />
+        <img id="winner-photo-img" src="" class="w-48 h-36 object-cover rounded-2xl mx-auto border-4 border-amber-300 shadow-xl mb-4 mt-2 hidden" />
         <h3 id="winner-group-title" class="text-2xl font-bold text-amber-300"></h3>
         <p id="winner-members-text" class="text-xs text-slate-300 mt-1 italic"></p>
         <div id="winner-score-badge" class="mt-4 inline-block bg-amber-400 text-slate-950 font-extrabold px-6 py-2 rounded-full text-sm"></div>
       </div>
     </div>
 
-    <!-- SEKSI DIAGRAM BATANG -->
+    <!-- DIAGRAM BATANG SKOR -->
     <div class="glass-card p-6 rounded-3xl border border-sky-500/20 space-y-4">
-      <h3 class="text-lg font-bold text-amber-300 flex items-center gap-2">📊 Papan Peringkat Diagram Batang Real-Time</h3>
+      <h3 class="text-lg font-bold text-amber-300">📊 Papan Peringkat Real-Time</h3>
       <div id="leaderboard-bars" class="space-y-4 pt-2"></div>
     </div>
 
+    <!-- KARTU VERIFIKASI KELOMPOK -->
     <div id="groups-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
   </div>
 
-  <!-- GURU: PANTAU BELAJAR MANDIRI -->
-  <div id="teacher-analytics-screen" class="hidden w-full max-w-4xl z-10 my-6 space-y-6">
-    <div class="glass-card p-6 rounded-3xl flex justify-between items-center border border-sky-500/20">
-      <div>
-        <h1 class="text-3xl font-extrabold text-emerald-300">📊 Pemantauan Belajar Mandiri</h1>
-        <p class="text-slate-400 text-xs mt-1">Aktivitas belajar & pengerjaan latihan siswa.</p>
-      </div>
-      <button type="button" onclick="backToTeacherMenu()" class="px-4 py-2.5 bg-slate-800 rounded-xl text-xs font-bold">← Kembali</button>
-    </div>
-    <div class="glass-card p-6 rounded-3xl border border-sky-500/20 space-y-4">
-      <div id="student-activity-container" class="space-y-3"></div>
-    </div>
-  </div>
-
-  <!-- SCRIPT UTAMA -->
+  <!-- FIREBASE & LOGIKA APLIKASI -->
   <script>
     let capturedPhotoData = null;
-    let currentStudentName = "";
+    let selectedGroup = null;
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDHNH2OpGV1xVyr3vn1KDr4XZILGMXKZEE",
+      authDomain: "kuis-interaktif-98daa.firebaseapp.com",
+      databaseURL: "https://kuis-interaktif-98daa-default-rtdb.firebaseio.com",
+      projectId: "kuis-interaktif-98daa",
+      storageBucket: "kuis-interaktif-98daa.firebasestorage.app",
+      messagingSenderId: "594426602679",
+      appId: "1:594426602679:web:459a7ec114a7d733b09932"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    const scoreTable = { 1: 140, 2: 130, 3: 120, 4: 110, 5: 100 };
+    let activeQuestions = {
+      1: "Soal Ronde 1: Apa jawaban hasil diskusi kelompok kalian untuk kasus pertama?",
+      2: "Soal Ronde 2: Berapa hasil perhitungan untuk permasalahan kedua?",
+      3: "Soal Ronde 3: Jelaskan analisis kelompok kalian mengenai pertanyaan ketiga?",
+      4: "Soal Ronde 4: Apa kesimpulan akhir dari tantangan ronde keempat?"
+    };
 
     function triggerConfetti() {
       if (typeof confetti === 'function') {
@@ -338,7 +251,7 @@
       }
     }
 
-    // KAMERA SELFIE LOGIKA
+    // LOGIKA KAMERA
     function startCamera() {
       navigator.mediaDevices.getUserMedia({ video: true }).then(stream => {
         const video = document.getElementById('webcam-preview');
@@ -367,22 +280,16 @@
       }
     }
 
-    // NAVIGASI DOKUMEN UTAMA
-    function showStudentMenu() {
-      document.getElementById('role-screen').classList.add('hidden');
-      document.getElementById('student-menu-screen').classList.remove('hidden');
-    }
-
+    // NAVIGASI
     function backToRole() {
-      document.getElementById('student-menu-screen').classList.add('hidden');
+      document.getElementById('student-setup-screen').classList.add('hidden');
+      document.getElementById('teacher-dashboard-screen').classList.add('hidden');
       document.getElementById('role-screen').classList.remove('hidden');
     }
 
-    function backToStudentMenu() {
-      document.getElementById('self-study-setup-screen').classList.add('hidden');
-      document.getElementById('self-study-screen').classList.add('hidden');
-      document.getElementById('student-setup-screen').classList.add('hidden');
-      document.getElementById('student-menu-screen').classList.remove('hidden');
+    function showStudentSetup() {
+      document.getElementById('role-screen').classList.add('hidden');
+      document.getElementById('student-setup-screen').classList.remove('hidden');
     }
 
     function showTeacherLogin() {
@@ -398,104 +305,43 @@
       if (pass === "abilsaja") {
         document.getElementById('teacher-login-modal').classList.add('hidden');
         document.getElementById('role-screen').classList.add('hidden');
-        document.getElementById('teacher-menu-screen').classList.remove('hidden');
+        document.getElementById('teacher-dashboard-screen').classList.remove('hidden');
+        initTeacherDashboard();
       } else {
         alert("Kode rahasia salah!");
       }
-    }
-
-    function backToTeacherMenu() {
-      document.getElementById('teacher-dashboard-screen').classList.add('hidden');
-      document.getElementById('teacher-analytics-screen').classList.add('hidden');
-      document.getElementById('teacher-menu-screen').classList.remove('hidden');
-    }
-
-    function openTeacherQuizDashboard() {
-      document.getElementById('teacher-menu-screen').classList.add('hidden');
-      document.getElementById('teacher-dashboard-screen').classList.remove('hidden');
-      initTeacherDashboard();
-    }
-
-    function openTeacherAnalyticsDashboard() {
-      document.getElementById('teacher-menu-screen').classList.add('hidden');
-      document.getElementById('teacher-analytics-screen').classList.remove('hidden');
-      initTeacherAnalytics();
-    }
-
-    function openSelfStudySetup() {
-      document.getElementById('student-menu-screen').classList.add('hidden');
-      document.getElementById('self-study-setup-screen').classList.remove('hidden');
-    }
-
-    function startSelfStudy() {
-      const name = document.getElementById('student-single-name').value;
-      if (!name.trim()) return alert("Masukkan nama kamu!");
-      currentStudentName = name.trim();
-      document.getElementById('self-study-setup-screen').classList.add('hidden');
-      document.getElementById('self-study-screen').classList.remove('hidden');
-      document.getElementById('self-student-display').innerText = "Siswa: " + currentStudentName;
-      updateStudentActivity("Membaca Modul Pembelajaran Mandiri");
-    }
-
-    function openGroupQuizSetup() {
-      document.getElementById('student-menu-screen').classList.add('hidden');
-      document.getElementById('student-setup-screen').classList.remove('hidden');
     }
 
     function toggleExplanations() {
       document.getElementById('explanations-container').classList.toggle('hidden');
     }
 
-    function checkPractice(btn, isCorrect, exerciseName) {
-      const parent = btn.parentElement.parentElement;
-      const feedback = parent.querySelector('.feedback-text');
-      feedback.classList.remove('hidden');
-
-      if (isCorrect) {
-        feedback.className = "feedback-text text-xs font-bold text-emerald-400 mt-2";
-        feedback.innerText = "✅ Jawaban Kamu Benar!";
-        updateStudentActivity("Menjawab BENAR di " + exerciseName);
-      } else {
-        feedback.className = "feedback-text text-xs font-bold text-rose-400 mt-2";
-        feedback.innerText = "❌ Jawaban Kurang Tepat, coba hitung lagi!";
-        updateStudentActivity("Menjawab SALAH di " + exerciseName);
-      }
-    }
-
-    function updateStudentActivity(statusText) {
-      if (!currentStudentName) return;
-      const key = currentStudentName.replace(/[^a-zA-Z0-9]/g, '_');
-      db.ref('self_study_activity/' + key).set({
-        name: currentStudentName,
-        status: statusText,
-        last_active: new Date().toLocaleTimeString('id-ID')
+    // PENGATURAN SOAL DINAMIS GURU
+    function loadQuestionsFromDB() {
+      db.ref('custom_questions').on('value', (snapshot) => {
+        const data = snapshot.val();
+        if (data) {
+          activeQuestions = data;
+        }
+        document.getElementById('edit-q1').value = activeQuestions[1] || "";
+        document.getElementById('edit-q2').value = activeQuestions[2] || "";
+        document.getElementById('edit-q3').value = activeQuestions[3] || "";
+        document.getElementById('edit-q4').value = activeQuestions[4] || "";
       });
     }
 
-    // FIREBASE CONFIG
-    const firebaseConfig = {
-      apiKey: "AIzaSyDHNH2OpGV1xVyr3vn1KDr4XZILGMXKZEE",
-      authDomain: "kuis-interaktif-98daa.firebaseapp.com",
-      databaseURL: "https://kuis-interaktif-98daa-default-rtdb.firebaseio.com",
-      projectId: "kuis-interaktif-98daa",
-      storageBucket: "kuis-interaktif-98daa.firebasestorage.app",
-      messagingSenderId: "594426602679",
-      appId: "1:594426602679:web:459a7ec114a7d733b09932"
-    };
+    function saveCustomQuestions() {
+      const q1 = document.getElementById('edit-q1').value;
+      const q2 = document.getElementById('edit-q2').value;
+      const q3 = document.getElementById('edit-q3').value;
+      const q4 = document.getElementById('edit-q4').value;
 
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
+      db.ref('custom_questions').set({
+        1: q1, 2: q2, 3: q3, 4: q4
+      }, () => alert("Soal berhasil diperbarui di seluruh siswa!"));
+    }
 
-    const questions = {
-      1: "Soal Ronde 1: Apa jawaban hasil diskusi kelompok kalian untuk kasus pertama?",
-      2: "Soal Ronde 2: Berapa hasil perhitungan untuk permasalahan kedua?",
-      3: "Soal Ronde 3: Jelaskan analisis kelompok kalian mengenai pertanyaan ketiga?",
-      4: "Soal Ronde 4: Apa kesimpulan akhir dari tantangan ronde keempat?"
-    };
-
-    const scoreTable = { 1: 140, 2: 130, 3: 120, 4: 110, 5: 100 };
-    let selectedGroup = null;
-
+    // LOGIKA SISWA
     function startStudentQuiz() {
       selectedGroup = document.getElementById('group-select').value;
       const rawMembers = document.getElementById('members-input').value;
@@ -527,6 +373,10 @@
     }
 
     function attachStudentListener() {
+      db.ref('custom_questions').on('value', (snapshot) => {
+        if (snapshot.val()) activeQuestions = snapshot.val();
+      });
+
       db.ref('quiz_started').on('value', (snapshot) => {
         const started = snapshot.val() === true;
         document.getElementById('quiz-lobby-box').classList.toggle('hidden', started);
@@ -547,7 +397,7 @@
           document.getElementById('waiting-box').classList.add('hidden');
           document.getElementById('finished-all-box').classList.add('hidden');
           document.getElementById('round-badge').innerText = 'Ronde ' + round;
-          document.getElementById('question-text').innerText = questions[round] || "Soal tidak ditemukan";
+          document.getElementById('question-text').innerText = activeQuestions[round] || "Soal tidak ditemukan";
           if (!data.answer) document.getElementById('answer-input').value = "";
         } else if (data.status === 'waiting') {
           document.getElementById('quiz-box').classList.add('hidden');
@@ -595,14 +445,17 @@
       });
     }
 
+    // DASHBOARD GURU
     function initTeacherDashboard() {
+      loadQuestionsFromDB();
+
       db.ref('quiz_started').on('value', (snapshot) => {
         const started = snapshot.val() === true;
         const statusInd = document.getElementById('quiz-status-indicator');
         const toggleBtn = document.getElementById('toggle-quiz-btn');
         if (started) {
           statusInd.innerText = "Status: 🚀 Kuis Berlangsung";
-          toggleBtn.innerText = "🔒 Kunci / Hentikan Kuis";
+          toggleBtn.innerText = "🔒 Kunci Kuis";
           toggleBtn.className = "px-5 py-2.5 bg-rose-600 font-bold rounded-xl text-xs";
         } else {
           statusInd.innerText = "Status: ⏳ Belum Dimulai";
@@ -650,22 +503,22 @@
                 <h2 class="text-xl font-bold text-white">Kelompok ${i}</h2>
                 ${statusBadge}
               </div>
-              <p class="text-xs text-slate-400 italic mb-3">Anggota: ${group.members ? group.members.join(', ') : 'Belum memasukkan nama'}</p>
+              <p class="text-xs text-slate-400 italic mb-3">Anggota: ${group.members ? group.members.join(', ') : 'Belum mendaftar'}</p>
               <div class="text-sm text-slate-300 space-y-1 mb-4">
                 <p>Ronde Sekarang: <strong class="text-indigo-400">Ronde ${group.current_round || 1}</strong></p>
                 <p>Total Skor: <strong class="text-emerald-400">${group.total_score || 0}</strong></p>
               </div>
-              ${group.status === 'waiting' ? `<div class="bg-slate-900/80 p-3 rounded-xl mb-4"><p class="text-xs text-slate-400">Jawaban:</p><p class="text-sm text-slate-200 italic">"${group.answer || '-'}"</p></div>` : ''}
+              ${group.status === 'waiting' ? `<div class="bg-slate-900/80 p-3 rounded-xl mb-4"><p class="text-xs text-slate-400">Jawaban Siswa:</p><p class="text-sm text-slate-200 italic font-semibold">"${group.answer || '-'}"</p></div>` : ''}
               <div class="bg-slate-900/50 p-3 rounded-xl mb-4 text-center">
-                <button type="button" onclick="pickRandomMember('${groupId}')" class="text-xs bg-indigo-600/30 text-indigo-300 px-3 py-1.5 rounded-lg mb-2">🎲 Tunjuk Anggota Acak</button>
-                <div class="text-sm font-bold text-amber-300">${group.picked_member ? 'Yang Ditunjuk: ' + group.picked_member : 'Belum Ditunjuk'}</div>
+                <button type="button" onclick="pickRandomMember('${groupId}')" class="text-xs bg-indigo-600/30 text-indigo-300 px-3 py-1.5 rounded-lg mb-2">🎲 Tunjuk Anggota Maju</button>
+                <div class="text-sm font-bold text-amber-300">${group.picked_member ? 'Yang Maju: ' + group.picked_member : 'Belum Ditunjuk'}</div>
               </div>
             </div>
             <div>
               ${group.status === 'waiting' ? `
-                <button type="button" onclick="approveGroup('${groupId}', ${group.current_round || 1}, ${group.total_score || 0}, ${scoreEarned})" class="w-full py-2 bg-emerald-600 font-bold rounded-xl text-sm mb-2">✅ ACC (+${scoreEarned} Poin)</button>
-                <button type="button" onclick="rejectGroup('${groupId}')" class="w-full py-1.5 bg-rose-600/30 text-rose-300 font-bold rounded-xl text-xs">❌ Suruh Diskusi Ulang</button>
-              ` : `<button type="button" disabled class="w-full py-2 bg-slate-700 text-slate-500 font-semibold rounded-xl text-xs">Menunggu...</button>`}
+                <button type="button" onclick="approveGroup('${groupId}',${group.current_round || 1}, ${group.total_score \vert{}\vert{} 0},${scoreEarned})" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 font-bold rounded-xl text-sm mb-2 shadow-lg">✅ ACC & Lanjut Ronde berikutnya (+${scoreEarned} Poin)</button>
+                <button type="button" onclick="rejectGroup('${groupId}')" class="w-full py-1.5 bg-rose-600/30 text-rose-300 font-bold rounded-xl text-xs">❌ Diskusi Ulang</button>
+              ` : `<button type="button" disabled class="w-full py-2 bg-slate-700 text-slate-500 font-semibold rounded-xl text-xs">Menunggu Jawaban Siswa...</button>`}
             </div>
           `;
           container.appendChild(card);
@@ -674,7 +527,6 @@
         groupList.sort((a, b) => b.score - a.score);
         const maxScore = Math.max(...groupList.map(g => g.score), 500);
 
-        // CEK APAKAH SEMUA TIM SELESAI UNTUK MENAMPILKAN PODIUM JUARA 1 REAL-TIME
         const activeGroups = groupList.filter(g => g.members && g.members.length > 0);
         const isAllFinished = activeGroups.length > 0 && activeGroups.every(g => g.status === 'completed');
 
@@ -772,22 +624,7 @@
       if (!confirm("Yakin ingin mereset seluruh kuis?")) return;
       db.ref('quiz_started').set(false);
       db.ref('round_passed_count').remove();
-      db.ref('groups').remove(() => alert("Berhasil reset total!"));
-    }
-
-    function initTeacherAnalytics() {
-      db.ref('self_study_activity').on('value', (snapshot) => {
-        const data = snapshot.val() || {};
-        const container = document.getElementById('student-activity-container');
-        container.innerHTML = '';
-        Object.keys(data).forEach(key => {
-          const item = data[key];
-          const card = document.createElement('div');
-          card.className = "bg-slate-900/90 border border-slate-800 p-4 rounded-2xl flex justify-between items-center";
-          card.innerHTML = `<div><h4 class="font-bold text-sky-300 text-sm">${item.name}</h4><p class="text-xs text-slate-300">Status: <strong class="text-emerald-400">${item.status}</strong></p></div><span class="text-[10px] text-slate-400 bg-slate-800 px-2.5 py-1 rounded-lg">Jam: ${item.last_active}</span>`;
-          container.appendChild(card);
-        });
-      });
+      db.ref('groups').remove(() => alert("Berhasil reset kuis!"));
     }
   </script>
 </body>
