@@ -133,7 +133,6 @@
       });
     }
 
-    // FUNGSI BARU: MENOLAK JAWABAN KELOMPOK
     function rejectGroup(groupId) {
       if (!confirm("Tolak jawaban dan minta kelompok ini diskusi ulang? Urutan selesai mereka akan di-reset!")) return;
       
@@ -145,18 +144,28 @@
     }
 
     function resetAllGame() {
-      if (!confirm("Yakin ingin mereset seluruh data kuis?")) return;
+      if (!confirm("Yakin ingin mereset seluruh data kuis? Semua HP kelompok akan otomatis kembali ke Ronde 1!")) return;
 
       db.ref('finish_counter').set(0);
+
+      const initialData = {};
       for (let i = 1; i <= 5; i++) {
-        db.ref(`groups/kelompok_${i}`).set({
+        initialData[`kelompok_${i}`] = {
           current_round: 1,
           status: 'answering',
           finish_order: null,
           total_score: 0,
           answer: ''
-        });
+        };
       }
+
+      db.ref('groups').set(initialData, (error) => {
+        if (error) {
+          alert("Gagal reset: " + error.message);
+        } else {
+          alert("Berhasil reset! Semua kelompok kembali ke Ronde 1.");
+        }
+      });
     }
   </script>
 </body>
