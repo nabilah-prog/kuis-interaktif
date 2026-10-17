@@ -89,7 +89,6 @@
       document.getElementById('app-screen').classList.remove('hidden');
       document.getElementById('group-name-display').innerText = groupId.replace('_', ' ').toUpperCase();
 
-      // Memastikan data awal kelompok tersedia di Firebase jika belum ada
       db.ref('groups/' + selectedGroup).once('value', (snapshot) => {
         if (!snapshot.exists()) {
           db.ref('groups/' + selectedGroup).set({
@@ -102,41 +101,41 @@
         }
       });
 
-      // Listener Real-time
-db.ref('groups/' + selectedGroup).on('value', (snapshot) => {
-  const data = snapshot.val();
+      db.ref('groups/' + selectedGroup).on('value', (snapshot) => {
+        const data = snapshot.val();
+        
+        if (!data) {
+          document.getElementById('app-screen').classList.add('hidden');
+          document.getElementById('login-screen').classList.remove('hidden');
+          document.getElementById('answer-input').value = "";
+          return;
+        }
 
-  // Jika data terhapus (akibat Reset Game Total oleh Guru)
-  if (!data) {
-    document.getElementById('app-screen').classList.add('hidden');
-    document.getElementById('login-screen').classList.remove('hidden');
-    document.getElementById('answer-input').value = "";
-    return;
-  }
+        document.getElementById('score-display').innerText = 'Total Skor: ' + (data.total_score || 0);
 
-  document.getElementById('score-display').innerText = 'Total Skor: ' + (data.total_score || 0);
-
-  if (data.status === 'answering') {
-    document.getElementById('quiz-box').classList.remove('hidden');
-    document.getElementById('waiting-box').classList.add('hidden');
-    document.getElementById('finished-all-box').classList.add('hidden');
-    document.getElementById('round-badge').innerText = 'Ronde ' + (data.current_round || 1);
-    document.getElementById('question-text').innerText = questions[data.current_round || 1] || "Soal tidak ditemukan";
-    
-    if (!data.answer) {
-      document.getElementById('answer-input').value = "";
+        if (data.status === 'answering') {
+          document.getElementById('quiz-box').classList.remove('hidden');
+          document.getElementById('waiting-box').classList.add('hidden');
+          document.getElementById('finished-all-box').classList.add('hidden');
+          document.getElementById('round-badge').innerText = 'Ronde ' + (data.current_round || 1);
+          document.getElementById('question-text').innerText = questions[data.current_round || 1] || "Soal tidak ditemukan";
+          
+          if (!data.answer) {
+            document.getElementById('answer-input').value = "";
+          }
+        } else if (data.status === 'waiting') {
+          document.getElementById('quiz-box').classList.add('hidden');
+          document.getElementById('waiting-box').classList.remove('hidden');
+          document.getElementById('finished-all-box').classList.add('hidden');
+          document.getElementById('finish-order-badge').innerText = 'Urutan Selesai: #' + (data.finish_order || '-');
+        } else if (data.status === 'completed') {
+          document.getElementById('quiz-box').classList.add('hidden');
+          document.getElementById('waiting-box').classList.add('hidden');
+          document.getElementById('finished-all-box').classList.remove('hidden');
+        }
+      });
     }
-  } else if (data.status === 'waiting') {
-    document.getElementById('quiz-box').classList.add('hidden');
-    document.getElementById('waiting-box').classList.remove('hidden');
-    document.getElementById('finished-all-box').classList.add('hidden');
-    document.getElementById('finish-order-badge').innerText = 'Urutan Selesai: #' + (data.finish_order || '-');
-  } else if (data.status === 'completed') {
-    document.getElementById('quiz-box').classList.add('hidden');
-    document.getElementById('waiting-box').classList.add('hidden');
-    document.getElementById('finished-all-box').classList.remove('hidden');
-  }
-});
+
     function submitAnswer() {
       const answer = document.getElementById('answer-input').value;
       if (!answer.trim()) {
