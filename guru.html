@@ -44,7 +44,7 @@
       container.innerHTML = '';
 
       for (let i = 1; i <= 5; i++) {
-        const groupId = `kelompok_${i}`;
+        const groupId = 'kelompok_' + i;
         const group = data[groupId] || {
           current_round: 1,
           status: 'answering',
@@ -57,74 +57,67 @@
 
         let statusBadge = '';
         if (group.status === 'answering') {
-          statusBadge = `<span class="bg-blue-500/20 text-blue-300 text-xs px-2.5 py-1 rounded-full border border-blue-500/30">Sedang Mengerjakan</span>`;
+          statusBadge = '<span class="bg-blue-500/20 text-blue-300 text-xs px-2.5 py-1 rounded-full border border-blue-500/30">Sedang Mengerjakan</span>';
         } else if (group.status === 'waiting') {
-          statusBadge = `<span class="bg-amber-500/20 text-amber-300 text-xs px-2.5 py-1 font-bold rounded-full border border-amber-500/30 animate-pulse">Menunggu Verifikasi (#${group.finish_order})</span>`;
+          statusBadge = '<span class="bg-amber-500/20 text-amber-300 text-xs px-2.5 py-1 font-bold rounded-full border border-amber-500/30 animate-pulse">Menunggu Verifikasi (#' + group.finish_order + ')</span>';
         } else if (group.status === 'completed') {
-          statusBadge = `<span class="bg-emerald-500/20 text-emerald-300 text-xs px-2.5 py-1 rounded-full border border-emerald-500/30">Selesai Semua Ronde</span>`;
+          statusBadge = '<span class="bg-emerald-500/20 text-emerald-300 text-xs px-2.5 py-1 rounded-full border border-emerald-500/30">Selesai Semua Ronde</span>';
         }
+
+        const answerBox = (group.status === 'waiting') ? 
+          '<div class="bg-slate-900/80 p-3 rounded-xl border border-slate-700 mb-4">' +
+            '<p class="text-xs text-slate-400 font-semibold mb-1">Jawaban Siswa:</p>' +
+            '<p class="text-sm text-slate-200 italic">"' + (group.answer || '-') + '"</p>' +
+          '</div>' : '';
+
+        const actionButtons = (group.status === 'waiting') ?
+          '<div class="space-y-2">' +
+            '<button onclick="approveGroup(\'' + groupId + '\', ' + (group.current_round || 1) + ', ' + (group.total_score || 0) + ', ' + scoreEarned + ')" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl shadow-lg transition text-sm">' +
+              '✅ ACC & Lanjut Ronde (+' + scoreEarned + ' Poin)' +
+            '</button>' +
+            '<button onclick="rejectGroup(\'' + groupId + '\')" class="w-full py-2 bg-rose-600/30 hover:bg-rose-600/50 text-rose-300 font-bold rounded-xl border border-rose-500/30 transition text-xs">' +
+              '❌ Batal / Suruh Diskusi Ulang' +
+            '</button>' +
+          '</div>' :
+          '<button disabled class="w-full py-2.5 bg-slate-700 text-slate-500 font-semibold rounded-xl text-sm cursor-not-allowed">Menunggu Jawaban...</button>';
 
         const card = document.createElement('div');
         card.className = "bg-slate-800 border border-slate-700 rounded-2xl p-5 shadow-xl flex flex-col justify-between";
-        card.innerHTML = `
-          <div>
-            <div class="flex justify-between items-center mb-3">
-              <h2 class="text-xl font-bold text-white">Kelompok ${i}</h2>
-              ${statusBadge}
-            </div>
+        card.innerHTML = 
+          '<div>' +
+            '<div class="flex justify-between items-center mb-3">' +
+              '<h2 class="text-xl font-bold text-white">Kelompok ' + i + '</h2>' +
+              statusBadge +
+            '</div>' +
+            '<div class="text-sm text-slate-300 space-y-1 mb-4">' +
+              '<p><span class="text-slate-400">Ronde Sekarang:</span> <strong class="text-indigo-400">Ronde ' + (group.current_round || 1) + '</strong></p>' +
+              '<p><span class="text-slate-400">Total Skor:</span> <strong class="text-emerald-400">' + (group.total_score || 0) + '</strong></p>' +
+              (group.finish_order ? '<p><span class="text-slate-400">Urutan Selesai:</span> <strong class="text-amber-400">#' + group.finish_order + '</strong> (Potensi: +' + scoreEarned + ')</p>' : '') +
+            '</div>' +
+            answerBox +
+            '<div class="bg-slate-900/50 p-3 rounded-xl border border-slate-700/50 mb-4 text-center">' +
+              '<button onclick="pickRandomMember(\'' + groupId + '\')" class="text-xs bg-indigo-600/30 hover:bg-indigo-600/50 text-indigo-300 px-3 py-1.5 rounded-lg border border-indigo-500/30 transition mb-2">' +
+                '🎲 Tunjuk Anggota Acak' +
+              '</button>' +
+              '<div id="picked-member-' + groupId + '" class="text-sm font-bold text-amber-300"></div>' +
+            '</div>' +
+          '</div>' +
+          '<div>' + actionButtons + '</div>';
 
-            <div class="text-sm text-slate-300 space-y-1 mb-4">
-              <p><span class="text-slate-400">Ronde Sekarang:</span> <strong class="text-indigo-400">Ronde ${group.current_round || 1}</strong></p>
-              <p><span class="text-slate-400">Total Skor:</span> <strong class="text-emerald-400">${group.total_score || 0}</strong></p>
-              ${group.finish_order ? `<p><span class="text-slate-400">Urutan Selesai:</span> <strong class="text-amber-400">#${group.finish_order}</strong> (Potensi Nilai: +${scoreEarned})</p>` : ''}
-            </div>
-
-            ${group.status === 'waiting' ? `
-              <div class="bg-slate-900/80 p-3 rounded-xl border border-slate-700 mb-4">
-                <p class="text-xs text-slate-400 font-semibold mb-1">Jawaban Siswa:</p>
-                <p class="text-sm text-slate-200 italic">"${group.answer || '-'}"</p>
-              </div>
-            ` : ''}
-
-            <div class="bg-slate-900/50 p-3 rounded-xl border border-slate-700/50 mb-4 text-center">
-              <button onclick="pickRandomMember('${groupId}')" class="text-xs bg-indigo-600/30 hover:bg-indigo-600/50 text-indigo-300 px-3 py-1.5 rounded-lg border border-indigo-500/30 transition mb-2">
-                🎲 Tunjuk Anggota Acak
-              </button>
-              <div id="picked-member-${groupId}" class="text-sm font-bold text-amber-300"></div>
-            </div>
-          </div>
-
-          <div>
-            ${group.status === 'waiting' ? `
-              <div class="space-y-2">
-                <button onclick="approveGroup('${groupId}',${group.current_round}, ${group.total_score \vert{}\vert{} 0},${scoreEarned})" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl shadow-lg transition text-sm">
-                  ✅ ACC & Lanjut Ronde (+${scoreEarned} Poin)
-                </button>
-                <button onclick="rejectGroup('${groupId}')" class="w-full py-2 bg-rose-600/30 hover:bg-rose-600/50 text-rose-300 font-bold rounded-xl border border-rose-500/30 transition text-xs">
-                  ❌ Batal / Suruh Diskusi Ulang
-                </button>
-              </div>
-            ` : `
-              <button disabled class="w-full py-2.5 bg-slate-700 text-slate-500 font-semibold rounded-xl text-sm cursor-not-allowed">
-                Menunggu Jawaban...
-              </button>
-            `}
-          </div>
-        `;
         container.appendChild(card);
       }
     });
 
     function pickRandomMember(groupId) {
       const randomNumber = Math.floor(Math.random() * 5) + 1;
-      document.getElementById(`picked-member-${groupId}`).innerText = `Anggota yang Ditunjuk: Siswa Nomor ${randomNumber}`;
+      document.getElementById('picked-member-' + groupId).innerText = 'Anggota yang Ditunjuk: Siswa Nomor ' + randomNumber;
     }
 
     function approveGroup(groupId, currentRound, currentScore, addedScore) {
       const nextRound = currentRound + 1;
       const isCompleted = nextRound > 4;
 
-      db.ref(`groups/${groupId}`).update({
+      db.ref('groups/' + groupId).update({
         current_round: isCompleted ? currentRound : nextRound,
         status: isCompleted ? 'completed' : 'answering',
         total_score: currentScore + addedScore,
@@ -136,7 +129,7 @@
     function rejectGroup(groupId) {
       if (!confirm("Tolak jawaban dan minta kelompok ini diskusi ulang? Urutan selesai mereka akan di-reset!")) return;
       
-      db.ref(`groups/${groupId}`).update({
+      db.ref('groups/' + groupId).update({
         status: 'answering',
         finish_order: null,
         answer: ''
@@ -150,7 +143,7 @@
 
       const initialData = {};
       for (let i = 1; i <= 5; i++) {
-        initialData[`kelompok_${i}`] = {
+        initialData['kelompok_' + i] = {
           current_round: 1,
           status: 'answering',
           finish_order: null,
