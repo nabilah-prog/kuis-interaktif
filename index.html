@@ -92,12 +92,19 @@
       // Listener Real-time
       db.ref('groups/' + selectedGroup).on('value', (snapshot) => {
         const data = snapshot.val();
-        if (!data) return;
+        
+        // JIKA GURU MENEKAN RESET (Data dikosongkan/dikembalikan ke awal)
+        if (!data || (data.current_round === 1 && data.status === 'answering' && data.total_score === 0 && !data.answer && !data.finish_order)) {
+          // Bawa HP siswa kembali ke layar Memilih Kelompok (Login)
+          document.getElementById('app-screen').classList.add('hidden');
+          document.getElementById('login-screen').classList.remove('hidden');
+          document.getElementById('answer-input').value = "";
+          return;
+        }
 
         // Update Skor
         document.getElementById('score-display').innerText = 'Total Skor: ' + (data.total_score || 0);
 
-        // Jika status answering (termasuk setelah di-Reset oleh Guru)
         if (data.status === 'answering') {
           document.getElementById('quiz-box').classList.remove('hidden');
           document.getElementById('waiting-box').classList.add('hidden');
@@ -105,7 +112,6 @@
           document.getElementById('round-badge').innerText = 'Ronde ' + (data.current_round || 1);
           document.getElementById('question-text').innerText = questions[data.current_round || 1] || "Soal tidak ditemukan";
           
-          // Kosongkan textarea jika data jawaban di Firebase kosong (misal saat di-reset)
           if (!data.answer) {
             document.getElementById('answer-input').value = "";
           }
