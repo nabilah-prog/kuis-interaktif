@@ -7,7 +7,6 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
   <style>
     @keyframes floatClouds {
       0% { transform: translateX(-10%); }
@@ -35,7 +34,7 @@
     <svg class="absolute top-1/3 right-10 w-96 h-56 animate-cloud-fast fill-amber-200" viewBox="0 0 24 24"><path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96z"/></svg>
   </div>
 
-  <!-- ================= 1. HALAMAN UTAMA ================= -->
+  <!-- 1. HALAMAN UTAMA -->
   <div id="role-screen" class="glass-card p-8 rounded-3xl shadow-2xl w-full max-w-md text-center z-10 border border-sky-500/20">
     <div class="text-5xl mb-3">☁️✨</div>
     <h1 class="text-3xl font-extrabold mb-2 bg-gradient-to-r from-sky-300 via-indigo-200 to-emerald-300 bg-clip-text text-transparent">Kuis & Media Belajar</h1>
@@ -58,7 +57,7 @@
     </div>
   </div>
 
-  <!-- ================= 2. PILIHAN MODE GURU ================= -->
+  <!-- 2. PILIHAN MODE GURU -->
   <div id="teacher-menu-screen" class="hidden glass-card p-8 rounded-3xl shadow-2xl w-full max-w-md z-10 border border-sky-500/20 text-center">
     <button type="button" onclick="location.reload()" class="text-xs text-sky-300 hover:underline mb-4 flex items-center gap-1">← Halaman Utama</button>
     <h2 class="text-2xl font-bold mb-2 text-sky-300">Menu Kontrol Guru</h2>
@@ -81,7 +80,7 @@
     </div>
   </div>
 
-  <!-- ================= 3. MENU SISWA ================= -->
+  <!-- 3. MENU SISWA -->
   <div id="student-menu-screen" class="hidden glass-card p-8 rounded-3xl shadow-2xl w-full max-w-md z-10 border border-sky-500/20 text-center">
     <button type="button" onclick="backToRole()" class="text-xs text-sky-300 hover:underline mb-4 flex items-center gap-1">← Halaman Utama</button>
     <h2 class="text-2xl font-bold mb-2 text-sky-300">Menu Siswa</h2>
@@ -128,7 +127,7 @@
     </div>
   </div>
 
-  <!-- ================= 4. SISWA: REGISTRASI KELOMPOK & SELFIE ================= -->
+  <!-- 4. SISWA: REGISTRASI KELOMPOK -->
   <div id="student-setup-screen" class="hidden glass-card p-8 rounded-3xl shadow-2xl w-full max-w-md z-10 border border-sky-500/20">
     <button type="button" onclick="backToStudentMenu()" class="text-xs text-sky-300 hover:underline mb-4 flex items-center gap-1">← Kembali</button>
     <h2 class="text-2xl font-bold mb-1 text-sky-300 text-center">Registrasi Kelompok</h2>
@@ -150,21 +149,11 @@
         <textarea id="members-input" rows="2" placeholder="Contoh: Abil, Budi, Cici" class="w-full bg-slate-900/90 border border-slate-700 rounded-xl p-3 text-white text-sm"></textarea>
       </div>
 
-      <div>
-        <label class="block text-xs font-semibold text-slate-300 mb-1">📷 Swafoto (Selfie Tim - Opsional):</label>
-        <div class="relative bg-slate-900 rounded-2xl overflow-hidden border border-slate-700 aspect-video flex flex-col items-center justify-center">
-          <video id="webcam-preview" autoplay playsinline class="w-full h-full object-cover hidden"></video>
-          <img id="selfie-photo-result" class="w-full h-full object-cover hidden" />
-          <button type="button" id="start-cam-btn" onclick="startCamera()" class="px-3 py-1.5 bg-slate-800 text-xs font-bold rounded-lg border border-slate-700">Nyalakan Kamera</button>
-          <button type="button" id="take-photo-btn" onclick="takePhoto()" class="hidden absolute bottom-3 px-4 py-1.5 bg-emerald-600 text-xs font-bold rounded-xl">📸 Ambil Foto</button>
-        </div>
-      </div>
-
       <button type="button" onclick="startStudentQuiz()" class="w-full py-4 bg-gradient-to-r from-indigo-600 to-sky-600 font-bold rounded-2xl shadow-lg">Masuk ke Ruang Kuis</button>
     </div>
   </div>
 
-  <!-- ================= 5. SISWA: RUANG KUIS KELOMPOK ================= -->
+  <!-- 5. SISWA: RUANG KUIS KELOMPOK -->
   <div id="student-quiz-screen" class="hidden w-full max-w-xl z-10 space-y-4">
     <div class="glass-card p-5 rounded-2xl flex justify-between items-center border border-sky-500/20">
       <div>
@@ -205,30 +194,27 @@
         <div class="text-6xl mb-3">🎉</div>
         <h2 class="text-2xl font-bold text-emerald-300 mb-2">Luar Biasa!</h2>
         <p class="text-slate-300 text-sm mb-6">Kelompokmu telah menyelesaikan seluruh ronde kuis!</p>
-        
         <button type="button" onclick="toggleExplanations()" class="px-5 py-3 bg-sky-600 hover:bg-sky-500 font-bold text-xs rounded-xl shadow-lg transition">
           📖 Lihat / Sembunyikan Pembahasan Jawaban Soal
         </button>
-
         <div id="explanations-container" class="hidden mt-6 text-left space-y-3 bg-slate-900/90 p-4 rounded-2xl border border-slate-800 text-xs text-slate-300">
           <h4 class="font-bold text-sky-300 border-b border-slate-700 pb-2">Pembahasan Resmi Soal:</h4>
-          <p><strong>Soal Ronde 1:</strong> [Penjelasan kunci jawaban konsep soal 1...]</p>
-          <p><strong>Soal Ronde 2:</strong> [Penjelasan kunci jawaban konsep soal 2...]</p>
-          <p><strong>Soal Ronde 3:</strong> [Penjelasan kunci jawaban konsep soal 3...]</p>
-          <p><strong>Soal Ronde 4:</strong> [Penjelasan kunci jawaban konsep soal 4...]</p>
+          <p><strong>Soal Ronde 1:</strong> [Penjelasan konsep soal 1...]</p>
+          <p><strong>Soal Ronde 2:</strong> [Penjelasan konsep soal 2...]</p>
+          <p><strong>Soal Ronde 3:</strong> [Penjelasan konsep soal 3...]</p>
+          <p><strong>Soal Ronde 4:</strong> [Penjelasan konsep soal 4...]</p>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- ================= 6. GURU: DASHBOARD KONTROL KUIS ================= -->
+  <!-- 6. GURU: DASHBOARD KONTROL KUIS -->
   <div id="teacher-dashboard-screen" class="hidden w-full max-w-6xl z-10 my-6 space-y-6">
     <div class="glass-card p-6 rounded-3xl border border-sky-500/20 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
       <div>
         <h1 class="text-3xl font-extrabold text-sky-300 flex items-center gap-2">🏆 Dashboard Kontrol & Papan Peringkat</h1>
         <p class="text-slate-400 text-xs mt-1">Pantau kuis real-time & Diagram Batang Nilai Kelompok.</p>
       </div>
-
       <div class="flex flex-wrap items-center gap-3">
         <div id="quiz-status-indicator" class="px-3.5 py-2 rounded-xl text-xs font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">
           Status: Kuis Belum Dimulai
@@ -239,17 +225,15 @@
       </div>
     </div>
 
-    <!-- DIAGRAM BATANG PERINGKAT REAL-TIME -->
     <div class="glass-card p-6 rounded-3xl border border-sky-500/20 space-y-4">
       <h3 class="text-lg font-bold text-amber-300 flex items-center gap-2">📊 Papan Peringkat Real-Time</h3>
       <div id="leaderboard-bars" class="space-y-4 pt-2"></div>
     </div>
 
-    <!-- KARTU KELOMPOK KONTROL GURU -->
     <div id="groups-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
   </div>
 
-  <!-- GURU: DASHBOARD PANTAU BELAJAR MANDIRI -->
+  <!-- GURU: PANTAU BELAJAR MANDIRI -->
   <div id="teacher-analytics-screen" class="hidden w-full max-w-4xl z-10 my-6 space-y-6">
     <div class="glass-card p-6 rounded-3xl flex justify-between items-center border border-sky-500/20">
       <div>
@@ -263,69 +247,9 @@
     </div>
   </div>
 
-  <!-- ================= FIREBASE & LOGIKA APLIKASI ================= -->
+  <!-- SCRIPT UTAMA -->
   <script>
-    const firebaseConfig = {
-      apiKey: "AIzaSyDHNH2OpGV1xVyr3vn1KDr4XZILGMXKZEE",
-      authDomain: "kuis-interaktif-98daa.firebaseapp.com",
-      databaseURL: "https://kuis-interaktif-98daa-default-rtdb.firebaseio.com",
-      projectId: "kuis-interaktif-98daa",
-      storageBucket: "kuis-interaktif-98daa.firebasestorage.app",
-      messagingSenderId: "594426602679",
-      appId: "1:594426602679:web:459a7ec114a7d733b09932"
-    };
-
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
-
-    const questions = {
-      1: "Soal Ronde 1: Apa jawaban hasil diskusi kelompok kalian untuk kasus pertama?",
-      2: "Soal Ronde 2: Berapa hasil perhitungan untuk permasalahan kedua?",
-      3: "Soal Ronde 3: Jelaskan analisis kelompok kalian mengenai pertanyaan ketiga?",
-      4: "Soal Ronde 4: Apa kesimpulan akhir dari tantangan ronde keempat?"
-    };
-
-    const scoreTable = { 1: 140, 2: 130, 3: 120, 4: 110, 5: 100 };
-    let selectedGroup = null;
-    let currentStudentName = "";
-    let capturedPhotoData = null;
-
-    function triggerConfetti() {
-      if (typeof confetti === 'function') {
-        confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
-      }
-    }
-
-    // --- LOGIKA KAMERA SELFIE ---
-    function startCamera() {
-      navigator.mediaDevices.getUserMedia({ video: true }).then(stream => {
-        const video = document.getElementById('webcam-preview');
-        video.srcObject = stream;
-        video.classList.remove('hidden');
-        document.getElementById('start-cam-btn').classList.add('hidden');
-        document.getElementById('take-photo-btn').classList.remove('hidden');
-      }).catch(err => alert("Kamera tidak dapat diakses: " + err));
-    }
-
-    function takePhoto() {
-      const video = document.getElementById('webcam-preview');
-      const canvas = document.createElement('canvas');
-      canvas.width = 320;
-      canvas.height = 240;
-      canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
-      capturedPhotoData = canvas.toDataURL('image/jpeg', 0.6);
-
-      document.getElementById('selfie-photo-result').src = capturedPhotoData;
-      document.getElementById('selfie-photo-result').classList.remove('hidden');
-      video.classList.add('hidden');
-      document.getElementById('take-photo-btn').classList.add('hidden');
-
-      if (video.srcObject) {
-        video.srcObject.getTracks().forEach(track => track.stop());
-      }
-    }
-
-    // --- NAVIGASI TINGKAT ATAS ---
+    // 1. DOKUMEN NAVIGASI UTAMA (LANGSUNG AKTIF DI AWAL)
     function showStudentMenu() {
       document.getElementById('role-screen').classList.add('hidden');
       document.getElementById('student-menu-screen').classList.remove('hidden');
@@ -388,7 +312,6 @@
     function startSelfStudy() {
       const name = document.getElementById('student-single-name').value;
       if (!name.trim()) return alert("Masukkan nama kamu!");
-      currentStudentName = name.trim();
       document.getElementById('self-study-setup-screen').classList.add('hidden');
       document.getElementById('self-study-screen').classList.remove('hidden');
     }
@@ -398,21 +321,46 @@
       document.getElementById('student-setup-screen').classList.remove('hidden');
     }
 
-    // --- SISWA KUIS KELOMPOK ---
+    function toggleExplanations() {
+      document.getElementById('explanations-container').classList.toggle('hidden');
+    }
+
+    // 2. FIREBASE CONFIG
+    const firebaseConfig = {
+      apiKey: "AIzaSyDHNH2OpGV1xVyr3vn1KDr4XZILGMXKZEE",
+      authDomain: "kuis-interaktif-98daa.firebaseapp.com",
+      databaseURL: "https://kuis-interaktif-98daa-default-rtdb.firebaseio.com",
+      projectId: "kuis-interaktif-98daa",
+      storageBucket: "kuis-interaktif-98daa.firebasestorage.app",
+      messagingSenderId: "594426602679",
+      appId: "1:594426602679:web:459a7ec114a7d733b09932"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    const questions = {
+      1: "Soal Ronde 1: Apa jawaban hasil diskusi kelompok kalian untuk kasus pertama?",
+      2: "Soal Ronde 2: Berapa hasil perhitungan untuk permasalahan kedua?",
+      3: "Soal Ronde 3: Jelaskan analisis kelompok kalian mengenai pertanyaan ketiga?",
+      4: "Soal Ronde 4: Apa kesimpulan akhir dari tantangan ronde keempat?"
+    };
+
+    const scoreTable = { 1: 140, 2: 130, 3: 120, 4: 110, 5: 100 };
+    let selectedGroup = null;
+
+    // SISWA LOGIKA
     function startStudentQuiz() {
       selectedGroup = document.getElementById('group-select').value;
       const rawMembers = document.getElementById('members-input').value;
-
       if (!rawMembers.trim()) return alert("Masukkan nama anggota!");
 
       const membersArray = rawMembers.split(',').map(name => name.trim()).filter(name => name !== '');
-
       document.getElementById('student-setup-screen').classList.add('hidden');
       document.getElementById('student-quiz-screen').classList.remove('hidden');
       document.getElementById('group-name-display').innerText = selectedGroup.replace('_', ' ').toUpperCase();
 
       const groupRef = db.ref('groups/' + selectedGroup);
-
       groupRef.once('value', (snapshot) => {
         const payload = {
           current_round: 1,
@@ -421,10 +369,8 @@
           total_score: 0,
           answer: '',
           picked_member: null,
-          members: membersArray,
-          photo: capturedPhotoData || null
+          members: membersArray
         };
-
         if (!snapshot.exists()) {
           groupRef.set(payload, attachStudentListener);
         } else {
@@ -442,15 +388,10 @@
 
       db.ref('groups/' + selectedGroup).on('value', (snapshot) => {
         const data = snapshot.val();
-        if (!data) {
-          document.getElementById('student-quiz-screen').classList.add('hidden');
-          document.getElementById('role-screen').classList.remove('hidden');
-          return;
-        }
+        if (!data) return;
 
         const round = data.current_round || 1;
         document.getElementById('dynamic-bg').className = `bg-round-${round} text-white min-h-screen flex flex-col items-center justify-center p-4 relative overflow-x-hidden transition-all duration-1000`;
-
         document.getElementById('score-display').innerText = 'Total Skor: ' + (data.total_score || 0);
         if (data.members) document.getElementById('group-members-display').innerText = 'Anggota: ' + data.members.join(', ');
 
@@ -478,7 +419,6 @@
           document.getElementById('quiz-box').classList.add('hidden');
           document.getElementById('waiting-box').classList.add('hidden');
           document.getElementById('finished-all-box').classList.remove('hidden');
-          triggerConfetti();
         }
       });
     }
@@ -507,11 +447,7 @@
       });
     }
 
-    function toggleExplanations() {
-      document.getElementById('explanations-container').classList.toggle('hidden');
-    }
-
-    // --- DASHBOARD GURU & DIAGRAM BATANG ---
+    // DASHBOARD GURU
     function initTeacherDashboard() {
       db.ref('quiz_started').on('value', (snapshot) => {
         const started = snapshot.val() === true;
@@ -536,7 +472,6 @@
         leaderboardContainer.innerHTML = '';
 
         let groupList = [];
-
         for (let i = 1; i <= 5; i++) {
           const groupId = 'kelompok_' + i;
           const group = data[groupId] || {
@@ -546,12 +481,10 @@
             total_score: 0,
             answer: '',
             picked_member: null,
-            members: [],
-            photo: null
+            members: []
           };
 
-          groupList.push({ id: groupId, name: 'Kelompok ' + i, score: group.total_score || 0, photo: group.photo, status: group.status });
-
+          groupList.push({ id: groupId, name: 'Kelompok ' + i, score: group.total_score || 0, status: group.status });
           const scoreEarned = group.finish_order ? (scoreTable[group.finish_order] || 100) : 100;
 
           let statusBadge = '';
@@ -590,27 +523,18 @@
 
         groupList.sort((a, b) => b.score - a.score);
         const maxScore = Math.max(...groupList.map(g => g.score), 500);
-        const allCompleted = groupList.length > 0 && groupList.every(g => g.status === 'completed');
-
-        if (allCompleted) {
-          triggerConfetti();
-        }
 
         groupList.forEach((item, index) => {
           const widthPercent = Math.max((item.score / maxScore) * 100, 10);
-          const isWinner = index === 0 && allCompleted && item.score > 0;
-
           const bar = document.createElement('div');
           bar.className = "flex items-center gap-3";
           bar.innerHTML = `
             <span class="w-24 text-xs font-bold text-slate-300">${item.name}</span>
             <div class="flex-1 bg-slate-900 rounded-xl h-8 overflow-hidden border border-slate-700 p-1 flex items-center">
-              <div class="h-full ${isWinner ? 'bg-gradient-to-r from-amber-400 to-yellow-300' : 'bg-gradient-to-r from-sky-500 to-indigo-500'} rounded-lg transition-all duration-1000 flex items-center justify-end px-2" style="width: ${widthPercent}%">
+              <div class="h-full bg-gradient-to-r from-sky-500 to-indigo-500 rounded-lg transition-all duration-1000 flex items-center justify-end px-2" style="width: ${widthPercent}%">
                 <span class="text-xs font-extrabold text-slate-950">${item.score} Poin</span>
               </div>
             </div>
-            ${item.photo ? `<img src="${item.photo}" class="w-9 h-9 rounded-full object-cover border-2 ${isWinner ? 'border-amber-400 animate-pulse scale-125' : 'border-sky-400'}" />` : ''}
-            ${isWinner ? '<span class="text-xl">👑 JUARA 1</span>' : ''}
           `;
           leaderboardContainer.appendChild(bar);
         });
