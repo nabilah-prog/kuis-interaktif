@@ -89,21 +89,29 @@
       document.getElementById('app-screen').classList.remove('hidden');
       document.getElementById('group-name-display').innerText = groupId.replace('_', ' ').toUpperCase();
 
-      db.ref('groups/' + selectedGroup).once('value', (snapshot) => {
+      const groupRef = db.ref('groups/' + selectedGroup);
+
+      // Pastikan data disiapkan dulu SEBELUM listener dipasang
+      groupRef.once('value', (snapshot) => {
         if (!snapshot.exists()) {
-          db.ref('groups/' + selectedGroup).set({
+          groupRef.set({
             current_round: 1,
             status: 'answering',
             finish_order: null,
             total_score: 0,
             answer: ''
-          });
+          }, attachListener);
+        } else {
+          attachListener();
         }
       });
+    }
 
+    function attachListener() {
       db.ref('groups/' + selectedGroup).on('value', (snapshot) => {
         const data = snapshot.val();
         
+        // Hanya lempar balik ke login jika data BENAR-BENAR dihapus saat Reset Game Total oleh Guru
         if (!data) {
           document.getElementById('app-screen').classList.add('hidden');
           document.getElementById('login-screen').classList.remove('hidden');
