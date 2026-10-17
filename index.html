@@ -7,43 +7,72 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+  <style>
+    @keyframes floatClouds {
+      0% { transform: translateX(-10%); }
+      50% { transform: translateX(10%); }
+      100% { transform: translateX(-10%); }
+    }
+    .animate-cloud-slow {
+      animation: floatClouds 20s ease-in-out infinite;
+    }
+    .animate-cloud-fast {
+      animation: floatClouds 12s ease-in-out infinite reverse;
+    }
+    .glass-card {
+      background: rgba(30, 41, 59, 0.75);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+    }
+  </style>
 </head>
-<body class="bg-slate-900 text-white min-h-screen flex flex-col items-center justify-center p-4">
+<body class="bg-gradient-to-b from-slate-950 via-indigo-950 to-slate-900 text-white min-h-screen flex flex-col items-center justify-center p-4 relative overflow-x-hidden">
+
+  <!-- ================= Latar Belakang Awan Visual ================= -->
+  <div class="fixed inset-0 pointer-events-none z-0 opacity-20">
+    <svg class="absolute top-10 left-5 w-72 h-44 animate-cloud-slow fill-sky-300" viewBox="0 0 24 24"><path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96z"/></svg>
+    <svg class="absolute top-1/3 right-10 w-96 h-56 animate-cloud-fast fill-indigo-300" viewBox="0 0 24 24"><path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96z"/></svg>
+    <svg class="absolute bottom-10 left-1/4 w-80 h-48 animate-cloud-slow fill-blue-300" viewBox="0 0 24 24"><path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96z"/></svg>
+  </div>
 
   <!-- ================= LAYAR UTAMA: PILIH PERAN ================= -->
-  <div id="role-screen" class="bg-slate-800 p-6 rounded-2xl shadow-xl w-full max-w-md text-center border border-slate-700">
-    <h1 class="text-2xl font-bold mb-2 text-emerald-400">Kuis Interaktif</h1>
-    <p class="text-slate-300 mb-6 text-sm">Pilih peran kamu untuk masuk ke dalam sistem:</p>
-    <div class="space-y-3">
-      <button onclick="showStudentSetup()" class="w-full py-3.5 bg-indigo-600 hover:bg-indigo-500 font-bold rounded-xl transition text-base shadow-lg">👨‍🎓 Masuk sebagai Siswa</button>
-      <button onclick="showTeacherLogin()" class="w-full py-3 bg-slate-700 hover:bg-slate-600 font-semibold text-slate-200 rounded-xl transition text-sm">👨‍🏫 Masuk sebagai Guru</button>
+  <div id="role-screen" class="glass-card p-8 rounded-3xl shadow-2xl w-full max-w-md text-center z-10 border border-sky-500/20">
+    <div class="text-5xl mb-3">☁️✨</div>
+    <h1 class="text-3xl font-extrabold mb-2 bg-gradient-to-r from-sky-300 via-indigo-200 to-emerald-300 bg-clip-text text-transparent">Kuis Interaktif</h1>
+    <p class="text-slate-300 mb-8 text-sm">Media Pembelajaran & Diskusi Interaktif Kelompok</p>
+    <div class="space-y-4">
+      <button onclick="showStudentSetup()" class="w-full py-4 bg-gradient-to-r from-indigo-600 to-sky-600 hover:from-indigo-500 hover:to-sky-500 font-bold rounded-2xl transition text-base shadow-lg shadow-sky-900/40 transform hover:-translate-y-0.5">
+        👨‍🎓 Masuk sebagai Siswa
+      </button>
+      <button onclick="showTeacherLogin()" class="w-full py-3 bg-slate-800/80 hover:bg-slate-700/80 font-semibold text-slate-300 rounded-2xl transition text-sm border border-slate-700">
+        👨‍🏫 Masuk sebagai Guru
+      </button>
     </div>
   </div>
 
   <!-- ================= MODAL LOGIN GURU ================= -->
-  <div id="teacher-login-modal" class="hidden fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-    <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700 w-full max-w-sm text-center shadow-2xl">
-      <h2 class="text-xl font-bold text-emerald-400 mb-2">Akses Dashboard Guru</h2>
+  <div id="teacher-login-modal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 z-50">
+    <div class="glass-card p-6 rounded-3xl border border-sky-500/30 w-full max-w-sm text-center shadow-2xl">
+      <h2 class="text-xl font-bold text-sky-300 mb-2">Akses Dashboard Guru</h2>
       <p class="text-slate-400 text-xs mb-4">Masukkan kode rahasia untuk melanjutkan:</p>
-      <input type="password" id="teacher-pass-input" placeholder="Kode Rahasia" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-white text-center font-bold mb-4 focus:outline-none focus:border-indigo-500" />
+      <input type="password" id="teacher-pass-input" placeholder="Kode Rahasia" class="w-full bg-slate-900/90 border border-slate-700 rounded-xl p-3 text-white text-center font-bold mb-4 focus:outline-none focus:border-sky-400" />
       <div class="flex gap-2">
         <button onclick="closeTeacherLogin()" class="w-1/2 py-2.5 bg-slate-700 hover:bg-slate-600 font-semibold rounded-xl text-xs transition">Batal</button>
-
-        <button onclick="verifyTeacher()" class="w-1/2 py-2.5 bg-emerald-600 hover:bg-emerald-500 font-bold rounded-xl text-xs transition">Masuk</button>
+        <button onclick="verifyTeacher()" class="w-1/2 py-2.5 bg-sky-600 hover:bg-sky-500 font-bold rounded-xl text-xs transition shadow-lg">Masuk</button>
       </div>
     </div>
   </div>
 
-  <!-- ================= LAYAR PEMILIHAN KELOMPOK SISWA ================= -->
-  <div id="student-setup-screen" class="hidden bg-slate-800 p-6 rounded-2xl shadow-xl w-full max-w-md border border-slate-700">
-    <button onclick="backToRole()" class="text-xs text-slate-400 hover:text-white mb-4 flex items-center gap-1">← Kembali</button>
-    <h2 class="text-xl font-bold mb-1 text-emerald-400 text-center">Registrasi Kelompok</h2>
-    <p class="text-slate-300 mb-5 text-xs text-center">Pilih kelompok dan masukkan nama anggota kelompokmu:</p>
+  <!-- ================= LAYAR REGISTRASI KELOMPOK SISWA ================= -->
+  <div id="student-setup-screen" class="hidden glass-card p-8 rounded-3xl shadow-2xl w-full max-w-md z-10 border border-sky-500/20">
+    <button onclick="backToRole()" class="text-xs text-sky-300 hover:underline mb-4 flex items-center gap-1">← Kembali</button>
+    <h2 class="text-2xl font-bold mb-1 text-sky-300 text-center">Registrasi Kelompok</h2>
+    <p class="text-slate-300 mb-6 text-xs text-center">Pilih kelompok dan daftarkan anggota kelompokmu:</p>
     
     <div class="space-y-4">
       <div>
-        <label class="block text-xs font-semibold text-slate-400 mb-1">Pilih Kelompok:</label>
-        <select id="group-select" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-white focus:outline-none focus:border-indigo-500">
+        <label class="block text-xs font-semibold text-slate-300 mb-1">Pilih Kelompok:</label>
+        <select id="group-select" class="w-full bg-slate-900/90 border border-slate-700 rounded-xl p-3 text-white focus:outline-none focus:border-sky-400">
           <option value="kelompok_1">Kelompok 1</option>
           <option value="kelompok_2">Kelompok 2</option>
           <option value="kelompok_3">Kelompok 3</option>
@@ -53,71 +82,103 @@
       </div>
 
       <div>
-        <label class="block text-xs font-semibold text-slate-400 mb-1">Daftar Nama Anggota (Pisahkan dengan koma):</label>
-        <textarea id="members-input" rows="3" placeholder="Contoh: Andi, Budi, Cici, Dina, Eko" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-white text-sm focus:outline-none focus:border-indigo-500"></textarea>
+        <label class="block text-xs font-semibold text-slate-300 mb-1">Daftar Nama Anggota (Pisahkan dengan koma):</label>
+        <textarea id="members-input" rows="3" placeholder="Contoh: Abil, Budi, Cici, Dina, Eko" class="w-full bg-slate-900/90 border border-slate-700 rounded-xl p-3 text-white text-sm focus:outline-none focus:border-sky-400"></textarea>
       </div>
 
-      <button onclick="startStudentQuiz()" class="w-full py-3.5 bg-emerald-600 hover:bg-emerald-500 font-bold rounded-xl shadow-lg transition">Masuk ke Kuis</button>
+      <button onclick="startStudentQuiz()" class="w-full py-4 bg-gradient-to-r from-sky-600 to-indigo-600 hover:from-sky-500 hover:to-indigo-500 font-bold rounded-2xl shadow-lg transition">Masuk ke Ruang Kuis</button>
     </div>
   </div>
 
-  <!-- ================= LAYAR KUIS SISWA ================= -->
-  <div id="student-quiz-screen" class="hidden w-full max-w-lg bg-slate-800 p-6 rounded-2xl shadow-xl border border-slate-700">
-    <div class="flex justify-between items-center mb-6 border-b border-slate-700 pb-4">
+  <!-- ================= LAYAR SISWA (BAHAN AJAR & KUIS) ================= -->
+  <div id="student-quiz-screen" class="hidden w-full max-w-xl z-10 space-y-4">
+    <!-- Header Informasi Kelompok -->
+    <div class="glass-card p-5 rounded-2xl flex justify-between items-center border border-sky-500/20">
       <div>
-        <span id="group-name-display" class="text-lg font-bold text-emerald-400"></span>
+        <span id="group-name-display" class="text-xl font-extrabold text-sky-300"></span>
         <p id="group-members-display" class="text-xs text-slate-400 mt-0.5 italic"></p>
       </div>
-      <span id="score-display" class="bg-emerald-500/20 text-emerald-300 text-xs font-semibold px-3 py-1.5 rounded-full border border-emerald-500/30">Total Skor: 0</span>
+      <span id="score-display" class="bg-emerald-500/20 text-emerald-300 text-xs font-bold px-3.5 py-2 rounded-full border border-emerald-500/30">Total Skor: 0</span>
     </div>
 
-    <!-- Box Soal Siswa -->
-    <div id="quiz-box">
-      <div class="flex justify-between items-center mb-3">
-        <span id="round-badge" class="bg-indigo-500/20 text-indigo-300 text-xs font-bold px-2.5 py-1 rounded-md border border-indigo-500/30">Ronde 1</span>
-      </div>
-      <div id="question-text" class="text-lg font-medium mb-6 leading-relaxed"></div>
-
-      <div class="space-y-3 mb-6">
-        <textarea id="answer-input" rows="3" placeholder="Tuliskan jawaban kelompok di sini..." class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-white focus:outline-none focus:border-indigo-500"></textarea>
-      </div>
-
-      <button onclick="submitAnswer()" class="w-full py-3.5 bg-emerald-600 hover:bg-emerald-500 font-bold rounded-xl shadow-lg transition">Kirim Jawaban</button>
+    <!-- Tab Navigasi Materi & Kuis -->
+    <div class="flex gap-2 bg-slate-900/60 p-1.5 rounded-2xl border border-slate-800">
+      <button id="tab-material-btn" onclick="switchTab('material')" class="flex-1 py-2.5 rounded-xl font-bold text-xs transition bg-sky-600 text-white shadow-md">
+        📚 Bahan Ajar & Video
+      </button>
+      <button id="tab-quiz-btn" onclick="switchTab('quiz')" class="flex-1 py-2.5 rounded-xl font-bold text-xs transition text-slate-400 hover:text-white">
+        ✏️ Kuis Interaktif
+      </button>
     </div>
 
-    <!-- Box Menunggu Guru -->
-    <div id="waiting-box" class="hidden text-center py-8">
-      <div class="animate-spin w-12 h-12 border-4 border-indigo-500 border-t-transparent rounded-full mx-auto mb-4"></div>
-      <h2 class="text-xl font-bold mb-2 text-amber-400">Jawaban Terkirim!</h2>
-      <p class="text-slate-300 text-sm mb-4">Tunggu Guru memanggil & memverifikasi penjelasan dari kelompokmu ya.</p>
+    <!-- TAB 1: BAHAN AJAR & VIDEO PEMBELAJARAN -->
+    <div id="tab-material-content" class="glass-card p-6 rounded-3xl space-y-4 border border-sky-500/20">
+      <h3 class="text-lg font-bold text-sky-300 flex items-center gap-2">📺 Video Pembelajaran</h3>
+      <div class="aspect-video w-full rounded-2xl overflow-hidden border border-slate-700 bg-black">
+        <!-- Disisipkan Video YouTube Pembelajaran -->
+        <iframe class="w-full h-full" src="https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ" title="Video Pembelajaran" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+      </div>
 
-      <div id="finish-order-badge" class="inline-block bg-slate-700 text-slate-200 text-xs px-3 py-1.5 rounded-lg border border-slate-600 mb-4"></div>
-
-      <!-- Kotak Panggilan Nama Asli -->
-      <div id="picked-member-box" class="hidden bg-indigo-900/40 border border-indigo-500/40 p-4 rounded-xl mt-3 animate-bounce">
-        <p class="text-xs text-indigo-300 uppercase tracking-wider font-semibold mb-1">📢 Guru Memanggil:</p>
-        <p id="picked-member-text" class="text-xl font-extrabold text-amber-300"></p>
+      <div class="border-t border-slate-700/60 pt-4">
+        <h4 class="text-sm font-bold text-indigo-300 mb-2">📌 Rangkuman Ringkas Materi</h4>
+        <div class="bg-slate-900/80 p-4 rounded-xl text-xs text-slate-300 leading-relaxed space-y-2 border border-slate-800">
+          <p>• Pelajari konsep dasar sebelum menjawab pertanyaan kuis pada tab kuis.</p>
+          <p>• Diskusikan jawaban bersama seluruh anggota kelompok sebelum tombol <strong>Kirim Jawaban</strong> ditekan.</p>
+          <p>• Pastikan setiap anggota siap dipanggil oleh Guru saat verifikasi jawaban!</p>
+        </div>
       </div>
     </div>
 
-    <!-- Box Selesai -->
-    <div id="finished-all-box" class="hidden text-center py-8">
-      <div class="text-5xl mb-4">🎉</div>
-      <h2 class="text-2xl font-bold text-emerald-400 mb-2">Selamat!</h2>
-      <p class="text-slate-300 text-sm">Kelompokmu telah menyelesaikan seluruh ronde kuis!</p>
+    <!-- TAB 2: KUIS INTERAKTIF -->
+    <div id="tab-quiz-content" class="hidden glass-card p-6 rounded-3xl border border-sky-500/20">
+      <!-- Box Soal -->
+      <div id="quiz-box">
+        <div class="flex justify-between items-center mb-3">
+          <span id="round-badge" class="bg-indigo-500/20 text-indigo-300 text-xs font-bold px-3 py-1 rounded-lg border border-indigo-500/30">Ronde 1</span>
+        </div>
+        <div id="question-text" class="text-lg font-medium mb-6 leading-relaxed text-slate-100"></div>
+
+        <div class="space-y-3 mb-6">
+          <textarea id="answer-input" rows="3" placeholder="Tuliskan jawaban hasil diskusi kelompok..." class="w-full bg-slate-900/90 border border-slate-700 rounded-xl p-3.5 text-white focus:outline-none focus:border-sky-400 text-sm"></textarea>
+        </div>
+
+        <button onclick="submitAnswer()" class="w-full py-4 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 font-bold rounded-2xl shadow-lg transition">Kirim Jawaban Kelompok</button>
+      </div>
+
+      <!-- Box Menunggu Verifikasi Guru -->
+      <div id="waiting-box" class="hidden text-center py-8">
+        <div class="animate-spin w-12 h-12 border-4 border-sky-400 border-t-transparent rounded-full mx-auto mb-4"></div>
+        <h2 class="text-xl font-bold mb-2 text-amber-300">Jawaban Terkirim!</h2>
+        <p class="text-slate-300 text-xs mb-4">Tunggu Guru memanggil & memverifikasi penjelasan dari kelompokmu.</p>
+
+        <div id="finish-order-badge" class="inline-block bg-slate-800 text-slate-200 text-xs px-3.5 py-1.5 rounded-xl border border-slate-700 mb-4 font-semibold"></div>
+
+        <!-- Panggilan Nama Anggota -->
+        <div id="picked-member-box" class="hidden bg-indigo-900/50 border border-indigo-400/40 p-4 rounded-2xl mt-3 animate-bounce">
+          <p class="text-xs text-indigo-300 uppercase tracking-wider font-bold mb-1">📢 Guru Memanggil:</p>
+          <p id="picked-member-text" class="text-xl font-extrabold text-amber-300"></p>
+        </div>
+      </div>
+
+      <!-- Box Selesai Kuis -->
+      <div id="finished-all-box" class="hidden text-center py-8">
+        <div class="text-6xl mb-4">🎉</div>
+        <h2 class="text-2xl font-bold text-emerald-300 mb-2">Luar Biasa!</h2>
+        <p class="text-slate-300 text-sm">Kelompokmu telah menyelesaikan seluruh ronde kuis!</p>
+      </div>
     </div>
   </div>
 
   <!-- ================= LAYAR DASHBOARD GURU ================= -->
-  <div id="teacher-dashboard-screen" class="hidden w-full max-w-6xl">
-    <div class="flex justify-between items-center mb-8 border-b border-slate-700 pb-4">
+  <div id="teacher-dashboard-screen" class="hidden w-full max-w-6xl z-10 my-6">
+    <div class="glass-card p-6 rounded-3xl mb-8 flex justify-between items-center border border-sky-500/20">
       <div>
-        <h1 class="text-3xl font-bold text-emerald-400">Dashboard Kontrol Guru</h1>
-        <p class="text-slate-400 text-sm mt-1">Pantau, panggil nama anggota acak, beri nilai, atau minta diskusi ulang.</p>
+        <h1 class="text-3xl font-extrabold text-sky-300 flex items-center gap-2">☁️ Dashboard Kontrol Guru</h1>
+        <p class="text-slate-400 text-xs mt-1">Pantau progress, panggil anggota acak, beri poin, atau minta diskusi ulang.</p>
       </div>
-      <div class="flex gap-2">
-        <button onclick="location.reload()" class="px-3 py-2 bg-slate-700 hover:bg-slate-600 rounded-xl text-xs font-semibold">Keluar</button>
-        <button onclick="resetAllGame()" class="px-4 py-2 bg-rose-600 hover:bg-rose-500 font-semibold rounded-xl text-sm transition shadow-lg">🔄 Reset Game Total</button>
+      <div class="flex gap-3">
+        <button onclick="location.reload()" class="px-4 py-2.5 bg-slate-800 hover:bg-slate-700 rounded-xl text-xs font-bold border border-slate-700">Keluar</button>
+        <button onclick="resetAllGame()" class="px-4 py-2.5 bg-rose-600 hover:bg-rose-500 font-bold rounded-xl text-xs transition shadow-lg shadow-rose-950/50">🔄 Reset Game Total</button>
       </div>
     </div>
 
@@ -149,7 +210,7 @@
     const scoreTable = { 1: 140, 2: 130, 3: 120, 4: 110, 5: 100 };
     let selectedGroup = null;
 
-    // --- NAVIGASI AWAL ---
+    // --- NAVIGASI PERAN ---
     function showStudentSetup() {
       document.getElementById('role-screen').classList.add('hidden');
       document.getElementById('student-setup-screen').classList.remove('hidden');
@@ -177,6 +238,26 @@
         initTeacherDashboard();
       } else {
         alert("Kode rahasia salah! Akses ditolak.");
+      }
+    }
+
+    // --- TAB SISWA (BAHAN AJAR / KUIS) ---
+    function switchTab(tab) {
+      const matBtn = document.getElementById('tab-material-btn');
+      const quizBtn = document.getElementById('tab-quiz-btn');
+      const matContent = document.getElementById('tab-material-content');
+      const quizContent = document.getElementById('tab-quiz-content');
+
+      if (tab === 'material') {
+        matBtn.className = "flex-1 py-2.5 rounded-xl font-bold text-xs transition bg-sky-600 text-white shadow-md";
+        quizBtn.className = "flex-1 py-2.5 rounded-xl font-bold text-xs transition text-slate-400 hover:text-white";
+        matContent.classList.remove('hidden');
+        quizContent.classList.add('hidden');
+      } else {
+        quizBtn.className = "flex-1 py-2.5 rounded-xl font-bold text-xs transition bg-sky-600 text-white shadow-md";
+        matBtn.className = "flex-1 py-2.5 rounded-xl font-bold text-xs transition text-slate-400 hover:text-white";
+        quizContent.classList.remove('hidden');
+        matContent.classList.add('hidden');
       }
     }
 
@@ -296,7 +377,7 @@
       });
     }
 
-    // --- LOGIKA GURU ---
+    // --- LOGIKA DASHBOARD GURU ---
     function initTeacherDashboard() {
       db.ref('groups').on('value', (snapshot) => {
         const data = snapshot.val() || {};
@@ -347,7 +428,7 @@
           const pickedText = group.picked_member ? 'Yang Ditunjuk: ' + group.picked_member : 'Belum Ditunjuk';
 
           const card = document.createElement('div');
-          card.className = "bg-slate-800 border border-slate-700 rounded-2xl p-5 shadow-xl flex flex-col justify-between";
+          card.className = "glass-card border border-slate-700 rounded-2xl p-5 shadow-xl flex flex-col justify-between";
           card.innerHTML = 
             '<div>' +
               '<div class="flex justify-between items-center mb-2">' +
