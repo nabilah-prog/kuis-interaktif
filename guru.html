@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard Guru - Kontrol Kuis</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Firebase App & Database (SDK v8) -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+</head>
+<body class="bg-slate-900 text-white min-h-screen p-6">
+  <div class="max-w-6xl mx-auto">
+    <!-- Header & Fitur Reset -->
+    <div class="flex justify-between items-center mb-8 border-b border-slate-700 pb-4">
+      <div>
+        <h1 class="text-3xl font-bold text-emerald-400">Dashboard Kontrol Guru</h1>
+        <p class="text-slate-400 text-sm mt-1">Pantau, panggil anggota acak, beri nilai, dan kontrol kelanjutan ronde.</p>
+      </div>
+      <button onclick="resetAllGame()" class="px-4 py-2 bg-rose-600 hover:bg-rose-500 font-semibold rounded-xl text-sm transition shadow-lg">
+        🔄 Reset Game Total
+      </button>
+    </div>
+
+    <!-- Grid Card untuk 5 Kelompok -->
+    <div id="groups-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <!-- Card kelompok akan di-render dinamis oleh JavaScript -->
+    </div>
+  </div>
+
+  <script>
+    // Konfigurasi Firebase
+    const firebaseConfig = {
+      apiKey: "AIzaSyDHNH2OpGV1xVyr3vn1KDr4XZILGMXKZEE",
+      authDomain: "kuis-interaktif-98daa.firebaseapp.com",
+      databaseURL: "https://kuis-interaktif-98daa-default-rtdb.firebaseio.com",
+      projectId: "kuis-interaktif-98daa",
+      storageBucket: "kuis-interaktif-98daa.firebasestorage.app",
+      messagingSenderId: "594426602679",
+      appId: "1:594426602679:web:459a7ec114a7d733b09932"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    // Daftar skor otomatis berdasarkan urutan selesai
+    const scoreTable = { 1: 140, 2: 130, 3: 120, 4: 110, 5: 100 };
+
+    // Pantau perubahan data 5 kelompok secara real-time
+    db.ref('groups').on('value', (snapshot) => {
+      const data = snapshot.val() || {};
+      const container = document.getElementById('groups-container');
+      container.innerHTML = '';
+
+      for (let i = 1; i <= 5; i++) {
+        const groupId = `kelompok_${i}`;
+        const group = data[groupId] || {
+          current_round: 1,
+          status: 'answering',
+          finish_order: null,
+          total_score: 0,
+          answer: ''
+        };
+
+        const scoreEarned = group.finish_order ? (scoreTable[group.finish_order] || 100) : 100;
+
+        let statusBadge = '';
+        if (group.status === 'answering') {
+          statusBadge = `<span class="bg-blue-500/20 text-blue-300 text-xs px-2.5 py-1 rounded-full border border-blue-500/30">Sedang Mengerjakan</span>`;
+        } else if (group.status === 'waiting') {
+          statusBadge = `<span class="bg-amber-500/20 text-amber-300 text-xs px-2.5 py-1 font-bold rounded-full border border-amber-500/30 animate-pulse">Menunggu Verifikasi (#${group.finish_order})</span>`;
+        } else if (group.status === 'completed') {
+          statusBadge = `<span class="bg-emerald-500/20 text-emerald-300 text-xs px-2.5 py-1 rounded-full border border-emerald-500/30">Selesai Semua Ronde</span>`;
+        }
+
+        const card = document.createElement('div');
+        card.className = "bg-slate-800 border border-slate-700 rounded-2xl p-5 shadow-xl flex flex-col justify-between";
+        card.innerHTML = `
+          <div>
+            <div class="flex justify-between items-center mb-3">
+              <h2 class="text-xl font-bold text-white">Kelompok ${i}</h2>
+              ${statusBadge}
+            </div>
+
+            <div class="text-sm text-slate-300 space-y-1 mb-4">
+              <p><span class="text-slate-400">Ronde Sekarang:</span> <strong class="text-indigo-400">Ronde ${group.current_round || 1}</strong></p>
+              <p><span class="text-slate-400">Total Skor:</span> <strong class="text-emerald-400">${group.total_score || 0}</strong></p>
+              ${group.finish_order ? `<p><span class="text-slate-400">Urutan Selesai:</span> <strong class="text-amber-400">#${group.finish_order}</strong> (Potensi Nilai: +${scoreEarned})</p>` : ''}
+            </div>
+
+            ${group.status === 'waiting' ? `
+              <div class="bg-slate-900/80 p-3 rounded-xl border border-slate-700 mb-4">
+                <p class="text-xs text-slate-400 font-semibold mb-1">Jawaban Siswa:</p>
+                <p class="text-sm text-slate-200 italic">"${group.answer || '-'}"</p>
+              </div>
+            ` : ''}
+
+            <!-- Area Penunjuk Siswa Acak -->
+            <div class="bg-slate-900/50 p-3 rounded-xl border border-slate-700/50 mb-4 text-center">
+              <button onclick="pickRandomMember('${groupId}')" class="text-xs bg-indigo-600/30 hover:bg-indigo-600/50 text-indigo-300 px-3 py-1.5 rounded-lg border border-indigo-500/30 transition mb-2">
+                🎲 Tunjuk Anggota Acak
+              </button>
+              <div id="picked-member-${groupId}" class="text-sm font-bold text-amber-300"></div>
+            </div>
+          </div>
+
+          <div>
+            ${group.status === 'waiting' ? `
+              <button onclick="approveGroup('${groupId}',${group.current_round}, ${group.total_score \vert{}\vert{} 0},${scoreEarned})" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl shadow-lg transition text-sm">
+                ✅ ACC & Lanjut Ronde (${scoreEarned} Poin)
+              </button>
+            ` : `
+              <button disabled class="w-full py-2.5 bg-slate-700 text-slate-500 font-semibold rounded-xl text-sm cursor-not-allowed">
+                Menunggu Jawaban...
+              </button>
+            `}
+          </div>
+        `;
+        container.appendChild(card);
+      }
+    });
+
+    // Fungsi Tunjuk Anggota Acak (Siswa 1 sampai 5)
+    function pickRandomMember(groupId) {
+      const randomNumber = Math.floor(Math.random() * 5) + 1;
+      document.getElementById(`picked-member-${groupId}`).innerText = `Anggota yang Ditunjuk: Siswa Nomor ${randomNumber}`;
+    }
+
+    // Fungsi ACC dan Pindahkan ke Ronde Berikutnya
+    function approveGroup(groupId, currentRound, currentScore, addedScore) {
+      const nextRound = currentRound + 1;
+      const isCompleted = nextRound > 4;
+
+      db.ref(`groups/${groupId}`).update({
+        current_round: isCompleted ? currentRound : nextRound,
+        status: isCompleted ? 'completed' : 'answering',
+        total_score: currentScore + addedScore,
+        finish_order: null,
+        answer: ''
+      });
+    }
+
+    // Fungsi Reset Game ke Ronde 1
+    function resetAllGame() {
+      if (!confirm("Yakin ingin mereset seluruh data kuis?")) return;
+
+      db.ref('finish_counter').set(0);
+      for (let i = 1; i <= 5; i++) {
+        db.ref(`groups/kelompok_${i}`).set({
+          current_round: 1,
+          status: 'answering',
+          finish_order: null,
+          total_score: 0,
+          answer: ''
+        });
+      }
+    }
+  </script>
+</body>
+</html>
