@@ -7,6 +7,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
   <style>
     @keyframes floatClouds {
       0% { transform: translateX(-10%); }
@@ -16,168 +17,127 @@
     .animate-cloud-slow { animation: floatClouds 20s ease-in-out infinite; }
     .animate-cloud-fast { animation: floatClouds 12s ease-in-out infinite reverse; }
     .glass-card {
-      background: rgba(30, 41, 59, 0.8);
-      backdrop-filter: blur(12px);
-      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: rgba(30, 41, 59, 0.85);
+      backdrop-filter: blur(14px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
     }
+    /* Dynamic Round Backgrounds */
+    .bg-round-1 { background: linear-gradient(to bottom, #0284c7, #1e1b4b, #0f172a); }
+    .bg-round-2 { background: linear-gradient(to bottom, #7c3aed, #431407, #0f172a); }
+    .bg-round-3 { background: linear-gradient(to bottom, #4c1d95, #831843, #0f172a); }
+    .bg-round-4 { background: linear-gradient(to bottom, #b45309, #701a75, #0f172a); }
   </style>
 </head>
-<body class="bg-gradient-to-b from-slate-950 via-indigo-950 to-slate-900 text-white min-h-screen flex flex-col items-center justify-center p-4 relative overflow-x-hidden">
+<body id="dynamic-bg" class="bg-round-1 text-white min-h-screen flex flex-col items-center justify-center p-4 relative overflow-x-hidden transition-all duration-1000">
 
-  <!-- Latar Belakang Visual Awan -->
-  <div class="fixed inset-0 pointer-events-none z-0 opacity-20">
-    <svg class="absolute top-10 left-5 w-72 h-44 animate-cloud-slow fill-sky-300" viewBox="0 0 24 24"><path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96z"/></svg>
-    <svg class="absolute top-1/3 right-10 w-96 h-56 animate-cloud-fast fill-indigo-300" viewBox="0 0 24 24"><path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96z"/></svg>
-    <svg class="absolute bottom-10 left-1/4 w-80 h-48 animate-cloud-slow fill-blue-300" viewBox="0 0 24 24"><path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96z"/></svg>
+  <!-- Visual Awan Melayang -->
+  <div class="fixed inset-0 pointer-events-none z-0 opacity-25">
+    <svg class="absolute top-10 left-5 w-72 h-44 animate-cloud-slow fill-sky-200" viewBox="0 0 24 24"><path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96z"/></svg>
+    <svg class="absolute top-1/3 right-10 w-96 h-56 animate-cloud-fast fill-amber-200" viewBox="0 0 24 24"><path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96z"/></svg>
   </div>
 
-  <!-- ================= 1. HALAMAN UTAMA: PILIH PERAN ================= -->
+  <!-- ================= 1. HALAMAN UTAMA ================= -->
   <div id="role-screen" class="glass-card p-8 rounded-3xl shadow-2xl w-full max-w-md text-center z-10 border border-sky-500/20">
     <div class="text-5xl mb-3">☁️✨</div>
     <h1 class="text-3xl font-extrabold mb-2 bg-gradient-to-r from-sky-300 via-indigo-200 to-emerald-300 bg-clip-text text-transparent">Kuis & Media Belajar</h1>
     <p class="text-slate-300 mb-8 text-sm">Portal Belajar Mandiri & Kuis Interaktif</p>
     <div class="space-y-4">
-      <button onclick="showStudentMenu()" class="w-full py-4 bg-gradient-to-r from-indigo-600 to-sky-600 hover:from-indigo-500 hover:to-sky-500 font-bold rounded-2xl transition text-base shadow-lg shadow-sky-900/40">
-        👨‍🎓 Masuk sebagai Siswa
-      </button>
-      <button onclick="showTeacherLogin()" class="w-full py-3 bg-slate-800/80 hover:bg-slate-700/80 font-semibold text-slate-300 rounded-2xl transition text-sm border border-slate-700">
-        👨‍🏫 Masuk sebagai Guru
-      </button>
+      <button onclick="showStudentMenu()" class="w-full py-4 bg-gradient-to-r from-indigo-600 to-sky-600 hover:from-indigo-500 hover:to-sky-500 font-bold rounded-2xl transition text-base shadow-lg">👨‍🎓 Masuk sebagai Siswa</button>
+      <button onclick="showTeacherLogin()" class="w-full py-3 bg-slate-800/80 hover:bg-slate-700/80 font-semibold text-slate-300 rounded-2xl transition text-sm border border-slate-700">👨‍🏫 Masuk sebagai Guru</button>
     </div>
   </div>
 
-  <!-- ================= MODAL LOGIN GURU ================= -->
+  <!-- MODAL LOGIN GURU -->
   <div id="teacher-login-modal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 z-50">
     <div class="glass-card p-6 rounded-3xl border border-sky-500/30 w-full max-w-sm text-center shadow-2xl">
       <h2 class="text-xl font-bold text-sky-300 mb-2">Akses Dashboard Guru</h2>
-      <p class="text-slate-400 text-xs mb-4">Masukkan kode rahasia untuk melanjutkan:</p>
       <input type="password" id="teacher-pass-input" placeholder="Kode Rahasia" class="w-full bg-slate-900/90 border border-slate-700 rounded-xl p-3 text-white text-center font-bold mb-4 focus:outline-none focus:border-sky-400" />
       <div class="flex gap-2">
-        <button onclick="closeTeacherLogin()" class="w-1/2 py-2.5 bg-slate-700 hover:bg-slate-600 font-semibold rounded-xl text-xs transition">Batal</button>
-        <button onclick="verifyTeacher()" class="w-1/2 py-2.5 bg-sky-600 hover:bg-sky-500 font-bold rounded-xl text-xs transition shadow-lg">Masuk</button>
+        <button onclick="closeTeacherLogin()" class="w-1/2 py-2.5 bg-slate-700 font-semibold rounded-xl text-xs">Batal</button>
+        <button onclick="verifyTeacher()" class="w-1/2 py-2.5 bg-sky-600 font-bold rounded-xl text-xs">Masuk</button>
       </div>
     </div>
   </div>
 
   <!-- ================= 2. PILIHAN MODE GURU ================= -->
   <div id="teacher-menu-screen" class="hidden glass-card p-8 rounded-3xl shadow-2xl w-full max-w-md z-10 border border-sky-500/20 text-center">
-    <button onclick="location.reload()" class="text-xs text-sky-300 hover:underline mb-4 flex items-center gap-1">← Kembali ke Halaman Utama</button>
+    <button onclick="location.reload()" class="text-xs text-sky-300 hover:underline mb-4 flex items-center gap-1">← Halaman Utama</button>
     <h2 class="text-2xl font-bold mb-2 text-sky-300">Menu Kontrol Guru</h2>
-    <p class="text-slate-300 mb-6 text-xs">Pilih mode pemantauan yang ingin diakses:</p>
-
     <div class="space-y-4">
-      <button onclick="openTeacherQuizDashboard()" class="w-full p-4 bg-slate-800/90 hover:bg-slate-700/90 border border-indigo-500/30 rounded-2xl text-left transition flex items-center gap-4">
+      <button onclick="openTeacherQuizDashboard()" class="w-full p-4 bg-slate-800/90 hover:bg-slate-700/90 border border-indigo-500/30 rounded-2xl text-left flex items-center gap-4">
         <div class="text-3xl bg-indigo-500/20 p-2.5 rounded-xl border border-indigo-500/30">🏆</div>
         <div>
           <h3 class="font-bold text-indigo-300 text-sm">Dashboard Kuis Kelompok</h3>
-          <p class="text-xs text-slate-400 mt-0.5">Kontrol kuis real-time, beri poin & panggil anggota acak.</p>
+          <p class="text-xs text-slate-400 mt-0.5">Kontrol kuis & Diagram Batang Peringkat.</p>
         </div>
       </button>
 
-      <button onclick="openTeacherAnalyticsDashboard()" class="w-full p-4 bg-slate-800/90 hover:bg-slate-700/90 border border-emerald-500/30 rounded-2xl text-left transition flex items-center gap-4">
+      <button onclick="openTeacherAnalyticsDashboard()" class="w-full p-4 bg-slate-800/90 hover:bg-slate-700/90 border border-emerald-500/30 rounded-2xl text-left flex items-center gap-4">
         <div class="text-3xl bg-emerald-500/20 p-2.5 rounded-xl border border-emerald-500/30">📊</div>
         <div>
-          <h3 class="font-bold text-emerald-300 text-sm">Pantau Belajar Mandiri Siswa</h3>
-          <p class="text-xs text-slate-400 mt-0.5">Lihat siswa yang aktif membaca materi atau mengerjakan latihan.</p>
+          <h3 class="font-bold text-emerald-300 text-sm">Pantau Belajar Mandiri</h3>
+          <p class="text-xs text-slate-400 mt-0.5">Aktivitas siswa di rumah.</p>
         </div>
       </button>
     </div>
   </div>
 
-  <!-- ================= 3. PILIHAN SISWA: BELAJAR vs KUIS ================= -->
+  <!-- ================= 3. MENU SISWA ================= -->
   <div id="student-menu-screen" class="hidden glass-card p-8 rounded-3xl shadow-2xl w-full max-w-md z-10 border border-sky-500/20 text-center">
-    <button onclick="backToRole()" class="text-xs text-sky-300 hover:underline mb-4 flex items-center gap-1">← Kembali ke Halaman Utama</button>
+    <button onclick="backToRole()" class="text-xs text-sky-300 hover:underline mb-4 flex items-center gap-1">← Halaman Utama</button>
     <h2 class="text-2xl font-bold mb-2 text-sky-300">Menu Siswa</h2>
-    <p class="text-slate-300 mb-6 text-xs">Pilih mode aktivitas yang ingin kamu lakukan:</p>
-
     <div class="space-y-4">
-      <button onclick="openSelfStudySetup()" class="w-full p-4 bg-slate-800/90 hover:bg-slate-700/90 border border-sky-500/30 rounded-2xl text-left transition flex items-center gap-4">
-        <div class="text-3xl bg-sky-500/20 p-2.5 rounded-xl border border-sky-500/30">📖</div>
+      <button onclick="openSelfStudySetup()" class="w-full p-4 bg-slate-800/90 hover:bg-slate-700/90 border border-sky-500/30 rounded-2xl text-left flex items-center gap-4">
+        <div class="text-3xl bg-sky-500/20 p-2.5 rounded-xl">📖</div>
         <div>
           <h3 class="font-bold text-sky-300 text-sm">Mode Belajar Mandiri</h3>
-          <p class="text-xs text-slate-400 mt-0.5">Materi, video pembelajaran & latihan soal mandiri di rumah.</p>
+          <p class="text-xs text-slate-400">Materi & Latihan Soal Mandiri.</p>
         </div>
       </button>
 
-      <button onclick="openGroupQuizSetup()" class="w-full p-4 bg-slate-800/90 hover:bg-slate-700/90 border border-indigo-500/30 rounded-2xl text-left transition flex items-center gap-4">
-        <div class="text-3xl bg-indigo-500/20 p-2.5 rounded-xl border border-indigo-500/30">🏆</div>
+      <button onclick="openGroupQuizSetup()" class="w-full p-4 bg-slate-800/90 hover:bg-slate-700/90 border border-indigo-500/30 rounded-2xl text-left flex items-center gap-4">
+        <div class="text-3xl bg-indigo-500/20 p-2.5 rounded-xl">🏆</div>
         <div>
           <h3 class="font-bold text-indigo-300 text-sm">Mode Kuis Kelompok</h3>
-          <p class="text-xs text-slate-400 mt-0.5">Digunakan di sekolah bersama kelompok & dipandu Guru.</p>
+          <p class="text-xs text-slate-400">Digunakan di sekolah bersama kelompok.</p>
         </div>
       </button>
     </div>
   </div>
 
-  <!-- ================= 4. SISWA: REGISTRASI NAMA UNTUK BELAJAR MANDIRI ================= -->
+  <!-- REGISTRASI BELAJAR MANDIRI SISWA -->
   <div id="self-study-setup-screen" class="hidden glass-card p-8 rounded-3xl shadow-2xl w-full max-w-md z-10 border border-sky-500/20">
     <button onclick="backToStudentMenu()" class="text-xs text-sky-300 hover:underline mb-4 flex items-center gap-1">← Kembali</button>
     <h2 class="text-2xl font-bold mb-1 text-sky-300 text-center">Masuk Belajar Mandiri</h2>
-    <p class="text-slate-300 mb-6 text-xs text-center">Masukkan nama kamu agar Guru bisa memantau aktivitas belajarmu:</p>
-    
     <div class="space-y-4">
-      <div>
-        <label class="block text-xs font-semibold text-slate-300 mb-1">Nama Lengkap Siswa:</label>
-        <input type="text" id="student-single-name" placeholder="Contoh: Nabilah Burairah" class="w-full bg-slate-900/90 border border-slate-700 rounded-xl p-3 text-white focus:outline-none focus:border-sky-400 text-sm" />
-      </div>
-
-      <button onclick="startSelfStudy()" class="w-full py-4 bg-gradient-to-r from-sky-600 to-emerald-600 hover:from-sky-500 hover:to-emerald-500 font-bold rounded-2xl shadow-lg transition">Mulai Belajar</button>
+      <input type="text" id="student-single-name" placeholder="Nama Lengkap Siswa" class="w-full bg-slate-900/90 border border-slate-700 rounded-xl p-3 text-white focus:outline-none focus:border-sky-400 text-sm" />
+      <button onclick="startSelfStudy()" class="w-full py-4 bg-gradient-to-r from-sky-600 to-emerald-600 font-bold rounded-2xl shadow-lg">Mulai Belajar</button>
     </div>
   </div>
 
-  <!-- ================= 5. SISWA: RUANG BELAJAR MANDIRI ================= -->
+  <!-- RUANG BELAJAR MANDIRI -->
   <div id="self-study-screen" class="hidden w-full max-w-2xl z-10 space-y-5">
     <div class="glass-card p-5 rounded-3xl flex justify-between items-center border border-sky-500/20">
-      <div>
-        <h2 class="text-xl font-extrabold text-sky-300">📖 Ruang Belajar Mandiri</h2>
-        <p id="student-name-display" class="text-xs text-emerald-400 font-semibold mt-0.5"></p>
-      </div>
-      <button onclick="backToStudentMenu()" class="px-3.5 py-2 bg-slate-800 hover:bg-slate-700 rounded-xl text-xs font-semibold border border-slate-700">← Keluar</button>
+      <h2 class="text-xl font-extrabold text-sky-300">📖 Ruang Belajar Mandiri</h2>
+      <button onclick="backToStudentMenu()" class="px-3.5 py-2 bg-slate-800 rounded-xl text-xs font-semibold">← Keluar</button>
     </div>
-
-    <!-- Video & Material -->
-    <div class="glass-card p-6 rounded-3xl space-y-4 border border-sky-500/20">
-      <h3 class="text-base font-bold text-sky-300 flex items-center gap-2">📺 Video Pembelajaran</h3>
-      <div class="aspect-video w-full rounded-2xl overflow-hidden border border-slate-700 bg-black">
-        <iframe class="w-full h-full" src="https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ" title="Video Pembelajaran" frameborder="0" allowfullscreen></iframe>
-      </div>
-
-      <div class="border-t border-slate-700/60 pt-4">
-        <h4 class="text-sm font-bold text-indigo-300 mb-2">📌 Rangkuman Penting Materi</h4>
-        <div class="bg-slate-900/80 p-4 rounded-xl text-xs text-slate-300 leading-relaxed space-y-2 border border-slate-800">
-          <p>• Pahami konsep utama yang dijelaskan di dalam video pembelajaran di atas.</p>
-          <p>• Gunakan latihan soal di bawah ini untuk menguji sejauh mana kamu memahami materi ini!</p>
-        </div>
-      </div>
-    </div>
-
-    <!-- Latihan Soal Mandiri -->
     <div class="glass-card p-6 rounded-3xl border border-sky-500/20 space-y-4">
-      <h3 class="text-base font-bold text-emerald-300 flex items-center gap-2">✍️ Latihan Soal Mandiri</h3>
-      
-      <div class="bg-slate-900/80 p-4 rounded-2xl border border-slate-800 space-y-3">
-        <p class="text-sm font-semibold text-slate-200">Latihan 1: Berapakah hasil perhitungan dari 12 + 15 × 2?</p>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs">
-          <button onclick="checkPractice(this, false, 'Soal 1')" class="p-2.5 bg-slate-800 hover:bg-slate-700 rounded-xl text-left border border-slate-700">A. 54</button>
-          <button onclick="checkPractice(this, true, 'Soal 1')" class="p-2.5 bg-slate-800 hover:bg-slate-700 rounded-xl text-left border border-slate-700">B. 42</button>
-          <button onclick="checkPractice(this, false, 'Soal 1')" class="p-2.5 bg-slate-800 hover:bg-slate-700 rounded-xl text-left border border-slate-700">C. 30</button>
-          <button onclick="checkPractice(this, false, 'Soal 1')" class="p-2.5 bg-slate-800 hover:bg-slate-700 rounded-xl text-left border border-slate-700">D. 27</button>
-        </div>
-        <div class="feedback-text text-xs font-bold hidden mt-2"></div>
+      <h3 class="text-base font-bold text-sky-300">📺 Video Pembelajaran</h3>
+      <div class="aspect-video w-full rounded-2xl overflow-hidden border border-slate-700 bg-black">
+        <iframe class="w-full h-full" src="https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ" title="Video" allowfullscreen></iframe>
       </div>
     </div>
   </div>
 
-  <!-- ================= 6. SISWA: REGISTRASI KELOMPOK (SEKOLAH) ================= -->
+  <!-- ================= 4. SISWA: REGISTRASI KELOMPOK & SELFIE ================= -->
   <div id="student-setup-screen" class="hidden glass-card p-8 rounded-3xl shadow-2xl w-full max-w-md z-10 border border-sky-500/20">
     <button onclick="backToStudentMenu()" class="text-xs text-sky-300 hover:underline mb-4 flex items-center gap-1">← Kembali</button>
     <h2 class="text-2xl font-bold mb-1 text-sky-300 text-center">Registrasi Kelompok</h2>
-    <p class="text-slate-300 mb-6 text-xs text-center">Pilih kelompok dan daftarkan anggota kelompokmu:</p>
     
     <div class="space-y-4">
       <div>
         <label class="block text-xs font-semibold text-slate-300 mb-1">Pilih Kelompok:</label>
-        <select id="group-select" class="w-full bg-slate-900/90 border border-slate-700 rounded-xl p-3 text-white focus:outline-none focus:border-sky-400">
+        <select id="group-select" class="w-full bg-slate-900/90 border border-slate-700 rounded-xl p-3 text-white text-sm">
           <option value="kelompok_1">Kelompok 1</option>
           <option value="kelompok_2">Kelompok 2</option>
           <option value="kelompok_3">Kelompok 3</option>
@@ -187,15 +147,26 @@
       </div>
 
       <div>
-        <label class="block text-xs font-semibold text-slate-300 mb-1">Daftar Nama Anggota (Pisahkan dengan koma):</label>
-        <textarea id="members-input" rows="3" placeholder="Contoh: Abil, Budi, Cici, Dina, Eko" class="w-full bg-slate-900/90 border border-slate-700 rounded-xl p-3 text-white text-sm focus:outline-none focus:border-sky-400"></textarea>
+        <label class="block text-xs font-semibold text-slate-300 mb-1">Daftar Nama Anggota (Pisahkan koma):</label>
+        <textarea id="members-input" rows="2" placeholder="Contoh: Abil, Budi, Cici" class="w-full bg-slate-900/90 border border-slate-700 rounded-xl p-3 text-white text-sm"></textarea>
       </div>
 
-      <button onclick="startStudentQuiz()" class="w-full py-4 bg-gradient-to-r from-indigo-600 to-sky-600 hover:from-indigo-500 hover:to-sky-500 font-bold rounded-2xl shadow-lg transition">Masuk ke Kuis Kelompok</button>
+      <!-- FITUR SELFIE BERSAMA -->
+      <div>
+        <label class="block text-xs font-semibold text-slate-300 mb-1">📷 Swafoto (Selfie Tim):</label>
+        <div class="relative bg-slate-900 rounded-2xl overflow-hidden border border-slate-700 aspect-video flex flex-col items-center justify-center">
+          <video id="webcam-preview" autoplay playsinline class="w-full h-full object-cover hidden"></video>
+          <img id="selfie-photo-result" class="w-full h-full object-cover hidden" />
+          <button id="start-cam-btn" onclick="startCamera()" class="px-3 py-1.5 bg-slate-800 text-xs font-bold rounded-lg border border-slate-700">Nyalakan Kamera</button>
+          <button id="take-photo-btn" onclick="takePhoto()" class="hidden absolute bottom-3 px-4 py-1.5 bg-emerald-600 text-xs font-bold rounded-xl">📸 Ambil Foto</button>
+        </div>
+      </div>
+
+      <button onclick="startStudentQuiz()" class="w-full py-4 bg-gradient-to-r from-indigo-600 to-sky-600 font-bold rounded-2xl shadow-lg">Masuk ke Ruang Kuis</button>
     </div>
   </div>
 
-  <!-- ================= 7. SISWA: RUANG KUIS KELOMPOK ================= -->
+  <!-- ================= 5. SISWA: RUANG KUIS KELOMPOK ================= -->
   <div id="student-quiz-screen" class="hidden w-full max-w-xl z-10 space-y-4">
     <div class="glass-card p-5 rounded-2xl flex justify-between items-center border border-sky-500/20">
       <div>
@@ -205,73 +176,96 @@
       <span id="score-display" class="bg-emerald-500/20 text-emerald-300 text-xs font-bold px-3.5 py-2 rounded-full border border-emerald-500/30">Total Skor: 0</span>
     </div>
 
-    <div class="glass-card p-6 rounded-3xl border border-sky-500/20">
+    <!-- Tampilan Lobby -->
+    <div id="quiz-lobby-box" class="glass-card p-8 rounded-3xl border border-sky-500/20 text-center py-12">
+      <div class="animate-bounce text-5xl mb-4">⏳</div>
+      <h2 class="text-2xl font-extrabold text-amber-300 mb-2">Menunggu Kuis Dimulai</h2>
+      <p class="text-slate-300 text-xs mb-6">Kelompokmu sudah terdaftar! Tunggu Guru menekan tombol <strong>Mulai Kuis</strong>.</p>
+    </div>
+
+    <!-- Tampilan Kuis Utama -->
+    <div id="quiz-content-wrapper" class="hidden glass-card p-6 rounded-3xl border border-sky-500/20">
       <div id="quiz-box">
         <div class="flex justify-between items-center mb-3">
           <span id="round-badge" class="bg-indigo-500/20 text-indigo-300 text-xs font-bold px-3 py-1 rounded-lg border border-indigo-500/30">Ronde 1</span>
-          <span class="text-xs text-slate-400 bg-slate-800/80 px-2.5 py-1 rounded-md border border-slate-700">🔒 Bahan ajar dikunci saat kuis</span>
+          <span class="text-xs text-slate-400 bg-slate-800/80 px-2.5 py-1 rounded-md">🔒 Bahan ajar dikunci</span>
         </div>
         <div id="question-text" class="text-lg font-medium mb-6 leading-relaxed text-slate-100"></div>
-
-        <div class="space-y-3 mb-6">
-          <textarea id="answer-input" rows="3" placeholder="Tuliskan jawaban hasil diskusi kelompok..." class="w-full bg-slate-900/90 border border-slate-700 rounded-xl p-3.5 text-white focus:outline-none focus:border-sky-400 text-sm"></textarea>
-        </div>
-
-        <button onclick="submitAnswer()" class="w-full py-4 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 font-bold rounded-2xl shadow-lg transition">Kirim Jawaban Kelompok</button>
+        <textarea id="answer-input" rows="3" placeholder="Tuliskan jawaban hasil diskusi kelompok..." class="w-full bg-slate-900/90 border border-slate-700 rounded-xl p-3.5 text-white text-sm mb-6"></textarea>
+        <button onclick="submitAnswer()" class="w-full py-4 bg-gradient-to-r from-emerald-600 to-teal-600 font-bold rounded-2xl shadow-lg">Kirim Jawaban Kelompok</button>
       </div>
 
+      <!-- Menunggu Verifikasi -->
       <div id="waiting-box" class="hidden text-center py-8">
         <div class="animate-spin w-12 h-12 border-4 border-sky-400 border-t-transparent rounded-full mx-auto mb-4"></div>
         <h2 class="text-xl font-bold mb-2 text-amber-300">Jawaban Terkirim!</h2>
-        <p class="text-slate-300 text-xs mb-4">Tunggu Guru memanggil & memverifikasi penjelasan dari kelompokmu.</p>
-
-        <div id="finish-order-badge" class="inline-block bg-slate-800 text-slate-200 text-xs px-3.5 py-1.5 rounded-xl border border-slate-700 mb-4 font-semibold"></div>
-
-        <div id="picked-member-box" class="hidden bg-indigo-900/50 border border-indigo-400/40 p-4 rounded-2xl mt-3 animate-bounce">
-          <p class="text-xs text-indigo-300 uppercase tracking-wider font-bold mb-1">📢 Guru Memanggil:</p>
+        <div id="finish-order-badge" class="inline-block bg-slate-800 text-slate-200 text-xs px-3.5 py-1.5 rounded-xl mb-4"></div>
+        <div id="picked-member-box" class="hidden bg-indigo-900/50 border border-indigo-400/40 p-4 rounded-2xl animate-bounce">
+          <p class="text-xs text-indigo-300 uppercase font-bold mb-1">📢 Guru Memanggil:</p>
           <p id="picked-member-text" class="text-xl font-extrabold text-amber-300"></p>
         </div>
       </div>
 
-      <div id="finished-all-box" class="hidden text-center py-8">
-        <div class="text-6xl mb-4">🎉</div>
+      <!-- Selesai Kuis & Pembahasan Opsional -->
+      <div id="finished-all-box" class="hidden text-center py-6">
+        <div class="text-6xl mb-3">🎉</div>
         <h2 class="text-2xl font-bold text-emerald-300 mb-2">Luar Biasa!</h2>
-        <p class="text-slate-300 text-sm">Kelompokmu telah menyelesaikan seluruh ronde kuis!</p>
+        <p class="text-slate-300 text-sm mb-6">Kelompokmu telah menyelesaikan seluruh ronde kuis!</p>
+        
+        <button onclick="toggleExplanations()" class="px-5 py-3 bg-sky-600 hover:bg-sky-500 font-bold text-xs rounded-xl shadow-lg transition">
+          📖 Lihat / Sembunyikan Pembahasan Jawaban Soal
+        </button>
+
+        <div id="explanations-container" class="hidden mt-6 text-left space-y-3 bg-slate-900/90 p-4 rounded-2xl border border-slate-800 text-xs text-slate-300">
+          <h4 class="font-bold text-sky-300 border-b border-slate-700 pb-2">Pembahasan Resmi Soal:</h4>
+          <p><strong>Soal Ronde 1:</strong> [Penjelasan kunci jawaban konsep soal 1...]</p>
+          <p><strong>Soal Ronde 2:</strong> [Penjelasan kunci jawaban konsep soal 2...]</p>
+          <p><strong>Soal Ronde 3:</strong> [Penjelasan kunci jawaban konsep soal 3...]</p>
+          <p><strong>Soal Ronde 4:</strong> [Penjelasan kunci jawaban konsep soal 4...]</p>
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- ================= 8. GURU: DASHBOARD KONTROL KUIS ================= -->
-  <div id="teacher-dashboard-screen" class="hidden w-full max-w-6xl z-10 my-6">
-    <div class="glass-card p-6 rounded-3xl mb-8 flex justify-between items-center border border-sky-500/20">
+  <!-- ================= 6. GURU: DASHBOARD KONTROL KUIS & PAPAN PERINGKAT ================= -->
+  <div id="teacher-dashboard-screen" class="hidden w-full max-w-6xl z-10 my-6 space-y-6">
+    <div class="glass-card p-6 rounded-3xl border border-sky-500/20 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
       <div>
-        <h1 class="text-3xl font-extrabold text-sky-300 flex items-center gap-2">🏆 Dashboard Kontrol Kuis</h1>
-        <p class="text-slate-400 text-xs mt-1">Pantau kuis real-time, beri poin, dan panggil anggota acak.</p>
+        <h1 class="text-3xl font-extrabold text-sky-300 flex items-center gap-2">🏆 Dashboard Kontrol & Papan Peringkat</h1>
+        <p class="text-slate-400 text-xs mt-1">Pantau kuis real-time & Diagram Batang Nilai Kelompok.</p>
       </div>
-      <div class="flex gap-3">
-        <button onclick="backToTeacherMenu()" class="px-4 py-2.5 bg-slate-800 hover:bg-slate-700 rounded-xl text-xs font-bold border border-slate-700">← Pilih Mode Guru</button>
-        <button onclick="resetAllGame()" class="px-4 py-2.5 bg-rose-600 hover:bg-rose-500 font-bold rounded-xl text-xs transition shadow-lg shadow-rose-950/50">🔄 Reset Game Total</button>
+
+      <div class="flex flex-wrap items-center gap-3">
+        <div id="quiz-status-indicator" class="px-3.5 py-2 rounded-xl text-xs font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">
+          Status: Kuis Belum Dimulai
+        </div>
+        <button id="toggle-quiz-btn" onclick="toggleQuizState()" class="px-5 py-2.5 bg-emerald-600 font-bold rounded-xl text-xs">🚀 Mulai Kuis</button>
+        <button onclick="backToTeacherMenu()" class="px-3.5 py-2.5 bg-slate-800 rounded-xl text-xs font-bold">← Kembali</button>
+        <button onclick="resetAllGame()" class="px-3.5 py-2.5 bg-rose-600/80 font-bold rounded-xl text-xs">🔄 Reset Game</button>
       </div>
     </div>
 
+    <!-- DIAGRAM BATANG PERINGKAT REAL-TIME -->
+    <div class="glass-card p-6 rounded-3xl border border-sky-500/20 space-y-4">
+      <h3 class="text-lg font-bold text-amber-300 flex items-center gap-2">📊 Papan Peringkat Real-Time (Proyektor Depan Kelas)</h3>
+      <div id="leaderboard-bars" class="space-y-4 pt-2"></div>
+    </div>
+
+    <!-- KARTU KELOMPOK KONTROL GURU -->
     <div id="groups-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
   </div>
 
-  <!-- ================= 9. GURU: DASHBOARD PANTAU BELAJAR MANDIRI ================= -->
+  <!-- GURU: DASHBOARD PANTAU BELAJAR MANDIRI -->
   <div id="teacher-analytics-screen" class="hidden w-full max-w-4xl z-10 my-6 space-y-6">
     <div class="glass-card p-6 rounded-3xl flex justify-between items-center border border-sky-500/20">
       <div>
-        <h1 class="text-3xl font-extrabold text-emerald-300 flex items-center gap-2">📊 Pemantauan Belajar Mandiri</h1>
-        <p class="text-slate-400 text-xs mt-1">Aktivitas belajar & pengerjaan latihan siswa secara real-time.</p>
+        <h1 class="text-3xl font-extrabold text-emerald-300">📊 Pemantauan Belajar Mandiri</h1>
+        <p class="text-slate-400 text-xs mt-1">Aktivitas belajar & pengerjaan latihan siswa.</p>
       </div>
-      <button onclick="backToTeacherMenu()" class="px-4 py-2.5 bg-slate-800 hover:bg-slate-700 rounded-xl text-xs font-bold border border-slate-700">← Pilih Mode Guru</button>
+      <button onclick="backToTeacherMenu()" class="px-4 py-2.5 bg-slate-800 rounded-xl text-xs font-bold">← Kembali</button>
     </div>
-
     <div class="glass-card p-6 rounded-3xl border border-sky-500/20 space-y-4">
-      <h3 class="text-base font-bold text-sky-300">Daftar Aktivitas Siswa Terkini</h3>
-      <div id="student-activity-container" class="space-y-3">
-        <p class="text-xs text-slate-500 italic">Belum ada siswa yang sedang aktif di Mode Belajar Mandiri...</p>
-      </div>
+      <div id="student-activity-container" class="space-y-3"></div>
     </div>
   </div>
 
@@ -300,8 +294,38 @@
     const scoreTable = { 1: 140, 2: 130, 3: 120, 4: 110, 5: 100 };
     let selectedGroup = null;
     let currentStudentName = "";
+    let capturedPhotoData = null;
 
-    // --- NAVIGASI AWAL ---
+    // --- LOGIKA KAMERA SELFIE ---
+    function startCamera() {
+      navigator.mediaDevices.getUserMedia({ video: true }).then(stream => {
+        const video = document.getElementById('webcam-preview');
+        video.srcObject = stream;
+        video.classList.remove('hidden');
+        document.getElementById('start-cam-btn').classList.add('hidden');
+        document.getElementById('take-photo-btn').classList.remove('hidden');
+      }).catch(err => alert("Kamera tidak dapat diakses: " + err));
+    }
+
+    function takePhoto() {
+      const video = document.getElementById('webcam-preview');
+      const canvas = document.createElement('canvas');
+      canvas.width = 320;
+      canvas.height = 240;
+      canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+      capturedPhotoData = canvas.toDataURL('image/jpeg', 0.6);
+
+      document.getElementById('selfie-photo-result').src = capturedPhotoData;
+      document.getElementById('selfie-photo-result').classList.remove('hidden');
+      video.classList.add('hidden');
+      document.getElementById('take-photo-btn').classList.add('hidden');
+
+      if (video.srcObject) {
+        video.srcObject.getTracks().forEach(track => track.stop());
+      }
+    }
+
+    // --- NAVIGASI TINGKAT ATAS ---
     function showStudentMenu() {
       document.getElementById('role-screen').classList.add('hidden');
       document.getElementById('student-menu-screen').classList.remove('hidden');
@@ -334,7 +358,7 @@
         document.getElementById('role-screen').classList.add('hidden');
         document.getElementById('teacher-menu-screen').classList.remove('hidden');
       } else {
-        alert("Kode rahasia salah! Akses ditolak.");
+        alert("Kode rahasia salah!");
       }
     }
 
@@ -356,7 +380,6 @@
       initTeacherAnalytics();
     }
 
-    // --- SISWA: MODE BELAJAR MANDIRI ---
     function openSelfStudySetup() {
       document.getElementById('student-menu-screen').classList.add('hidden');
       document.getElementById('self-study-setup-screen').classList.remove('hidden');
@@ -364,60 +387,23 @@
 
     function startSelfStudy() {
       const name = document.getElementById('student-single-name').value;
-      if (!name.trim()) {
-        alert("Masukkan nama lengkap kamu!");
-        return;
-      }
+      if (!name.trim()) return alert("Masukkan nama kamu!");
       currentStudentName = name.trim();
-
       document.getElementById('self-study-setup-screen').classList.add('hidden');
       document.getElementById('self-study-screen').classList.remove('hidden');
-      document.getElementById('student-name-display').innerText = "Siswa: " + currentStudentName;
-
-      // Catat Aktivitas Pertama ke Firebase
-      updateStudentActivity("Membuka Video & Materi Pembelajaran");
     }
 
-    function updateStudentActivity(statusText) {
-      if (!currentStudentName) return;
-      const studentKey = currentStudentName.replace(/[^a-zA-Z0-9]/g, '_');
-      db.ref('self_study_activity/' + studentKey).set({
-        name: currentStudentName,
-        status: statusText,
-        last_active: new Date().toLocaleTimeString('id-ID')
-      });
-    }
-
-    function checkPractice(btn, isCorrect, exerciseName) {
-      const parent = btn.parentElement.parentElement;
-      const feedback = parent.querySelector('.feedback-text');
-      feedback.classList.remove('hidden');
-
-      if (isCorrect) {
-        feedback.className = "feedback-text text-xs font-bold text-emerald-400 mt-2";
-        feedback.innerText = "✅ Benar sekali! Jawaban kamu tepat.";
-        updateStudentActivity("Menjawab BENAR di " + exerciseName);
-      } else {
-        feedback.className = "feedback-text text-xs font-bold text-rose-400 mt-2";
-        feedback.innerText = "❌ Kurang tepat, coba hitung dan periksa kembali ya!";
-        updateStudentActivity("Menjawab SALAH di " + exerciseName);
-      }
-    }
-
-    // --- SISWA: KUIS KELOMPOK ---
     function openGroupQuizSetup() {
       document.getElementById('student-menu-screen').classList.add('hidden');
       document.getElementById('student-setup-screen').classList.remove('hidden');
     }
 
+    // --- SISWA KUIS KELOMPOK ---
     function startStudentQuiz() {
       selectedGroup = document.getElementById('group-select').value;
       const rawMembers = document.getElementById('members-input').value;
 
-      if (!rawMembers.trim()) {
-        alert("Masukkan minimal satu nama anggota kelompok!");
-        return;
-      }
+      if (!rawMembers.trim()) return alert("Masukkan nama anggota!");
 
       const membersArray = rawMembers.split(',').map(name => name.trim()).filter(name => name !== '');
 
@@ -428,48 +414,54 @@
       const groupRef = db.ref('groups/' + selectedGroup);
 
       groupRef.once('value', (snapshot) => {
+        const payload = {
+          current_round: 1,
+          status: 'answering',
+          finish_order: null,
+          total_score: 0,
+          answer: '',
+          picked_member: null,
+          members: membersArray,
+          photo: capturedPhotoData || null
+        };
+
         if (!snapshot.exists()) {
-          groupRef.set({
-            current_round: 1,
-            status: 'answering',
-            finish_order: null,
-            total_score: 0,
-            answer: '',
-            picked_member: null,
-            members: membersArray
-          }, attachStudentListener);
+          groupRef.set(payload, attachStudentListener);
         } else {
-          groupRef.update({ members: membersArray }, attachStudentListener);
+          groupRef.update(payload, attachStudentListener);
         }
       });
     }
 
     function attachStudentListener() {
+      db.ref('quiz_started').on('value', (snapshot) => {
+        const started = snapshot.val() === true;
+        document.getElementById('quiz-lobby-box').classList.toggle('hidden', started);
+        document.getElementById('quiz-content-wrapper').classList.toggle('hidden', !started);
+      });
+
       db.ref('groups/' + selectedGroup).on('value', (snapshot) => {
         const data = snapshot.val();
-        
         if (!data) {
           document.getElementById('student-quiz-screen').classList.add('hidden');
           document.getElementById('role-screen').classList.remove('hidden');
-          document.getElementById('answer-input').value = "";
           return;
         }
 
+        // UPDATE ATMOSFER WARNA LANGIT BERDASARKAN RONDE
+        const round = data.current_round || 1;
+        document.getElementById('dynamic-bg').className = `bg-round-${round} text-white min-h-screen flex flex-col items-center justify-center p-4 relative overflow-x-hidden transition-all duration-1000`;
+
         document.getElementById('score-display').innerText = 'Total Skor: ' + (data.total_score || 0);
-        if (data.members) {
-          document.getElementById('group-members-display').innerText = 'Anggota: ' + data.members.join(', ');
-        }
+        if (data.members) document.getElementById('group-members-display').innerText = 'Anggota: ' + data.members.join(', ');
 
         if (data.status === 'answering') {
           document.getElementById('quiz-box').classList.remove('hidden');
           document.getElementById('waiting-box').classList.add('hidden');
           document.getElementById('finished-all-box').classList.add('hidden');
-          document.getElementById('round-badge').innerText = 'Ronde ' + (data.current_round || 1);
-          document.getElementById('question-text').innerText = questions[data.current_round || 1] || "Soal tidak ditemukan";
-          
-          if (!data.answer) {
-            document.getElementById('answer-input').value = "";
-          }
+          document.getElementById('round-badge').innerText = 'Ronde ' + round;
+          document.getElementById('question-text').innerText = questions[round] || "Soal tidak ditemukan";
+          if (!data.answer) document.getElementById('answer-input').value = "";
         } else if (data.status === 'waiting') {
           document.getElementById('quiz-box').classList.add('hidden');
           document.getElementById('waiting-box').classList.remove('hidden');
@@ -477,11 +469,9 @@
           document.getElementById('finish-order-badge').innerText = 'Urutan Selesai: #' + (data.finish_order || '-');
 
           const pickedBox = document.getElementById('picked-member-box');
-          const pickedText = document.getElementById('picked-member-text');
-
           if (data.picked_member) {
             pickedBox.classList.remove('hidden');
-            pickedText.innerText = data.picked_member + ' Wajib Maju/Menjelaskan!';
+            document.getElementById('picked-member-text').innerText = data.picked_member + ' Wajib Maju!';
           } else {
             pickedBox.classList.add('hidden');
           }
@@ -489,48 +479,64 @@
           document.getElementById('quiz-box').classList.add('hidden');
           document.getElementById('waiting-box').classList.add('hidden');
           document.getElementById('finished-all-box').classList.remove('hidden');
+          confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
         }
       });
     }
 
     function submitAnswer() {
       const answer = document.getElementById('answer-input').value;
-      if (!answer.trim()) {
-        alert("Isi jawaban dulu ya!");
-        return;
-      }
+      if (!answer.trim()) return alert("Isi jawaban dulu!");
 
       db.ref('groups').once('value', (snapshot) => {
         const groups = snapshot.val() || {};
-        let myCurrentRound = groups[selectedGroup] ? groups[selectedGroup].current_round : 1;
-        
-        let countWaitingInRound = 0;
+        let myRound = groups[selectedGroup] ? groups[selectedGroup].current_round : 1;
+        let countWaiting = 0;
         for (let key in groups) {
-          if (groups[key].current_round === myCurrentRound && groups[key].finish_order) {
-            countWaitingInRound++;
-          }
+          if (groups[key].current_round === myRound && groups[key].finish_order) countWaiting++;
         }
 
-        db.ref('round_passed_count/' + myCurrentRound).once('value', (passedSnap) => {
+        db.ref('round_passed_count/' + myRound).once('value', (passedSnap) => {
           const passedCount = passedSnap.val() || 0;
-          const calculatedOrder = passedCount + countWaitingInRound + 1;
-
           db.ref('groups/' + selectedGroup).update({
             status: 'waiting',
             answer: answer,
-            finish_order: calculatedOrder,
+            finish_order: passedCount + countWaiting + 1,
             picked_member: null
           });
         });
       });
     }
 
-    // --- LOGIKA DASHBOARD KONTROL KUIS GURU ---
+    function toggleExplanations() {
+      document.getElementById('explanations-container').classList.toggle('hidden');
+    }
+
+    // --- DASHBOARD GURU & DIAGRAM BATANG ---
     function initTeacherDashboard() {
+      db.ref('quiz_started').on('value', (snapshot) => {
+        const started = snapshot.val() === true;
+        const statusInd = document.getElementById('quiz-status-indicator');
+        const toggleBtn = document.getElementById('toggle-quiz-btn');
+        if (started) {
+          statusInd.innerText = "Status: 🚀 Kuis Berlangsung";
+          toggleBtn.innerText = "🔒 Kunci / Hentikan Kuis";
+          toggleBtn.className = "px-5 py-2.5 bg-rose-600 font-bold rounded-xl text-xs";
+        } else {
+          statusInd.innerText = "Status: ⏳ Belum Dimulai";
+          toggleBtn.innerText = "🚀 Mulai Kuis Sekarang";
+          toggleBtn.className = "px-5 py-2.5 bg-emerald-600 font-bold rounded-xl text-xs";
+        }
+      });
+
       db.ref('groups').on('value', (snapshot) => {
         const data = snapshot.val() || {};
         const container = document.getElementById('groups-container');
+        const leaderboardContainer = document.getElementById('leaderboard-bars');
         container.innerHTML = '';
+        leaderboardContainer.innerHTML = '';
+
+        let groupList = [];
 
         for (let i = 1; i <= 5; i++) {
           const groupId = 'kelompok_' + i;
@@ -541,94 +547,97 @@
             total_score: 0,
             answer: '',
             picked_member: null,
-            members: []
+            members: [],
+            photo: null
           };
+
+          groupList.push({ id: groupId, name: 'Kelompok ' + i, score: group.total_score || 0, photo: group.photo, status: group.status });
 
           const scoreEarned = group.finish_order ? (scoreTable[group.finish_order] || 100) : 100;
 
           let statusBadge = '';
-          if (group.status === 'answering') {
-            statusBadge = '<span class="bg-blue-500/20 text-blue-300 text-xs px-2.5 py-1 rounded-full border border-blue-500/30">Sedang Mengerjakan</span>';
-          } else if (group.status === 'waiting') {
-            statusBadge = '<span class="bg-amber-500/20 text-amber-300 text-xs px-2.5 py-1 font-bold rounded-full border border-amber-500/30 animate-pulse">Menunggu Verifikasi (#' + group.finish_order + ')</span>';
-          } else if (group.status === 'completed') {
-            statusBadge = '<span class="bg-emerald-500/20 text-emerald-300 text-xs px-2.5 py-1 rounded-full border border-emerald-500/30">Selesai Semua Ronde</span>';
-          }
-
-          const answerBox = (group.status === 'waiting') ? 
-            '<div class="bg-slate-900/80 p-3 rounded-xl border border-slate-700 mb-4">' +
-              '<p class="text-xs text-slate-400 font-semibold mb-1">Jawaban Siswa:</p>' +
-              '<p class="text-sm text-slate-200 italic">"' + (group.answer || '-') + '"</p>' +
-            '</div>' : '';
-
-          const actionButtons = (group.status === 'waiting') ?
-            '<div class="space-y-2">' +
-              '<button onclick="approveGroup(\'' + groupId + '\', ' + (group.current_round || 1) + ', ' + (group.total_score || 0) + ', ' + scoreEarned + ')" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl shadow-lg transition text-sm">' +
-                '✅ ACC & Lanjut Ronde (+' + scoreEarned + ' Poin)' +
-              '</button>' +
-              '<button onclick="rejectGroup(\'' + groupId + '\')" class="w-full py-2 bg-rose-600/30 hover:bg-rose-600/50 text-rose-300 font-bold rounded-xl border border-rose-500/30 transition text-xs">' +
-                '❌ Batal / Suruh Diskusi Ulang' +
-              '</button>' +
-            '</div>' :
-            '<button disabled class="w-full py-2.5 bg-slate-700 text-slate-500 font-semibold rounded-xl text-sm cursor-not-allowed">Menunggu Jawaban...</button>';
-
-          const membersListText = (group.members && group.members.length > 0) ? group.members.join(', ') : 'Belum memasukkan nama';
-          const pickedText = group.picked_member ? 'Yang Ditunjuk: ' + group.picked_member : 'Belum Ditunjuk';
+          if (group.status === 'answering') statusBadge = '<span class="bg-blue-500/20 text-blue-300 text-xs px-2.5 py-1 rounded-full">Sedang Mengerjakan</span>';
+          else if (group.status === 'waiting') statusBadge = '<span class="bg-amber-500/20 text-amber-300 text-xs px-2.5 py-1 font-bold rounded-full animate-pulse">Menunggu (#' + group.finish_order + ')</span>';
+          else if (group.status === 'completed') statusBadge = '<span class="bg-emerald-500/20 text-emerald-300 text-xs px-2.5 py-1 rounded-full">Selesai</span>';
 
           const card = document.createElement('div');
           card.className = "glass-card border border-slate-700 rounded-2xl p-5 shadow-xl flex flex-col justify-between";
-          card.innerHTML = 
-            '<div>' +
-              '<div class="flex justify-between items-center mb-2">' +
-                '<h2 class="text-xl font-bold text-white">Kelompok ' + i + '</h2>' +
-                statusBadge +
-              '</div>' +
-              '<p class="text-xs text-slate-400 italic mb-3">Anggota: ' + membersListText + '</p>' +
-              '<div class="text-sm text-slate-300 space-y-1 mb-4">' +
-                '<p><span class="text-slate-400">Ronde Sekarang:</span> <strong class="text-indigo-400">Ronde ' + (group.current_round || 1) + '</strong></p>' +
-                '<p><span class="text-slate-400">Total Skor:</span> <strong class="text-emerald-400">' + (group.total_score || 0) + '</strong></p>' +
-                (group.finish_order ? '<p><span class="text-slate-400">Urutan Selesai:</span> <strong class="text-amber-400">#' + group.finish_order + '</strong> (Potensi: +' + scoreEarned + ' Poin)</p>' : '') +
-              '</div>' +
-              answerBox +
-              '<div class="bg-slate-900/50 p-3 rounded-xl border border-slate-700/50 mb-4 text-center">' +
-                '<button onclick="pickRandomMember(\'' + groupId + '\')" class="text-xs bg-indigo-600/30 hover:bg-indigo-600/50 text-indigo-300 px-3 py-1.5 rounded-lg border border-indigo-500/30 transition mb-2">' +
-                  '🎲 Tunjuk Anggota Acak' +
-                '</button>' +
-                '<div id="picked-member-' + groupId + '" class="text-sm font-bold text-amber-300">' + pickedText + '</div>' +
-              '</div>' +
-            '</div>' +
-            '<div>' + actionButtons + '</div>';
-
+          card.innerHTML = `
+            <div>
+              <div class="flex justify-between items-center mb-2">
+                <h2 class="text-xl font-bold text-white">Kelompok ${i}</h2>
+                ${statusBadge}
+              </div>
+              <p class="text-xs text-slate-400 italic mb-3">Anggota: ${group.members ? group.members.join(', ') : 'Belum memasukkan nama'}</p>
+              <div class="text-sm text-slate-300 space-y-1 mb-4">
+                <p>Ronde Sekarang: <strong class="text-indigo-400">Ronde ${group.current_round || 1}</strong></p>
+                <p>Total Skor: <strong class="text-emerald-400">${group.total_score || 0}</strong></p>
+              </div>
+              ${group.status === 'waiting' ? `<div class="bg-slate-900/80 p-3 rounded-xl mb-4"><p class="text-xs text-slate-400">Jawaban:</p><p class="text-sm text-slate-200 italic">"${group.answer || '-'}"</p></div>` : ''}
+              <div class="bg-slate-900/50 p-3 rounded-xl mb-4 text-center">
+                <button onclick="pickRandomMember('${groupId}')" class="text-xs bg-indigo-600/30 text-indigo-300 px-3 py-1.5 rounded-lg mb-2">🎲 Tunjuk Anggota Acak</button>
+                <div class="text-sm font-bold text-amber-300">${group.picked_member ? 'Yang Ditunjuk: ' + group.picked_member : 'Belum Ditunjuk'}</div>
+              </div>
+            </div>
+            <div>
+              ${group.status === 'waiting' ? `
+                <button onclick="approveGroup('${groupId}',${group.current_round || 1}, ${group.total_score \vert{}\vert{} 0},${scoreEarned})" class="w-full py-2 bg-emerald-600 font-bold rounded-xl text-sm mb-2">✅ ACC (+${scoreEarned} Poin)</button>
+                <button onclick="rejectGroup('${groupId}')" class="w-full py-1.5 bg-rose-600/30 text-rose-300 font-bold rounded-xl text-xs">❌ Suruh Diskusi Ulang</button>
+              ` : `<button disabled class="w-full py-2 bg-slate-700 text-slate-500 font-semibold rounded-xl text-xs">Menunggu...</button>`}
+            </div>
+          `;
           container.appendChild(card);
         }
+
+        // AMBIL SEMUA TIM UNTUK UPDATE DIAGRAM BATANG & JUARA
+        groupList.sort((a, b) => b.score - a.score);
+        const maxScore = Math.max(...groupList.map(g => g.score), 500);
+        const allCompleted = groupList.every(g => g.status === 'completed');
+
+        if (allCompleted) {
+          confetti({ particleCount: 200, spread: 100, origin: { y: 0.4 } });
+        }
+
+        groupList.forEach((item, index) => {
+          const widthPercent = Math.max((item.score / maxScore) * 100, 10);
+          const isWinner = index === 0 && allCompleted && item.score > 0;
+
+          const bar = document.createElement('div');
+          bar.className = "flex items-center gap-3";
+          bar.innerHTML = `
+            <span class="w-24 text-xs font-bold text-slate-300">${item.name}</span>
+            <div class="flex-1 bg-slate-900 rounded-xl h-8 overflow-hidden border border-slate-700 p-1 flex items-center">
+              <div class="h-full ${isWinner ? 'bg-gradient-to-r from-amber-400 to-yellow-300' : 'bg-gradient-to-r from-sky-500 to-indigo-500'} rounded-lg transition-all duration-1000 flex items-center justify-end px-2" style="width: ${widthPercent}%">
+                <span class="text-xs font-extrabold text-slate-950">${item.score} Poin</span>
+              </div>
+            </div>
+            ${item.photo ? `<img src="${item.photo}" class="w-9 h-9 rounded-full object-cover border-2 ${isWinner ? 'border-amber-400 animate-pulse scale-125' : 'border-sky-400'}" />` : ''}
+            ${isWinner ? '<span class="text-xl">👑 JUARA 1</span>' : ''}
+          `;
+          leaderboardContainer.appendChild(bar);
+        });
+      });
+    }
+
+    function toggleQuizState() {
+      db.ref('quiz_started').once('value', (snapshot) => {
+        db.ref('quiz_started').set(snapshot.val() !== true);
       });
     }
 
     function pickRandomMember(groupId) {
       db.ref('groups/' + groupId).once('value', (snapshot) => {
         const group = snapshot.val();
-        if (!group || !group.members || group.members.length === 0) {
-          alert("Kelompok ini belum memasukkan nama anggota!");
-          return;
-        }
-
-        const randomIndex = Math.floor(Math.random() * group.members.length);
-        const selectedName = group.members[randomIndex];
-
-        db.ref('groups/' + groupId).update({
-          picked_member: selectedName
-        });
+        if (!group || !group.members || group.members.length === 0) return alert("Belum ada nama anggota!");
+        const selectedName = group.members[Math.floor(Math.random() * group.members.length)];
+        db.ref('groups/' + groupId).update({ picked_member: selectedName });
       });
     }
 
     function approveGroup(groupId, currentRound, currentScore, addedScore) {
       const nextRound = currentRound + 1;
       const isCompleted = nextRound > 4;
-
-      db.ref('round_passed_count/' + currentRound).transaction((count) => {
-        return (count || 0) + 1;
-      });
-
+      db.ref('round_passed_count/' + currentRound).transaction((count) => (count || 0) + 1);
       db.ref('groups/' + groupId).update({
         current_round: isCompleted ? currentRound : nextRound,
         status: isCompleted ? 'completed' : 'answering',
@@ -640,18 +649,15 @@
     }
 
     function rejectGroup(rejectedGroupId) {
-      if (!confirm("Tolak jawaban dan minta kelompok ini diskusi ulang? Urutan kelompok lain di ronde ini akan otomatis naik!")) return;
-
+      if (!confirm("Tolak jawaban kelompok ini?")) return;
       db.ref('groups').once('value', (snapshot) => {
         const groups = snapshot.val() || {};
         const rejectedGroup = groups[rejectedGroupId];
         if (!rejectedGroup || !rejectedGroup.finish_order) return;
-
         const rejectedOrder = rejectedGroup.finish_order;
         const currentRound = rejectedGroup.current_round;
 
         const updates = {};
-
         updates['groups/' + rejectedGroupId + '/status'] = 'answering';
         updates['groups/' + rejectedGroupId + '/finish_order'] = null;
         updates['groups/' + rejectedGroupId + '/answer'] = '';
@@ -662,48 +668,27 @@
             updates['groups/' + key + '/finish_order'] = groups[key].finish_order - 1;
           }
         }
-
         db.ref().update(updates);
       });
     }
 
     function resetAllGame() {
-      if (!confirm("Yakin ingin mereset seluruh data kuis? Semua HP kelompok akan otomatis kembali ke menu awal!")) return;
-
+      if (!confirm("Yakin ingin mereset seluruh kuis?")) return;
+      db.ref('quiz_started').set(false);
       db.ref('round_passed_count').remove();
-      db.ref('groups').remove((error) => {
-        if (error) {
-          alert("Gagal reset: " + error.message);
-        } else {
-          alert("Berhasil reset total! Semua HP murid otomatis kembali ke menu awal.");
-        }
-      });
+      db.ref('groups').remove(() => alert("Berhasil reset total!"));
     }
 
-    // --- LOGIKA DASHBOARD PANTAU BELAJAR MANDIRI GURU ---
     function initTeacherAnalytics() {
       db.ref('self_study_activity').on('value', (snapshot) => {
         const data = snapshot.val() || {};
         const container = document.getElementById('student-activity-container');
         container.innerHTML = '';
-
-        const keys = Object.keys(data);
-        if (keys.length === 0) {
-          container.innerHTML = '<p class="text-xs text-slate-500 italic">Belum ada siswa yang sedang aktif di Mode Belajar Mandiri...</p>';
-          return;
-        }
-
-        keys.forEach(key => {
+        Object.keys(data).forEach(key => {
           const item = data[key];
           const card = document.createElement('div');
           card.className = "bg-slate-900/90 border border-slate-800 p-4 rounded-2xl flex justify-between items-center";
-          card.innerHTML = 
-            '<div>' +
-              '<h4 class="font-bold text-sky-300 text-sm">' + item.name + '</h4>' +
-              '<p class="text-xs text-slate-300 mt-1">Status: <strong class="text-emerald-400">' + item.status + '</strong></p>' +
-            '</div>' +
-            '<span class="text-[10px] text-slate-400 bg-slate-800 px-2.5 py-1 rounded-lg border border-slate-700">Aktif jam: ' + item.last_active + '</span>';
-
+          card.innerHTML = `<div><h4 class="font-bold text-sky-300 text-sm">${item.name}</h4><p class="text-xs text-slate-300">Status: <strong class="text-emerald-400">${item.status}</strong></p></div><span class="text-[10px] text-slate-400 bg-slate-800 px-2.5 py-1 rounded-lg">Jam: ${item.last_active}</span>`;
           container.appendChild(card);
         });
       });
