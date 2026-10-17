@@ -249,7 +249,6 @@
 
   <!-- SCRIPT UTAMA -->
   <script>
-    // 1. DOKUMEN NAVIGASI UTAMA (DITARUH PALING ATAS AGAR LANGSUNG BISA DIKLIK)
     function showStudentMenu() {
       document.getElementById('role-screen').classList.add('hidden');
       document.getElementById('student-menu-screen').classList.remove('hidden');
@@ -325,7 +324,6 @@
       document.getElementById('explanations-container').classList.toggle('hidden');
     }
 
-    // 2. FIREBASE CONFIG
     const firebaseConfig = {
       apiKey: "AIzaSyDHNH2OpGV1xVyr3vn1KDr4XZILGMXKZEE",
       authDomain: "kuis-interaktif-98daa.firebaseapp.com",
@@ -349,7 +347,6 @@
     const scoreTable = { 1: 140, 2: 130, 3: 120, 4: 110, 5: 100 };
     let selectedGroup = null;
 
-    // SISWA LOGIKA
     function startStudentQuiz() {
       selectedGroup = document.getElementById('group-select').value;
       const rawMembers = document.getElementById('members-input').value;
@@ -447,7 +444,6 @@
       });
     }
 
-    // DASHBOARD GURU
     function initTeacherDashboard() {
       db.ref('quiz_started').on('value', (snapshot) => {
         const started = snapshot.val() === true;
