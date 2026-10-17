@@ -55,19 +55,29 @@
     <svg class="absolute top-1/3 right-10 w-96 h-56 animate-cloud-fast fill-amber-200" viewBox="0 0 24 24"><path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96z"/></svg>
   </div>
 
-  <!-- 1. HALAMAN UTAMA (2 TOMBOL BERSISIH) -->
-  <div id="role-screen" class="glass-card p-8 rounded-3xl shadow-2xl w-full max-w-md text-center z-10 border border-sky-500/20">
-    <div class="text-5xl mb-3">☁️✨</div>
-    <h1 class="text-3xl font-extrabold mb-2 bg-gradient-to-r from-sky-300 via-indigo-200 to-emerald-300 bg-clip-text text-transparent">Kuis Interaktif Kelompok</h1>
-    <p class="text-slate-300 mb-8 text-sm">Media Pembelajaran Real-Time Kelas</p>
-    
-    <div class="space-y-4">
-      <button type="button" onclick="playClickSound(); showManualCodeModal();" class="w-full py-4 bg-gradient-to-r from-indigo-600 to-sky-600 hover:from-indigo-500 hover:to-sky-500 font-bold rounded-2xl transition text-base shadow-lg flex items-center justify-center gap-2">👨‍🎓 Masuk sebagai Siswa</button>
-      <button type="button" onclick="playClickSound(); createTeacherRoom();" class="w-full py-3.5 bg-slate-800/80 hover:bg-slate-700/80 font-semibold text-slate-300 rounded-2xl transition text-sm border border-slate-700 flex items-center justify-center gap-2">👨‍🏫 Masuk / Buat Ruang Kuis (Guru)</button>
+  <!-- 1. HALAMAN UTAMA -->
+  <div id="role-screen" class="glass-card p-8 rounded-3xl shadow-2xl w-full max-w-md text-center z-10 border border-sky-500/20 flex flex-col justify-between">
+    <div>
+      <div class="text-5xl mb-3">☁️✨</div>
+      <h1 class="text-3xl font-extrabold mb-2 bg-gradient-to-r from-sky-300 via-indigo-200 to-emerald-300 bg-clip-text text-transparent">Kuis Interaktif Kelompok</h1>
+      <p class="text-slate-300 mb-8 text-sm">Media Pembelajaran Real-Time Kelas</p>
+      
+      <div class="space-y-4 mb-8">
+        <button type="button" onclick="playClickSound(); showManualCodeModal();" class="w-full py-4 bg-gradient-to-r from-indigo-600 to-sky-600 hover:from-indigo-500 hover:to-sky-500 font-bold rounded-2xl transition text-base shadow-lg flex items-center justify-center gap-2">👨‍🎓 Masuk sebagai Siswa</button>
+        <button type="button" onclick="playClickSound(); createTeacherRoom();" class="w-full py-3.5 bg-slate-800/80 hover:bg-slate-700/80 font-semibold text-slate-300 rounded-2xl transition text-sm border border-slate-700 flex items-center justify-center gap-2">👨‍🏫 Masuk / Buat Ruang Kuis (Guru)</button>
+      </div>
+    </div>
+
+    <!-- HAK CIPTA & PENGEMBANG -->
+    <div class="pt-4 border-t border-slate-700/60">
+      <p class="text-[11px] text-slate-300 leading-relaxed font-medium">
+        Dikembangkan oleh <span class="font-bold text-amber-300">Nabilah Burairah</span><br>
+        <span class="text-slate-400">Mahasiswa PPG Calon Guru Universitas PGRI Sumatera Barat</span>
+      </p>
     </div>
   </div>
 
-  <!-- MODAL MANUAL MASUKKAN KODE RUANG (SISWA TANPA SCAN) -->
+  <!-- MODAL MANUAL MASUKKAN KODE RUANG -->
   <div id="manual-code-modal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 z-50">
     <div class="glass-card p-6 rounded-3xl border border-sky-500/30 w-full max-w-sm text-center shadow-2xl">
       <h2 class="text-xl font-bold text-sky-300 mb-2">🔑 Masukkan Kode Ruang</h2>
@@ -80,7 +90,7 @@
     </div>
   </div>
 
-  <!-- MODAL QR CODE BESAR UNTUK DIPAPARKAN GURU ATAS PROYEKTOR -->
+  <!-- MODAL QR CODE BESAR UNTUK DIPAPARKAN GURU -->
   <div id="qr-modal" class="hidden fixed inset-0 bg-black/90 backdrop-blur-md flex items-center justify-center p-4 z-50">
     <div class="glass-card p-8 rounded-3xl border-2 border-amber-400 max-w-sm w-full text-center shadow-2xl">
       <h2 class="text-2xl font-extrabold text-amber-300 mb-1">📱 Scan QR Code Kuis</h2>
@@ -266,7 +276,7 @@
     <div id="groups-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
   </div>
 
-  <!-- FIREBASE & EFEK SUARA SELEBRASI HEBOH -->
+  <!-- FIREBASE & EFEK SUARA -->
   <script>
     let capturedPhotoData = null;
     let selectedGroup = null;
@@ -372,7 +382,6 @@
       }
     }
 
-    // AUDIO SELEBRASI JUARA SANGAT HEBOH (FANFARE TROMPET)
     function playWinnerVictorySound() {
       if (audioCtx.state === 'suspended') audioCtx.resume();
       const fanfare = [
@@ -417,7 +426,6 @@
       { text: "Soal Ronde 4: Apa kesimpulan akhir tantangan kelompok?", type: "uraian", explanation: "Penjelasan Soal 4" }
     ];
 
-    // OTOMATIS BACA URL SCAN QR CODE DARI HP SISWA
     window.addEventListener('DOMContentLoaded', () => {
       const urlParams = new URLSearchParams(window.location.search);
       const roomFromUrl = urlParams.get('room');
@@ -427,7 +435,6 @@
       }
     });
 
-    // GENERATE KODE UNIK OTOMATIS UNTUK GURU DENGAN TANGGAL & ACAK UNIK
     function generateUniqueRoomCode() {
       const rand = Math.random().toString(36).substring(2, 6).toUpperCase();
       return `KUIS-${rand}`;
