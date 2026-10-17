@@ -89,15 +89,23 @@
       document.getElementById('app-screen').classList.remove('hidden');
       document.getElementById('group-name-display').innerText = groupId.replace('_', ' ').toUpperCase();
 
+      // Memastikan data awal kelompok tersedia di Firebase jika belum ada
+      db.ref('groups/' + selectedGroup).once('value', (snapshot) => {
+        if (!snapshot.exists()) {
+          db.ref('groups/' + selectedGroup).set({
+            current_round: 1,
+            status: 'answering',
+            finish_order: null,
+            total_score: 0,
+            answer: ''
+          });
+        }
+      });
+
+      // Listener Real-time
       db.ref('groups/' + selectedGroup).on('value', (snapshot) => {
         const data = snapshot.val();
-        
-        if (!data || (data.current_round === 1 && data.status === 'answering' && data.total_score === 0 && !data.answer && !data.finish_order)) {
-          document.getElementById('app-screen').classList.add('hidden');
-          document.getElementById('login-screen').classList.remove('hidden');
-          document.getElementById('answer-input').value = "";
-          return;
-        }
+        if (!data) return;
 
         document.getElementById('score-display').innerText = 'Total Skor: ' + (data.total_score || 0);
 
@@ -142,11 +150,8 @@
           }
         }
 
-        // Ambil data berapa kelompok yang SUDAH LOLOS (ACC) di ronde ini sebelumnya
         db.ref('round_passed_count/' + myCurrentRound).once('value', (passedSnap) => {
           const passedCount = passedSnap.val() || 0;
-          
-          // Urutan baru = kelompok yang sudah lolos + kelompok yang sedang antri + 1
           const calculatedOrder = passedCount + countWaitingInRound + 1;
 
           db.ref('groups/' + selectedGroup).update({
