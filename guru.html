@@ -1,4 +1,4 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="id">
 <head>
   <meta charset="UTF-8" />
@@ -117,7 +117,6 @@
       const nextRound = currentRound + 1;
       const isCompleted = nextRound > 4;
 
-      // Catat bahwa ronde ini sudah memiliki urutan ter-ACC
       db.ref('round_passed_count/' + currentRound).transaction((count) => {
         return (count || 0) + 1;
       });
@@ -159,24 +158,14 @@
     }
 
     function resetAllGame() {
-  if (!confirm("Yakin ingin mereset seluruh data kuis? Semua HP kelompok akan otomatis kembali ke menu pemilihan kelompok!")) return;
+      if (!confirm("Yakin ingin mereset seluruh data kuis? Semua HP kelompok akan otomatis kembali ke menu pemilihan kelompok!")) return;
 
-  // Hapus seluruh data groups dan riwayat ronde agar terdeteksi reset total oleh HP murid
-  db.ref('round_passed_count').remove();
-  db.ref('groups').remove((error) => {
-    if (error) {
-      alert("Gagal reset: " + error.message);
-    } else {
-      alert("Berhasil reset total! Semua HP murid otomatis kembali ke menu awal.");
-    }
-  });
-}
-
-      db.ref('groups').set(initialData, (error) => {
+      db.ref('round_passed_count').remove();
+      db.ref('groups').remove((error) => {
         if (error) {
           alert("Gagal reset: " + error.message);
         } else {
-          alert("Berhasil reset! Semua kelompok kembali ke kondisi awal.");
+          alert("Berhasil reset total! Semua HP murid otomatis kembali ke menu awal.");
         }
       });
     }
