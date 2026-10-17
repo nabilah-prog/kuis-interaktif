@@ -21,7 +21,6 @@
       backdrop-filter: blur(14px);
       border: 1px solid rgba(255, 255, 255, 0.15);
     }
-    /* Dynamic Round Backgrounds */
     .bg-round-1 { background: linear-gradient(to bottom, #0284c7, #1e1b4b, #0f172a); }
     .bg-round-2 { background: linear-gradient(to bottom, #7c3aed, #431407, #0f172a); }
     .bg-round-3 { background: linear-gradient(to bottom, #4c1d95, #831843, #0f172a); }
@@ -42,8 +41,8 @@
     <h1 class="text-3xl font-extrabold mb-2 bg-gradient-to-r from-sky-300 via-indigo-200 to-emerald-300 bg-clip-text text-transparent">Kuis & Media Belajar</h1>
     <p class="text-slate-300 mb-8 text-sm">Portal Belajar Mandiri & Kuis Interaktif</p>
     <div class="space-y-4">
-      <button onclick="showStudentMenu()" class="w-full py-4 bg-gradient-to-r from-indigo-600 to-sky-600 hover:from-indigo-500 hover:to-sky-500 font-bold rounded-2xl transition text-base shadow-lg">👨‍🎓 Masuk sebagai Siswa</button>
-      <button onclick="showTeacherLogin()" class="w-full py-3 bg-slate-800/80 hover:bg-slate-700/80 font-semibold text-slate-300 rounded-2xl transition text-sm border border-slate-700">👨‍🏫 Masuk sebagai Guru</button>
+      <button type="button" onclick="showStudentMenu()" class="w-full py-4 bg-gradient-to-r from-indigo-600 to-sky-600 hover:from-indigo-500 hover:to-sky-500 font-bold rounded-2xl transition text-base shadow-lg">👨‍🎓 Masuk sebagai Siswa</button>
+      <button type="button" onclick="showTeacherLogin()" class="w-full py-3 bg-slate-800/80 hover:bg-slate-700/80 font-semibold text-slate-300 rounded-2xl transition text-sm border border-slate-700">👨‍🏫 Masuk sebagai Guru</button>
     </div>
   </div>
 
@@ -53,18 +52,18 @@
       <h2 class="text-xl font-bold text-sky-300 mb-2">Akses Dashboard Guru</h2>
       <input type="password" id="teacher-pass-input" placeholder="Kode Rahasia" class="w-full bg-slate-900/90 border border-slate-700 rounded-xl p-3 text-white text-center font-bold mb-4 focus:outline-none focus:border-sky-400" />
       <div class="flex gap-2">
-        <button onclick="closeTeacherLogin()" class="w-1/2 py-2.5 bg-slate-700 font-semibold rounded-xl text-xs">Batal</button>
-        <button onclick="verifyTeacher()" class="w-1/2 py-2.5 bg-sky-600 font-bold rounded-xl text-xs">Masuk</button>
+        <button type="button" onclick="closeTeacherLogin()" class="w-1/2 py-2.5 bg-slate-700 font-semibold rounded-xl text-xs">Batal</button>
+        <button type="button" onclick="verifyTeacher()" class="w-1/2 py-2.5 bg-sky-600 font-bold rounded-xl text-xs">Masuk</button>
       </div>
     </div>
   </div>
 
   <!-- ================= 2. PILIHAN MODE GURU ================= -->
   <div id="teacher-menu-screen" class="hidden glass-card p-8 rounded-3xl shadow-2xl w-full max-w-md z-10 border border-sky-500/20 text-center">
-    <button onclick="location.reload()" class="text-xs text-sky-300 hover:underline mb-4 flex items-center gap-1">← Halaman Utama</button>
+    <button type="button" onclick="location.reload()" class="text-xs text-sky-300 hover:underline mb-4 flex items-center gap-1">← Halaman Utama</button>
     <h2 class="text-2xl font-bold mb-2 text-sky-300">Menu Kontrol Guru</h2>
     <div class="space-y-4">
-      <button onclick="openTeacherQuizDashboard()" class="w-full p-4 bg-slate-800/90 hover:bg-slate-700/90 border border-indigo-500/30 rounded-2xl text-left flex items-center gap-4">
+      <button type="button" onclick="openTeacherQuizDashboard()" class="w-full p-4 bg-slate-800/90 hover:bg-slate-700/90 border border-indigo-500/30 rounded-2xl text-left flex items-center gap-4">
         <div class="text-3xl bg-indigo-500/20 p-2.5 rounded-xl border border-indigo-500/30">🏆</div>
         <div>
           <h3 class="font-bold text-indigo-300 text-sm">Dashboard Kuis Kelompok</h3>
@@ -72,7 +71,7 @@
         </div>
       </button>
 
-      <button onclick="openTeacherAnalyticsDashboard()" class="w-full p-4 bg-slate-800/90 hover:bg-slate-700/90 border border-emerald-500/30 rounded-2xl text-left flex items-center gap-4">
+      <button type="button" onclick="openTeacherAnalyticsDashboard()" class="w-full p-4 bg-slate-800/90 hover:bg-slate-700/90 border border-emerald-500/30 rounded-2xl text-left flex items-center gap-4">
         <div class="text-3xl bg-emerald-500/20 p-2.5 rounded-xl border border-emerald-500/30">📊</div>
         <div>
           <h3 class="font-bold text-emerald-300 text-sm">Pantau Belajar Mandiri</h3>
@@ -84,10 +83,10 @@
 
   <!-- ================= 3. MENU SISWA ================= -->
   <div id="student-menu-screen" class="hidden glass-card p-8 rounded-3xl shadow-2xl w-full max-w-md z-10 border border-sky-500/20 text-center">
-    <button onclick="backToRole()" class="text-xs text-sky-300 hover:underline mb-4 flex items-center gap-1">← Halaman Utama</button>
+    <button type="button" onclick="backToRole()" class="text-xs text-sky-300 hover:underline mb-4 flex items-center gap-1">← Halaman Utama</button>
     <h2 class="text-2xl font-bold mb-2 text-sky-300">Menu Siswa</h2>
     <div class="space-y-4">
-      <button onclick="openSelfStudySetup()" class="w-full p-4 bg-slate-800/90 hover:bg-slate-700/90 border border-sky-500/30 rounded-2xl text-left flex items-center gap-4">
+      <button type="button" onclick="openSelfStudySetup()" class="w-full p-4 bg-slate-800/90 hover:bg-slate-700/90 border border-sky-500/30 rounded-2xl text-left flex items-center gap-4">
         <div class="text-3xl bg-sky-500/20 p-2.5 rounded-xl">📖</div>
         <div>
           <h3 class="font-bold text-sky-300 text-sm">Mode Belajar Mandiri</h3>
@@ -95,7 +94,7 @@
         </div>
       </button>
 
-      <button onclick="openGroupQuizSetup()" class="w-full p-4 bg-slate-800/90 hover:bg-slate-700/90 border border-indigo-500/30 rounded-2xl text-left flex items-center gap-4">
+      <button type="button" onclick="openGroupQuizSetup()" class="w-full p-4 bg-slate-800/90 hover:bg-slate-700/90 border border-indigo-500/30 rounded-2xl text-left flex items-center gap-4">
         <div class="text-3xl bg-indigo-500/20 p-2.5 rounded-xl">🏆</div>
         <div>
           <h3 class="font-bold text-indigo-300 text-sm">Mode Kuis Kelompok</h3>
@@ -107,11 +106,11 @@
 
   <!-- REGISTRASI BELAJAR MANDIRI SISWA -->
   <div id="self-study-setup-screen" class="hidden glass-card p-8 rounded-3xl shadow-2xl w-full max-w-md z-10 border border-sky-500/20">
-    <button onclick="backToStudentMenu()" class="text-xs text-sky-300 hover:underline mb-4 flex items-center gap-1">← Kembali</button>
+    <button type="button" onclick="backToStudentMenu()" class="text-xs text-sky-300 hover:underline mb-4 flex items-center gap-1">← Kembali</button>
     <h2 class="text-2xl font-bold mb-1 text-sky-300 text-center">Masuk Belajar Mandiri</h2>
     <div class="space-y-4">
       <input type="text" id="student-single-name" placeholder="Nama Lengkap Siswa" class="w-full bg-slate-900/90 border border-slate-700 rounded-xl p-3 text-white focus:outline-none focus:border-sky-400 text-sm" />
-      <button onclick="startSelfStudy()" class="w-full py-4 bg-gradient-to-r from-sky-600 to-emerald-600 font-bold rounded-2xl shadow-lg">Mulai Belajar</button>
+      <button type="button" onclick="startSelfStudy()" class="w-full py-4 bg-gradient-to-r from-sky-600 to-emerald-600 font-bold rounded-2xl shadow-lg">Mulai Belajar</button>
     </div>
   </div>
 
@@ -119,7 +118,7 @@
   <div id="self-study-screen" class="hidden w-full max-w-2xl z-10 space-y-5">
     <div class="glass-card p-5 rounded-3xl flex justify-between items-center border border-sky-500/20">
       <h2 class="text-xl font-extrabold text-sky-300">📖 Ruang Belajar Mandiri</h2>
-      <button onclick="backToStudentMenu()" class="px-3.5 py-2 bg-slate-800 rounded-xl text-xs font-semibold">← Keluar</button>
+      <button type="button" onclick="backToStudentMenu()" class="px-3.5 py-2 bg-slate-800 rounded-xl text-xs font-semibold">← Keluar</button>
     </div>
     <div class="glass-card p-6 rounded-3xl border border-sky-500/20 space-y-4">
       <h3 class="text-base font-bold text-sky-300">📺 Video Pembelajaran</h3>
@@ -131,7 +130,7 @@
 
   <!-- ================= 4. SISWA: REGISTRASI KELOMPOK & SELFIE ================= -->
   <div id="student-setup-screen" class="hidden glass-card p-8 rounded-3xl shadow-2xl w-full max-w-md z-10 border border-sky-500/20">
-    <button onclick="backToStudentMenu()" class="text-xs text-sky-300 hover:underline mb-4 flex items-center gap-1">← Kembali</button>
+    <button type="button" onclick="backToStudentMenu()" class="text-xs text-sky-300 hover:underline mb-4 flex items-center gap-1">← Kembali</button>
     <h2 class="text-2xl font-bold mb-1 text-sky-300 text-center">Registrasi Kelompok</h2>
     
     <div class="space-y-4">
@@ -151,18 +150,17 @@
         <textarea id="members-input" rows="2" placeholder="Contoh: Abil, Budi, Cici" class="w-full bg-slate-900/90 border border-slate-700 rounded-xl p-3 text-white text-sm"></textarea>
       </div>
 
-      <!-- FITUR SELFIE BERSAMA -->
       <div>
-        <label class="block text-xs font-semibold text-slate-300 mb-1">📷 Swafoto (Selfie Tim):</label>
+        <label class="block text-xs font-semibold text-slate-300 mb-1">📷 Swafoto (Selfie Tim - Opsional):</label>
         <div class="relative bg-slate-900 rounded-2xl overflow-hidden border border-slate-700 aspect-video flex flex-col items-center justify-center">
           <video id="webcam-preview" autoplay playsinline class="w-full h-full object-cover hidden"></video>
           <img id="selfie-photo-result" class="w-full h-full object-cover hidden" />
-          <button id="start-cam-btn" onclick="startCamera()" class="px-3 py-1.5 bg-slate-800 text-xs font-bold rounded-lg border border-slate-700">Nyalakan Kamera</button>
-          <button id="take-photo-btn" onclick="takePhoto()" class="hidden absolute bottom-3 px-4 py-1.5 bg-emerald-600 text-xs font-bold rounded-xl">📸 Ambil Foto</button>
+          <button type="button" id="start-cam-btn" onclick="startCamera()" class="px-3 py-1.5 bg-slate-800 text-xs font-bold rounded-lg border border-slate-700">Nyalakan Kamera</button>
+          <button type="button" id="take-photo-btn" onclick="takePhoto()" class="hidden absolute bottom-3 px-4 py-1.5 bg-emerald-600 text-xs font-bold rounded-xl">📸 Ambil Foto</button>
         </div>
       </div>
 
-      <button onclick="startStudentQuiz()" class="w-full py-4 bg-gradient-to-r from-indigo-600 to-sky-600 font-bold rounded-2xl shadow-lg">Masuk ke Ruang Kuis</button>
+      <button type="button" onclick="startStudentQuiz()" class="w-full py-4 bg-gradient-to-r from-indigo-600 to-sky-600 font-bold rounded-2xl shadow-lg">Masuk ke Ruang Kuis</button>
     </div>
   </div>
 
@@ -176,14 +174,12 @@
       <span id="score-display" class="bg-emerald-500/20 text-emerald-300 text-xs font-bold px-3.5 py-2 rounded-full border border-emerald-500/30">Total Skor: 0</span>
     </div>
 
-    <!-- Tampilan Lobby -->
     <div id="quiz-lobby-box" class="glass-card p-8 rounded-3xl border border-sky-500/20 text-center py-12">
       <div class="animate-bounce text-5xl mb-4">⏳</div>
       <h2 class="text-2xl font-extrabold text-amber-300 mb-2">Menunggu Kuis Dimulai</h2>
       <p class="text-slate-300 text-xs mb-6">Kelompokmu sudah terdaftar! Tunggu Guru menekan tombol <strong>Mulai Kuis</strong>.</p>
     </div>
 
-    <!-- Tampilan Kuis Utama -->
     <div id="quiz-content-wrapper" class="hidden glass-card p-6 rounded-3xl border border-sky-500/20">
       <div id="quiz-box">
         <div class="flex justify-between items-center mb-3">
@@ -192,10 +188,9 @@
         </div>
         <div id="question-text" class="text-lg font-medium mb-6 leading-relaxed text-slate-100"></div>
         <textarea id="answer-input" rows="3" placeholder="Tuliskan jawaban hasil diskusi kelompok..." class="w-full bg-slate-900/90 border border-slate-700 rounded-xl p-3.5 text-white text-sm mb-6"></textarea>
-        <button onclick="submitAnswer()" class="w-full py-4 bg-gradient-to-r from-emerald-600 to-teal-600 font-bold rounded-2xl shadow-lg">Kirim Jawaban Kelompok</button>
+        <button type="button" onclick="submitAnswer()" class="w-full py-4 bg-gradient-to-r from-emerald-600 to-teal-600 font-bold rounded-2xl shadow-lg">Kirim Jawaban Kelompok</button>
       </div>
 
-      <!-- Menunggu Verifikasi -->
       <div id="waiting-box" class="hidden text-center py-8">
         <div class="animate-spin w-12 h-12 border-4 border-sky-400 border-t-transparent rounded-full mx-auto mb-4"></div>
         <h2 class="text-xl font-bold mb-2 text-amber-300">Jawaban Terkirim!</h2>
@@ -206,13 +201,12 @@
         </div>
       </div>
 
-      <!-- Selesai Kuis & Pembahasan Opsional -->
       <div id="finished-all-box" class="hidden text-center py-6">
         <div class="text-6xl mb-3">🎉</div>
         <h2 class="text-2xl font-bold text-emerald-300 mb-2">Luar Biasa!</h2>
         <p class="text-slate-300 text-sm mb-6">Kelompokmu telah menyelesaikan seluruh ronde kuis!</p>
         
-        <button onclick="toggleExplanations()" class="px-5 py-3 bg-sky-600 hover:bg-sky-500 font-bold text-xs rounded-xl shadow-lg transition">
+        <button type="button" onclick="toggleExplanations()" class="px-5 py-3 bg-sky-600 hover:bg-sky-500 font-bold text-xs rounded-xl shadow-lg transition">
           📖 Lihat / Sembunyikan Pembahasan Jawaban Soal
         </button>
 
@@ -227,7 +221,7 @@
     </div>
   </div>
 
-  <!-- ================= 6. GURU: DASHBOARD KONTROL KUIS & PAPAN PERINGKAT ================= -->
+  <!-- ================= 6. GURU: DASHBOARD KONTROL KUIS ================= -->
   <div id="teacher-dashboard-screen" class="hidden w-full max-w-6xl z-10 my-6 space-y-6">
     <div class="glass-card p-6 rounded-3xl border border-sky-500/20 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
       <div>
@@ -239,15 +233,15 @@
         <div id="quiz-status-indicator" class="px-3.5 py-2 rounded-xl text-xs font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">
           Status: Kuis Belum Dimulai
         </div>
-        <button id="toggle-quiz-btn" onclick="toggleQuizState()" class="px-5 py-2.5 bg-emerald-600 font-bold rounded-xl text-xs">🚀 Mulai Kuis</button>
-        <button onclick="backToTeacherMenu()" class="px-3.5 py-2.5 bg-slate-800 rounded-xl text-xs font-bold">← Kembali</button>
-        <button onclick="resetAllGame()" class="px-3.5 py-2.5 bg-rose-600/80 font-bold rounded-xl text-xs">🔄 Reset Game</button>
+        <button type="button" id="toggle-quiz-btn" onclick="toggleQuizState()" class="px-5 py-2.5 bg-emerald-600 font-bold rounded-xl text-xs">🚀 Mulai Kuis</button>
+        <button type="button" onclick="backToTeacherMenu()" class="px-3.5 py-2.5 bg-slate-800 rounded-xl text-xs font-bold">← Kembali</button>
+        <button type="button" onclick="resetAllGame()" class="px-3.5 py-2.5 bg-rose-600/80 font-bold rounded-xl text-xs">🔄 Reset Game</button>
       </div>
     </div>
 
     <!-- DIAGRAM BATANG PERINGKAT REAL-TIME -->
     <div class="glass-card p-6 rounded-3xl border border-sky-500/20 space-y-4">
-      <h3 class="text-lg font-bold text-amber-300 flex items-center gap-2">📊 Papan Peringkat Real-Time (Proyektor Depan Kelas)</h3>
+      <h3 class="text-lg font-bold text-amber-300 flex items-center gap-2">📊 Papan Peringkat Real-Time</h3>
       <div id="leaderboard-bars" class="space-y-4 pt-2"></div>
     </div>
 
@@ -262,7 +256,7 @@
         <h1 class="text-3xl font-extrabold text-emerald-300">📊 Pemantauan Belajar Mandiri</h1>
         <p class="text-slate-400 text-xs mt-1">Aktivitas belajar & pengerjaan latihan siswa.</p>
       </div>
-      <button onclick="backToTeacherMenu()" class="px-4 py-2.5 bg-slate-800 rounded-xl text-xs font-bold">← Kembali</button>
+      <button type="button" onclick="backToTeacherMenu()" class="px-4 py-2.5 bg-slate-800 rounded-xl text-xs font-bold">← Kembali</button>
     </div>
     <div class="glass-card p-6 rounded-3xl border border-sky-500/20 space-y-4">
       <div id="student-activity-container" class="space-y-3"></div>
@@ -295,6 +289,12 @@
     let selectedGroup = null;
     let currentStudentName = "";
     let capturedPhotoData = null;
+
+    function triggerConfetti() {
+      if (typeof confetti === 'function') {
+        confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+      }
+    }
 
     // --- LOGIKA KAMERA SELFIE ---
     function startCamera() {
@@ -448,7 +448,6 @@
           return;
         }
 
-        // UPDATE ATMOSFER WARNA LANGIT BERDASARKAN RONDE
         const round = data.current_round || 1;
         document.getElementById('dynamic-bg').className = `bg-round-${round} text-white min-h-screen flex flex-col items-center justify-center p-4 relative overflow-x-hidden transition-all duration-1000`;
 
@@ -479,7 +478,7 @@
           document.getElementById('quiz-box').classList.add('hidden');
           document.getElementById('waiting-box').classList.add('hidden');
           document.getElementById('finished-all-box').classList.remove('hidden');
-          confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+          triggerConfetti();
         }
       });
     }
@@ -575,27 +574,26 @@
               </div>
               ${group.status === 'waiting' ? `<div class="bg-slate-900/80 p-3 rounded-xl mb-4"><p class="text-xs text-slate-400">Jawaban:</p><p class="text-sm text-slate-200 italic">"${group.answer || '-'}"</p></div>` : ''}
               <div class="bg-slate-900/50 p-3 rounded-xl mb-4 text-center">
-                <button onclick="pickRandomMember('${groupId}')" class="text-xs bg-indigo-600/30 text-indigo-300 px-3 py-1.5 rounded-lg mb-2">🎲 Tunjuk Anggota Acak</button>
+                <button type="button" onclick="pickRandomMember('${groupId}')" class="text-xs bg-indigo-600/30 text-indigo-300 px-3 py-1.5 rounded-lg mb-2">🎲 Tunjuk Anggota Acak</button>
                 <div class="text-sm font-bold text-amber-300">${group.picked_member ? 'Yang Ditunjuk: ' + group.picked_member : 'Belum Ditunjuk'}</div>
               </div>
             </div>
             <div>
               ${group.status === 'waiting' ? `
-                <button onclick="approveGroup('${groupId}',${group.current_round || 1}, ${group.total_score \vert{}\vert{} 0},${scoreEarned})" class="w-full py-2 bg-emerald-600 font-bold rounded-xl text-sm mb-2">✅ ACC (+${scoreEarned} Poin)</button>
-                <button onclick="rejectGroup('${groupId}')" class="w-full py-1.5 bg-rose-600/30 text-rose-300 font-bold rounded-xl text-xs">❌ Suruh Diskusi Ulang</button>
-              ` : `<button disabled class="w-full py-2 bg-slate-700 text-slate-500 font-semibold rounded-xl text-xs">Menunggu...</button>`}
+                <button type="button" onclick="approveGroup('${groupId}',${group.current_round || 1}, ${group.total_score \vert{}\vert{} 0},${scoreEarned})" class="w-full py-2 bg-emerald-600 font-bold rounded-xl text-sm mb-2">✅ ACC (+${scoreEarned} Poin)</button>
+                <button type="button" onclick="rejectGroup('${groupId}')" class="w-full py-1.5 bg-rose-600/30 text-rose-300 font-bold rounded-xl text-xs">❌ Suruh Diskusi Ulang</button>
+              ` : `<button type="button" disabled class="w-full py-2 bg-slate-700 text-slate-500 font-semibold rounded-xl text-xs">Menunggu...</button>`}
             </div>
           `;
           container.appendChild(card);
         }
 
-        // AMBIL SEMUA TIM UNTUK UPDATE DIAGRAM BATANG & JUARA
         groupList.sort((a, b) => b.score - a.score);
         const maxScore = Math.max(...groupList.map(g => g.score), 500);
-        const allCompleted = groupList.every(g => g.status === 'completed');
+        const allCompleted = groupList.length > 0 && groupList.every(g => g.status === 'completed');
 
         if (allCompleted) {
-          confetti({ particleCount: 200, spread: 100, origin: { y: 0.4 } });
+          triggerConfetti();
         }
 
         groupList.forEach((item, index) => {
