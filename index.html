@@ -7,6 +7,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
   <style>
     @keyframes floatClouds {
       0% { transform: translateX(-10%); }
@@ -66,7 +67,7 @@
         <div class="text-3xl bg-indigo-500/20 p-2.5 rounded-xl border border-indigo-500/30">🏆</div>
         <div>
           <h3 class="font-bold text-indigo-300 text-sm">Dashboard Kuis Kelompok</h3>
-          <p class="text-xs text-slate-400 mt-0.5">Kontrol kuis & Diagram Batang Peringkat.</p>
+          <p class="text-xs text-slate-400 mt-0.5">Kontrol kuis & Podium Selfie Juara.</p>
         </div>
       </button>
 
@@ -74,7 +75,7 @@
         <div class="text-3xl bg-emerald-500/20 p-2.5 rounded-xl border border-emerald-500/30">📊</div>
         <div>
           <h3 class="font-bold text-emerald-300 text-sm">Pantau Belajar Mandiri</h3>
-          <p class="text-xs text-slate-400 mt-0.5">Aktivitas siswa di rumah.</p>
+          <p class="text-xs text-slate-400 mt-0.5">Pantau latihan & progres siswa.</p>
         </div>
       </button>
     </div>
@@ -89,7 +90,7 @@
         <div class="text-3xl bg-sky-500/20 p-2.5 rounded-xl">📖</div>
         <div>
           <h3 class="font-bold text-sky-300 text-sm">Mode Belajar Mandiri</h3>
-          <p class="text-xs text-slate-400">Materi & Latihan Soal Mandiri.</p>
+          <p class="text-xs text-slate-400">Materi Lengkap & Latihan Soal Mandiri.</p>
         </div>
       </button>
 
@@ -113,21 +114,75 @@
     </div>
   </div>
 
-  <!-- RUANG BELAJAR MANDIRI -->
-  <div id="self-study-screen" class="hidden w-full max-w-2xl z-10 space-y-5">
+  <!-- RUANG BELAJAR MANDIRI LENGKAP WITH MATERI & LATIHAN -->
+  <div id="self-study-screen" class="hidden w-full max-w-3xl z-10 space-y-6 my-6">
     <div class="glass-card p-5 rounded-3xl flex justify-between items-center border border-sky-500/20">
-      <h2 class="text-xl font-extrabold text-sky-300">📖 Ruang Belajar Mandiri</h2>
+      <div>
+        <h2 class="text-xl font-extrabold text-sky-300">📖 Ruang Belajar Mandiri</h2>
+        <p id="self-student-display" class="text-xs text-emerald-400 font-semibold"></p>
+      </div>
       <button type="button" onclick="backToStudentMenu()" class="px-3.5 py-2 bg-slate-800 rounded-xl text-xs font-semibold">← Keluar</button>
     </div>
+
+    <!-- Video Pembelajaran -->
     <div class="glass-card p-6 rounded-3xl border border-sky-500/20 space-y-4">
-      <h3 class="text-base font-bold text-sky-300">📺 Video Pembelajaran</h3>
+      <h3 class="text-base font-bold text-sky-300 flex items-center gap-2">📺 Video Pembelajaran Konsep Interaktif</h3>
       <div class="aspect-video w-full rounded-2xl overflow-hidden border border-slate-700 bg-black">
         <iframe class="w-full h-full" src="https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ" title="Video" allowfullscreen></iframe>
       </div>
     </div>
+
+    <!-- Modul Rangkuman Materi Ajar -->
+    <div class="glass-card p-6 rounded-3xl border border-sky-500/20 space-y-4">
+      <h3 class="text-base font-bold text-amber-300 flex items-center gap-2">📌 Modul Rangkuman Ringkasan Materi</h3>
+      <div class="bg-slate-900/90 p-5 rounded-2xl border border-slate-800 space-y-3 text-xs text-slate-300 leading-relaxed">
+        <div class="border-b border-slate-800 pb-2">
+          <h4 class="font-bold text-sky-300 text-sm">1. Definisi & Konsep Dasar</h4>
+          <p class="mt-1">Pahami bahwa setiap konsep matematika didasari oleh pola dan penalaran logis. Bacalah penjelasan di video di atas secara seksama.</p>
+        </div>
+        <div class="border-b border-slate-800 pb-2">
+          <h4 class="font-bold text-sky-300 text-sm">2. Rumus Kunci & Poin Penting</h4>
+          <p class="mt-1">• Perhatikan urutan operasi hitung matematika (Prioritas Perkalian/Pembagian dibanding Penjumlahan/Pengurangan).</p>
+          <p>• Selalu periksa kembali variabel dan angka masukan sebelum menyelesaikan masalah.</p>
+        </div>
+        <div>
+          <h4 class="font-bold text-sky-300 text-sm">3. Tips Diskusi Kelompok</h4>
+          <p class="mt-1">Gunakan pemahaman dari modul mandiri ini untuk membantu kelompokmu memenangkan Kuis Kelompok di kelas!</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Latihan Soal Mandiri Interaktif -->
+    <div class="glass-card p-6 rounded-3xl border border-sky-500/20 space-y-4">
+      <h3 class="text-base font-bold text-emerald-300 flex items-center gap-2">✍️ Latihan Soal Mandiri Interaktif</h3>
+      
+      <!-- Soal 1 -->
+      <div class="bg-slate-900/90 p-4 rounded-2xl border border-slate-800 space-y-3">
+        <p class="text-sm font-semibold text-slate-200">Soal 1: Berapakah hasil dari $15 + 25 \times 2$?</p>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs">
+          <button type="button" onclick="checkPractice(this, false, 'Soal 1')" class="p-3 bg-slate-800 hover:bg-slate-700 rounded-xl text-left">A. 80</button>
+          <button type="button" onclick="checkPractice(this, true, 'Soal 1')" class="p-3 bg-slate-800 hover:bg-slate-700 rounded-xl text-left">B. 65</button>
+          <button type="button" onclick="checkPractice(this, false, 'Soal 1')" class="p-3 bg-slate-800 hover:bg-slate-700 rounded-xl text-left">C. 50</button>
+          <button type="button" onclick="checkPractice(this, false, 'Soal 1')" class="p-3 bg-slate-800 hover:bg-slate-700 rounded-xl text-left">D. 90</button>
+        </div>
+        <div class="feedback-text text-xs font-bold hidden mt-2"></div>
+      </div>
+
+      <!-- Soal 2 -->
+      <div class="bg-slate-900/90 p-4 rounded-2xl border border-slate-800 space-y-3">
+        <p class="text-sm font-semibold text-slate-200">Soal 2: Manakah di antara pilihan berikut yang merupakan sifat komutatif?</p>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs">
+          <button type="button" onclick="checkPractice(this, true, 'Soal 2')" class="p-3 bg-slate-800 hover:bg-slate-700 rounded-xl text-left">A. $a + b = b + a$</button>
+          <button type="button" onclick="checkPractice(this, false, 'Soal 2')" class="p-3 bg-slate-800 hover:bg-slate-700 rounded-xl text-left">B. $a(b + c) = ab + ac$</button>
+          <button type="button" onclick="checkPractice(this, false, 'Soal 2')" class="p-3 bg-slate-800 hover:bg-slate-700 rounded-xl text-left">C. $(a + b) + c = a + (b + c)$</button>
+          <button type="button" onclick="checkPractice(this, false, 'Soal 2')" class="p-3 bg-slate-800 hover:bg-slate-700 rounded-xl text-left">D. $a \times 1 = a$</button>
+        </div>
+        <div class="feedback-text text-xs font-bold hidden mt-2"></div>
+      </div>
+    </div>
   </div>
 
-  <!-- 4. SISWA: REGISTRASI KELOMPOK -->
+  <!-- 4. SISWA: REGISTRASI KELOMPOK + SELFIE KELOMPOK -->
   <div id="student-setup-screen" class="hidden glass-card p-8 rounded-3xl shadow-2xl w-full max-w-md z-10 border border-sky-500/20">
     <button type="button" onclick="backToStudentMenu()" class="text-xs text-sky-300 hover:underline mb-4 flex items-center gap-1">← Kembali</button>
     <h2 class="text-2xl font-bold mb-1 text-sky-300 text-center">Registrasi Kelompok</h2>
@@ -147,6 +202,17 @@
       <div>
         <label class="block text-xs font-semibold text-slate-300 mb-1">Daftar Nama Anggota (Pisahkan koma):</label>
         <textarea id="members-input" rows="2" placeholder="Contoh: Abil, Budi, Cici" class="w-full bg-slate-900/90 border border-slate-700 rounded-xl p-3 text-white text-sm"></textarea>
+      </div>
+
+      <!-- Kamera Swafoto Tim -->
+      <div>
+        <label class="block text-xs font-semibold text-amber-300 mb-1">📸 Swafoto bersama Kelompok (Foto Juara):</label>
+        <div class="relative bg-slate-900 rounded-2xl overflow-hidden border border-slate-700 aspect-video flex flex-col items-center justify-center">
+          <video id="webcam-preview" autoplay playsinline class="w-full h-full object-cover hidden"></video>
+          <img id="selfie-photo-result" class="w-full h-full object-cover hidden" />
+          <button type="button" id="start-cam-btn" onclick="startCamera()" class="px-3 py-1.5 bg-slate-800 text-xs font-bold rounded-lg border border-slate-700 text-sky-300">📷 Nyalakan Kamera Kamera</button>
+          <button type="button" id="take-photo-btn" onclick="takePhoto()" class="hidden absolute bottom-3 px-4 py-1.5 bg-emerald-600 text-xs font-bold rounded-xl shadow-lg">📸 Ambil Foto Selfie</button>
+        </div>
       </div>
 
       <button type="button" onclick="startStudentQuiz()" class="w-full py-4 bg-gradient-to-r from-indigo-600 to-sky-600 font-bold rounded-2xl shadow-lg">Masuk ke Ruang Kuis</button>
@@ -199,21 +265,21 @@
         </button>
         <div id="explanations-container" class="hidden mt-6 text-left space-y-3 bg-slate-900/90 p-4 rounded-2xl border border-slate-800 text-xs text-slate-300">
           <h4 class="font-bold text-sky-300 border-b border-slate-700 pb-2">Pembahasan Resmi Soal:</h4>
-          <p><strong>Soal Ronde 1:</strong> [Penjelasan konsep soal 1...]</p>
-          <p><strong>Soal Ronde 2:</strong> [Penjelasan konsep soal 2...]</p>
-          <p><strong>Soal Ronde 3:</strong> [Penjelasan konsep soal 3...]</p>
-          <p><strong>Soal Ronde 4:</strong> [Penjelasan konsep soal 4...]</p>
+          <p><strong>Soal Ronde 1:</strong> Perkalian harus didahulukan: 25 x 2 = 50. Kemudian ditambah 15: 15 + 50 = 65.</p>
+          <p><strong>Soal Ronde 2:</strong> Sifat Komutatif adalah sifat pertukaran posisi pada penjumlahan/perkalian: a + b = b + a.</p>
+          <p><strong>Soal Ronde 3:</strong> Evaluasi pernyataan berdasarkan kaidah logika komutatif dan asosiatif.</p>
+          <p><strong>Soal Ronde 4:</strong> Analisis akhir dari kasus gabungan konsep dasar.</p>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- 6. GURU: DASHBOARD KONTROL KUIS -->
+  <!-- 6. GURU: DASHBOARD KONTROL KUIS & PODIUM JUARA -->
   <div id="teacher-dashboard-screen" class="hidden w-full max-w-6xl z-10 my-6 space-y-6">
     <div class="glass-card p-6 rounded-3xl border border-sky-500/20 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
       <div>
         <h1 class="text-3xl font-extrabold text-sky-300 flex items-center gap-2">🏆 Dashboard Kontrol & Papan Peringkat</h1>
-        <p class="text-slate-400 text-xs mt-1">Pantau kuis real-time & Diagram Batang Nilai Kelompok.</p>
+        <p class="text-slate-400 text-xs mt-1">Pantau kuis real-time, beri poin, dan tampilkan Podium Juara.</p>
       </div>
       <div class="flex flex-wrap items-center gap-3">
         <div id="quiz-status-indicator" class="px-3.5 py-2 rounded-xl text-xs font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">
@@ -225,8 +291,22 @@
       </div>
     </div>
 
+    <!-- SEKSI PODIUM SELESAI KUIS (MUNCUL JIKA SEMUA TIM SELESAI) -->
+    <div id="winner-podium-section" class="hidden glass-card p-8 rounded-3xl border border-amber-500/40 text-center bg-gradient-to-b from-indigo-900/60 to-slate-900/90 shadow-2xl">
+      <h2 class="text-3xl font-extrabold text-amber-300 mb-6 flex items-center justify-center gap-2">👑 SELEMAT KEPADA KELOMPOK JUARA 1 👑</h2>
+      
+      <div id="podium-winner-card" class="inline-block relative bg-slate-900/90 border-2 border-amber-400 rounded-3xl p-6 shadow-2xl max-w-md w-full">
+        <div class="absolute -top-7 left-1/2 -translate-x-1/2 text-5xl animate-bounce">👑</div>
+        <img id="winner-photo-img" src="" class="w-48 h-36 object-cover rounded-2xl mx-auto border-4 border-amber-300 shadow-xl mb-4 mt-2" />
+        <h3 id="winner-group-title" class="text-2xl font-bold text-amber-300"></h3>
+        <p id="winner-members-text" class="text-xs text-slate-300 mt-1 italic"></p>
+        <div id="winner-score-badge" class="mt-4 inline-block bg-amber-400 text-slate-950 font-extrabold px-6 py-2 rounded-full text-sm"></div>
+      </div>
+    </div>
+
+    <!-- SEKSI DIAGRAM BATANG -->
     <div class="glass-card p-6 rounded-3xl border border-sky-500/20 space-y-4">
-      <h3 class="text-lg font-bold text-amber-300 flex items-center gap-2">📊 Papan Peringkat Real-Time</h3>
+      <h3 class="text-lg font-bold text-amber-300 flex items-center gap-2">📊 Papan Peringkat Diagram Batang Real-Time</h3>
       <div id="leaderboard-bars" class="space-y-4 pt-2"></div>
     </div>
 
@@ -249,6 +329,45 @@
 
   <!-- SCRIPT UTAMA -->
   <script>
+    let capturedPhotoData = null;
+    let currentStudentName = "";
+
+    function triggerConfetti() {
+      if (typeof confetti === 'function') {
+        confetti({ particleCount: 150, spread: 80, origin: { y: 0.5 } });
+      }
+    }
+
+    // KAMERA SELFIE LOGIKA
+    function startCamera() {
+      navigator.mediaDevices.getUserMedia({ video: true }).then(stream => {
+        const video = document.getElementById('webcam-preview');
+        video.srcObject = stream;
+        video.classList.remove('hidden');
+        document.getElementById('start-cam-btn').classList.add('hidden');
+        document.getElementById('take-photo-btn').classList.remove('hidden');
+      }).catch(err => alert("Kamera tidak dapat diakses: " + err));
+    }
+
+    function takePhoto() {
+      const video = document.getElementById('webcam-preview');
+      const canvas = document.createElement('canvas');
+      canvas.width = 320;
+      canvas.height = 240;
+      canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+      capturedPhotoData = canvas.toDataURL('image/jpeg', 0.6);
+
+      document.getElementById('selfie-photo-result').src = capturedPhotoData;
+      document.getElementById('selfie-photo-result').classList.remove('hidden');
+      video.classList.add('hidden');
+      document.getElementById('take-photo-btn').classList.add('hidden');
+
+      if (video.srcObject) {
+        video.srcObject.getTracks().forEach(track => track.stop());
+      }
+    }
+
+    // NAVIGASI DOKUMEN UTAMA
     function showStudentMenu() {
       document.getElementById('role-screen').classList.add('hidden');
       document.getElementById('student-menu-screen').classList.remove('hidden');
@@ -311,8 +430,11 @@
     function startSelfStudy() {
       const name = document.getElementById('student-single-name').value;
       if (!name.trim()) return alert("Masukkan nama kamu!");
+      currentStudentName = name.trim();
       document.getElementById('self-study-setup-screen').classList.add('hidden');
       document.getElementById('self-study-screen').classList.remove('hidden');
+      document.getElementById('self-student-display').innerText = "Siswa: " + currentStudentName;
+      updateStudentActivity("Membaca Modul Pembelajaran Mandiri");
     }
 
     function openGroupQuizSetup() {
@@ -324,6 +446,33 @@
       document.getElementById('explanations-container').classList.toggle('hidden');
     }
 
+    function checkPractice(btn, isCorrect, exerciseName) {
+      const parent = btn.parentElement.parentElement;
+      const feedback = parent.querySelector('.feedback-text');
+      feedback.classList.remove('hidden');
+
+      if (isCorrect) {
+        feedback.className = "feedback-text text-xs font-bold text-emerald-400 mt-2";
+        feedback.innerText = "✅ Jawaban Kamu Benar!";
+        updateStudentActivity("Menjawab BENAR di " + exerciseName);
+      } else {
+        feedback.className = "feedback-text text-xs font-bold text-rose-400 mt-2";
+        feedback.innerText = "❌ Jawaban Kurang Tepat, coba hitung lagi!";
+        updateStudentActivity("Menjawab SALAH di " + exerciseName);
+      }
+    }
+
+    function updateStudentActivity(statusText) {
+      if (!currentStudentName) return;
+      const key = currentStudentName.replace(/[^a-zA-Z0-9]/g, '_');
+      db.ref('self_study_activity/' + key).set({
+        name: currentStudentName,
+        status: statusText,
+        last_active: new Date().toLocaleTimeString('id-ID')
+      });
+    }
+
+    // FIREBASE CONFIG
     const firebaseConfig = {
       apiKey: "AIzaSyDHNH2OpGV1xVyr3vn1KDr4XZILGMXKZEE",
       authDomain: "kuis-interaktif-98daa.firebaseapp.com",
@@ -366,7 +515,8 @@
           total_score: 0,
           answer: '',
           picked_member: null,
-          members: membersArray
+          members: membersArray,
+          photo: capturedPhotoData || null
         };
         if (!snapshot.exists()) {
           groupRef.set(payload, attachStudentListener);
@@ -416,6 +566,7 @@
           document.getElementById('quiz-box').classList.add('hidden');
           document.getElementById('waiting-box').classList.add('hidden');
           document.getElementById('finished-all-box').classList.remove('hidden');
+          triggerConfetti();
         }
       });
     }
@@ -464,6 +615,8 @@
         const data = snapshot.val() || {};
         const container = document.getElementById('groups-container');
         const leaderboardContainer = document.getElementById('leaderboard-bars');
+        const winnerPodiumSection = document.getElementById('winner-podium-section');
+
         container.innerHTML = '';
         leaderboardContainer.innerHTML = '';
 
@@ -477,10 +630,11 @@
             total_score: 0,
             answer: '',
             picked_member: null,
-            members: []
+            members: [],
+            photo: null
           };
 
-          groupList.push({ id: groupId, name: 'Kelompok ' + i, score: group.total_score || 0, status: group.status });
+          groupList.push({ id: groupId, name: 'Kelompok ' + i, score: group.total_score || 0, status: group.status, members: group.members, photo: group.photo });
           const scoreEarned = group.finish_order ? (scoreTable[group.finish_order] || 100) : 100;
 
           let statusBadge = '';
@@ -509,7 +663,7 @@
             </div>
             <div>
               ${group.status === 'waiting' ? `
-                <button type="button" onclick="approveGroup('${groupId}', ${group.current_round || 1}, ${group.total_score || 0}, ${scoreEarned})" class="w-full py-2 bg-emerald-600 font-bold rounded-xl text-sm mb-2">✅ ACC (+${scoreEarned} Poin)</button>
+                <button type="button" onclick="approveGroup('${groupId}',${group.current_round || 1}, ${group.total_score \vert{}\vert{} 0},${scoreEarned})" class="w-full py-2 bg-emerald-600 font-bold rounded-xl text-sm mb-2">✅ ACC (+${scoreEarned} Poin)</button>
                 <button type="button" onclick="rejectGroup('${groupId}')" class="w-full py-1.5 bg-rose-600/30 text-rose-300 font-bold rounded-xl text-xs">❌ Suruh Diskusi Ulang</button>
               ` : `<button type="button" disabled class="w-full py-2 bg-slate-700 text-slate-500 font-semibold rounded-xl text-xs">Menunggu...</button>`}
             </div>
@@ -519,6 +673,29 @@
 
         groupList.sort((a, b) => b.score - a.score);
         const maxScore = Math.max(...groupList.map(g => g.score), 500);
+
+        // CEK APAKAH SEMUA TIM SELESAI UNTUK MENAMPILKAN PODIUM JUARA 1 REAL-TIME
+        const activeGroups = groupList.filter(g => g.members && g.members.length > 0);
+        const isAllFinished = activeGroups.length > 0 && activeGroups.every(g => g.status === 'completed');
+
+        if (isAllFinished) {
+          const winner = groupList[0];
+          winnerPodiumSection.classList.remove('hidden');
+          document.getElementById('winner-group-title').innerText = winner.name.toUpperCase();
+          document.getElementById('winner-members-text').innerText = "Anggota: " + (winner.members ? winner.members.join(', ') : '-');
+          document.getElementById('winner-score-badge').innerText = "🏆 Skor Akhir: " + winner.score + " Poin";
+
+          if (winner.photo) {
+            document.getElementById('winner-photo-img').src = winner.photo;
+            document.getElementById('winner-photo-img').classList.remove('hidden');
+          } else {
+            document.getElementById('winner-photo-img').classList.add('hidden');
+          }
+
+          triggerConfetti();
+        } else {
+          winnerPodiumSection.classList.add('hidden');
+        }
 
         groupList.forEach((item, index) => {
           const widthPercent = Math.max((item.score / maxScore) * 100, 10);
@@ -531,6 +708,7 @@
                 <span class="text-xs font-extrabold text-slate-950">${item.score} Poin</span>
               </div>
             </div>
+            ${item.photo ? `<img src="${item.photo}" class="w-8 h-8 rounded-full object-cover border-2 border-sky-400" />` : ''}
           `;
           leaderboardContainer.appendChild(bar);
         });
