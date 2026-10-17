@@ -117,30 +117,21 @@
         return;
       }
 
-      // Cari angka urutan terendah (1-5) yang sedang tidak dipakai di ronde ini
       db.ref('groups').once('value', (snapshot) => {
         const groups = snapshot.val() || {};
         let myCurrentRound = groups[selectedGroup] ? groups[selectedGroup].current_round : 1;
         
-        let takenOrders = [];
+        let countWaiting = 0;
         for (let key in groups) {
           if (groups[key].current_round === myCurrentRound && groups[key].finish_order) {
-            takenOrders.push(groups[key].finish_order);
-          }
-        }
-
-        let assignedOrder = 1;
-        for (let order = 1; order <= 5; order++) {
-          if (!takenOrders.includes(order)) {
-            assignedOrder = order;
-            break;
+            countWaiting++;
           }
         }
 
         db.ref('groups/' + selectedGroup).update({
           status: 'waiting',
           answer: answer,
-          finish_order: assignedOrder
+          finish_order: countWaiting + 1
         });
       });
     }
