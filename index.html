@@ -64,7 +64,7 @@
       
       <div class="space-y-4 mb-8">
         <button type="button" onclick="playClickSound(); showManualCodeModal();" class="w-full py-4 bg-gradient-to-r from-indigo-600 to-sky-600 hover:from-indigo-500 hover:to-sky-500 font-bold rounded-2xl transition text-base shadow-lg flex items-center justify-center gap-2">👨‍🎓 Masuk sebagai Siswa</button>
-        <button type="button" onclick="playClickSound(); createTeacherRoom();" class="w-full py-3.5 bg-slate-800/80 hover:bg-slate-700/80 font-semibold text-slate-300 rounded-2xl transition text-sm border border-slate-700 flex items-center justify-center gap-2">👨‍🏫 Masuk / Buat Ruang Kuis (Guru)</button>
+        <button type="button" onclick="playClickSound(); showTeacherLoginModal();" class="w-full py-3.5 bg-slate-800/80 hover:bg-slate-700/80 font-semibold text-slate-300 rounded-2xl transition text-sm border border-slate-700 flex items-center justify-center gap-2">👨‍🏫 Masuk Akun Guru</button>
       </div>
     </div>
 
@@ -77,7 +77,20 @@
     </div>
   </div>
 
-  <!-- MODAL MANUAL MASUKKAN KODE RUANG -->
+  <!-- MODAL LOGIN GURU DENGAN ID UNIK -->
+  <div id="teacher-login-modal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 z-50">
+    <div class="glass-card p-6 rounded-3xl border border-sky-500/30 w-full max-w-sm text-center shadow-2xl space-y-4">
+      <h2 class="text-xl font-bold text-sky-300">👨‍🏫 Masuk Akun Guru</h2>
+      <p class="text-xs text-slate-300">Masukkan Nama atau ID Unik Guru milikmu untuk mengelola bank soal & melihat riwayat kuis pribadi.</p>
+      <input type="text" id="teacher-id-input" placeholder="Contoh: guru_abil" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-white font-bold text-center focus:outline-none focus:border-sky-400" />
+      <div class="flex gap-2">
+        <button type="button" onclick="playClickSound(); closeTeacherLoginModal();" class="w-1/2 py-2.5 bg-slate-700 font-semibold rounded-xl text-xs">Batal</button>
+        <button type="button" onclick="playClickSound(); handleTeacherLogin();" class="w-1/2 py-2.5 bg-sky-600 font-bold rounded-xl text-xs">Masuk / Buat</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL MANUAL MASUKKAN KODE RUANG (SISWA) -->
   <div id="manual-code-modal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 z-50">
     <div class="glass-card p-6 rounded-3xl border border-sky-500/30 w-full max-w-sm text-center shadow-2xl">
       <h2 class="text-xl font-bold text-sky-300 mb-2">🔑 Masukkan Kode Ruang</h2>
@@ -90,11 +103,28 @@
     </div>
   </div>
 
-  <!-- MODAL RIWAYAT HASIL KUIS (GURU) - KHUSUS RUANG INI -->
+  <!-- MODAL BANK SOAL PUBLIK KOMUNITAS -->
+  <div id="public-bank-modal" class="hidden fixed inset-0 bg-black/90 backdrop-blur-md flex items-center justify-center p-4 z-50">
+    <div class="glass-card p-6 rounded-3xl border border-emerald-400/40 w-full max-w-2xl shadow-2xl space-y-4 max-h-[85vh] flex flex-col">
+      <div class="flex justify-between items-center border-b border-slate-700 pb-3">
+        <h2 class="text-xl font-extrabold text-emerald-300 flex items-center gap-2">🌐 Bank Soal Publik Bersama</h2>
+        <button type="button" onclick="playClickSound(); closePublicBankModal();" class="text-slate-400 hover:text-white font-bold text-sm">✕ Tutup</button>
+      </div>
+      <p class="text-xs text-slate-300">Bank soal yang dipublikasikan oleh guru-guru lain. Kamu bisa menyalinnya langsung ke akunmu!</p>
+
+      <div id="public-bank-list-container" class="space-y-4 overflow-y-auto pr-2 flex-1"></div>
+
+      <div class="pt-2 border-t border-slate-800 text-right">
+        <button type="button" onclick="playClickSound(); closePublicBankModal();" class="px-5 py-2.5 bg-slate-800 hover:bg-slate-700 font-bold rounded-xl text-xs text-slate-300">Tutup</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL RIWAYAT HASIL KUIS PRIBADI GURU -->
   <div id="history-modal" class="hidden fixed inset-0 bg-black/90 backdrop-blur-md flex items-center justify-center p-4 z-50">
     <div class="glass-card p-6 rounded-3xl border border-amber-400/40 w-full max-w-2xl shadow-2xl space-y-4 max-h-[85vh] flex flex-col">
       <div class="flex justify-between items-center border-b border-slate-700 pb-3">
-        <h2 class="text-xl font-extrabold text-amber-300 flex items-center gap-2">📜 Riwayat Rekap Nilai Ruangan Ini</h2>
+        <h2 class="text-xl font-extrabold text-amber-300 flex items-center gap-2">📜 Seluruh Riwayat Rekap Kuis Saya</h2>
         <button type="button" onclick="playClickSound(); closeHistoryModal();" class="text-slate-400 hover:text-white font-bold text-sm">✕ Tutup</button>
       </div>
 
@@ -239,30 +269,32 @@
     <div class="glass-card p-6 rounded-3xl border border-sky-500/20 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
       <div>
         <div class="flex items-center gap-2">
-          <h1 class="text-3xl font-extrabold text-sky-300">🏆 Dashboard Kontrol Guru</h1>
-          <span id="teacher-room-badge" class="bg-amber-500/20 text-amber-300 text-xs font-bold px-3 py-1 rounded-lg border border-amber-500/30">Ruang: -</span>
-          <button type="button" onclick="playClickSound(); openQRModal();" class="px-3 py-1 bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold text-xs rounded-lg shadow-md flex items-center gap-1">📱 Tampilkan QR Code</button>
+          <h1 class="text-2xl font-extrabold text-sky-300">🏆 Dashboard Kontrol Guru</h1>
+          <span id="teacher-id-badge" class="bg-indigo-500/20 text-indigo-300 text-xs font-bold px-2.5 py-1 rounded-lg border border-indigo-500/30">👤 Guru: -</span>
+          <span id="teacher-room-badge" class="bg-amber-500/20 text-amber-300 text-xs font-bold px-2.5 py-1 rounded-lg border border-amber-500/30">Ruang: -</span>
+          <button type="button" onclick="playClickSound(); openQRModal();" class="px-2.5 py-1 bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold text-xs rounded-lg shadow-md flex items-center gap-1">📱 QR Code</button>
         </div>
-        <p class="text-slate-400 text-xs mt-1">Kelola kelompok, bank soal tersimpan, & ACC nilai kuis.</p>
+        <p class="text-slate-400 text-xs mt-1">Kelola bank soal pribadi & publik, simpan rekap nilai, serta ACC kuis real-time.</p>
       </div>
-      <div class="flex flex-wrap items-center gap-3">
-        <button type="button" onclick="playClickSound(); openHistoryModal();" class="px-3.5 py-2.5 bg-indigo-600 hover:bg-indigo-500 font-bold rounded-xl text-xs flex items-center gap-1.5 shadow-lg">📜 Riwayat Rekap Nilai</button>
-        <div id="quiz-status-indicator" class="px-3.5 py-2 rounded-xl text-xs font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">
-          Status: Belum Dimulai
+      <div class="flex flex-wrap items-center gap-2">
+        <button type="button" onclick="playClickSound(); openPublicBankModal();" class="px-3 py-2 bg-emerald-600 hover:bg-emerald-500 font-bold rounded-xl text-xs flex items-center gap-1 shadow-lg">🌐 Bank Soal Publik</button>
+        <button type="button" onclick="playClickSound(); openHistoryModal();" class="px-3 py-2 bg-indigo-600 hover:bg-indigo-500 font-bold rounded-xl text-xs flex items-center gap-1 shadow-lg">📜 Riwayat Rekap Nilai Saya</button>
+        <div id="quiz-status-indicator" class="px-3 py-2 rounded-xl text-xs font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">
+          Belum Dimulai
         </div>
-        <button type="button" id="toggle-quiz-btn" onclick="toggleQuizState()" class="px-5 py-2.5 bg-emerald-600 font-bold rounded-xl text-xs">🚀 Mulai Kuis</button>
-        <button type="button" onclick="playClickSound(); saveCurrentQuizResults();" class="px-3.5 py-2.5 bg-amber-600 hover:bg-amber-500 text-white font-bold rounded-xl text-xs shadow-lg">💾 Simpan Rekap Hasil</button>
-        <button type="button" onclick="playClickSound(); location.href=location.pathname;" class="px-3.5 py-2.5 bg-slate-800 rounded-xl text-xs font-bold">← Keluar</button>
-        <button type="button" onclick="resetAllGame()" class="px-3.5 py-2.5 bg-rose-600/80 font-bold rounded-xl text-xs">🔄 Reset Kuis</button>
+        <button type="button" id="toggle-quiz-btn" onclick="toggleQuizState()" class="px-4 py-2 bg-emerald-600 font-bold rounded-xl text-xs">🚀 Mulai Kuis</button>
+        <button type="button" onclick="playClickSound(); saveCurrentQuizResults();" class="px-3 py-2 bg-amber-600 hover:bg-amber-500 text-white font-bold rounded-xl text-xs shadow-lg">💾 Simpan Rekap</button>
+        <button type="button" onclick="playClickSound(); location.href=location.pathname;" class="px-3 py-2 bg-slate-800 rounded-xl text-xs font-bold">← Keluar</button>
+        <button type="button" onclick="resetAllGame()" class="px-3 py-2 bg-rose-600/80 font-bold rounded-xl text-xs">🔄 Reset Kuis</button>
       </div>
     </div>
 
-    <!-- PENGATURAN SOAL & KELOMPOK -->
+    <!-- PENGATURAN SOAL & BANK PRESET AKUN GURU -->
     <div class="glass-card p-6 rounded-3xl border border-sky-500/20 space-y-4">
       <div class="flex flex-wrap justify-between items-center gap-3 border-b border-slate-700 pb-3">
         <div>
-          <h3 class="text-lg font-bold text-sky-300">⚙️ Pengaturan Jumlah Kelompok & Bank Soal</h3>
-          <p class="text-xs text-slate-400">Atur berapa saja jumlah soal & kelompok di kelas.</p>
+          <h3 class="text-lg font-bold text-sky-300">⚙️ Pengaturan Soal & Bank Preset Akun</h3>
+          <p class="text-xs text-slate-400">Pilih bank soal yang sudah disimpan atau buat preset baru.</p>
         </div>
         <div class="flex items-center gap-2">
           <select id="preset-selector" onchange="loadSelectedPreset(this.value)" class="bg-slate-900 border border-slate-700 text-xs rounded-xl p-2 text-white">
@@ -312,7 +344,7 @@
     <div id="groups-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
   </div>
 
-  <!-- FIREBASE & LOGIKA EFEK SUARA -->
+  <!-- FIREBASE & LOGIKA APLIKASI -->
   <script>
     let capturedPhotoData = null;
     let tempPhotoData = null;
@@ -320,6 +352,7 @@
     let currentSelectedAnswer = "";
     let totalConfiguredGroups = 5;
     let currentRoomCode = "DEFAULT";
+    let currentTeacherId = "GURU_ANONIM";
     let previousStatus = null;
     let previousRound = null;
 
@@ -511,16 +544,35 @@
       return `KUIS-${rand}`;
     }
 
+    function showTeacherLoginModal() {
+      document.getElementById('teacher-login-modal').classList.remove('hidden');
+    }
+
+    function closeTeacherLoginModal() {
+      document.getElementById('teacher-login-modal').classList.add('hidden');
+    }
+
+    function handleTeacherLogin() {
+      const rawId = document.getElementById('teacher-id-input').value.trim();
+      if (!rawId) return alert("Masukkan Nama / ID Unik Guru!");
+      currentTeacherId = rawId.toLowerCase().replace(/[^a-z0-9_]/g, '_');
+      
+      closeTeacherLoginModal();
+      createTeacherRoom();
+    }
+
     function createTeacherRoom() {
       currentRoomCode = generateUniqueRoomCode();
       db.ref(`rooms/${currentRoomCode}`).set({
         created_at: Date.now(),
+        teacher_id: currentTeacherId,
         group_count: 5,
         quiz_started: false,
         active_quiz_questions: activeQuestions
       }, () => {
         document.getElementById('role-screen').classList.add('hidden');
         document.getElementById('teacher-dashboard-screen').classList.remove('hidden');
+        document.getElementById('teacher-id-badge').innerText = "👤 Guru: " + currentTeacherId;
         document.getElementById('teacher-room-badge').innerText = "Ruang: " + currentRoomCode;
         initTeacherDashboard();
       });
@@ -547,7 +599,7 @@
           closeManualCodeModal();
           openStudentSetupScreen();
         } else {
-          alert(`❌ Kode Ruang "${code}" tidak ditemukan!\n\nPastikan Guru sudah menekan "Buat Ruang Kuis" terlebih dahulu.`);
+          alert(`❌ Kode Ruang "${code}" tidak ditemukan!\n\nPastikan Guru sudah menekan "Masuk Akun Guru" terlebih dahulu.`);
         }
       });
     }
@@ -758,21 +810,36 @@
       });
     }
 
+    // SIMPAN PRESET AKUN GURU DENGAN PILIHAN (PRIVAT ATAU PUBLIK)
     function saveAsNewPreset() {
       const presetName = prompt("Masukkan nama simpanan bank soal ini (contoh: Ulangan Bab 1):");
       if (!presetName) return;
 
+      const isPublic = confirm("Apakah bank soal ini ingin DIPUBLIKASIKAN ke Guru lain?\n\n[OK] = 🌐 Publik (Dapat dilihat & disalin guru lain)\n[Cancel] = 🔒 Privat (Hanya untuk akunmu)");
       const questionsToSave = collectQuestionsFromEditor();
       const key = presetName.replace(/[^a-zA-Z0-9]/g, '_');
 
-      db.ref(`rooms/${currentRoomCode}/question_presets/${key}`).set({
+      const presetData = {
         title: presetName,
-        questions: questionsToSave
-      }, () => alert("Preset soal berhasil disimpan!"));
+        questions: questionsToSave,
+        is_public: isPublic,
+        author: currentTeacherId,
+        created_at: Date.now()
+      };
+
+      // SIMPAN KE PRESET AKUN GURU PRIBADI
+      db.ref(`teachers/${currentTeacherId}/presets/${key}`).set(presetData);
+
+      // JIKA DIPILIH PUBLIK, SIMPAN JUGA KE BANK SOAL BERSAMA
+      if (isPublic) {
+        db.ref(`public_bank/${key}`).set(presetData);
+      }
+
+      alert(`Bank Soal "${presetName}" berhasil disimpan sebagai ${isPublic ? '🌐 PUBLIK' : '🔒 PRIVAT'}!`);
     }
 
     function loadPresetsList() {
-      db.ref(`rooms/${currentRoomCode}/question_presets`).on('value', (snapshot) => {
+      db.ref(`teachers/${currentTeacherId}/presets`).on('value', (snapshot) => {
         const data = snapshot.val() || {};
         const selector = document.getElementById('preset-selector');
         selector.innerHTML = '<option value="default">Bank Soal Utama (Default)</option>';
@@ -780,7 +847,8 @@
         Object.keys(data).forEach(key => {
           const option = document.createElement('option');
           option.value = key;
-          option.innerText = data[key].title;
+          const statusIcon = data[key].is_public ? '🌐' : '🔒';
+          option.innerText = `${statusIcon} ${data[key].title}`;
           selector.appendChild(option);
         });
       });
@@ -788,7 +856,7 @@
 
     function loadSelectedPreset(presetKey) {
       if (presetKey === "default") return;
-      db.ref(`rooms/${currentRoomCode}/question_presets/${presetKey}`).once('value', (snapshot) => {
+      db.ref(`teachers/${currentTeacherId}/presets/${presetKey}`).once('value', (snapshot) => {
         const data = snapshot.val();
         if (data && data.questions) {
           activeQuestions = data.questions;
@@ -798,7 +866,58 @@
       });
     }
 
-    // SIMPAN REKAP NILAI DENGAN CATATAN TANGGAL SUBMIT AKHIR
+    // BANK SOAL PUBLIK KOMUNITAS GURU
+    function openPublicBankModal() {
+      const modal = document.getElementById('public-bank-modal');
+      const container = document.getElementById('public-bank-list-container');
+      container.innerHTML = '<p class="text-xs text-slate-400 italic text-center py-4">Memuat bank soal publik...</p>';
+
+      db.ref('public_bank').once('value', (snapshot) => {
+        const publicData = snapshot.val() || {};
+        container.innerHTML = '';
+
+        const keys = Object.keys(publicData);
+        if (keys.length === 0) {
+          container.innerHTML = '<p class="text-xs text-slate-400 italic text-center py-6">Belum ada bank soal publik yang dibagikan oleh guru lain.</p>';
+        } else {
+          keys.forEach(key => {
+            const item = publicData[key];
+            const div = document.createElement('div');
+            div.className = "bg-slate-900/90 p-4 rounded-2xl border border-slate-800 flex justify-between items-center text-xs";
+
+            div.innerHTML = `
+              <div>
+                <h4 class="font-bold text-emerald-300 text-sm">🌐 ${item.title}</h4>
+                <p class="text-[11px] text-slate-400 mt-0.5">Dibuat oleh: <strong class="text-slate-200">${item.author || 'Guru'}</strong> | Jumlah Soal: ${item.questions ? item.questions.length : 0}</p>
+              </div>
+              <button type="button" onclick="copyPublicPresetToAccount('${key}')" class="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-500 font-bold rounded-xl text-xs shadow-md">📋 Salin ke Akun Saya</button>
+            `;
+            container.appendChild(div);
+          });
+        }
+      });
+
+      modal.classList.remove('hidden');
+    }
+
+    function copyPublicPresetToAccount(key) {
+      db.ref(`public_bank/${key}`).once('value', (snapshot) => {
+        const data = snapshot.val();
+        if (!data) return;
+
+        data.is_public = false; // Disalin sebagai milik pribadi
+        db.ref(`teachers/${currentTeacherId}/presets/${key}`).set(data, () => {
+          alert(`✅ Bank Soal "${data.title}" berhasil disalin ke akun milikmu (${currentTeacherId})!`);
+          closePublicBankModal();
+        });
+      });
+    }
+
+    function closePublicBankModal() {
+      document.getElementById('public-bank-modal').classList.add('hidden');
+    }
+
+    // SIMPAN REKAP NILAI KHUSUS AKUN GURU
     function saveCurrentQuizResults() {
       db.ref(`rooms/${currentRoomCode}/groups`).once('value', (snapshot) => {
         const groupsData = snapshot.val();
@@ -815,7 +934,7 @@
           });
         });
 
-        // PENANGANAN PENENTUAN JUARA (TIE-BREAKER: SKOR TINGGI DAHULU, JIKA SAMA PADA YANG PALING AWAL MENGUMPULKAN)
+        // TIE-BREAKER: SKOR TINGGI DAHULU, JIKA SAMA MAKA YANG LEBIH CEPAT SUBMIT LEST_SUBMIT_TIME
         list.sort((a, b) => {
           if (b.score !== a.score) return b.score - a.score;
           return a.last_submit_time - b.last_submit_time;
@@ -824,30 +943,30 @@
         const now = new Date();
         const timestampStr = now.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
 
-        const newHistoryKey = db.ref(`quiz_history/${currentRoomCode}`).push().key;
-        db.ref(`quiz_history/${currentRoomCode}/${newHistoryKey}`).set({
+        const newHistoryKey = db.ref(`teachers/${currentTeacherId}/quiz_history`).push().key;
+        db.ref(`teachers/${currentTeacherId}/quiz_history/${newHistoryKey}`).set({
           room_code: currentRoomCode,
           date_saved: timestampStr,
           results: list
         }, () => {
-          alert("✅ Rekap Hasil Kuis Berhasil Disimpan Khusus untuk Ruangan " + currentRoomCode + "!");
+          alert("✅ Rekap Hasil Kuis Berhasil Disimpan Khusus ke Akun Guru " + currentTeacherId + "!");
         });
       });
     }
 
-    // BUKA REKAP HANYA UNTUK KODE RUANGAN MILIK GURU INI
+    // BUKA REKAP HANYA UNTUK AKUN GURU INI
     function openHistoryModal() {
       const modal = document.getElementById('history-modal');
       const container = document.getElementById('history-list-container');
-      container.innerHTML = '<p class="text-xs text-slate-400 italic text-center py-4">Memuat riwayat rekap nilai ruang ini...</p>';
+      container.innerHTML = '<p class="text-xs text-slate-400 italic text-center py-4">Memuat riwayat rekap nilai milikmu...</p>';
 
-      db.ref(`quiz_history/${currentRoomCode}`).once('value', (snapshot) => {
+      db.ref(`teachers/${currentTeacherId}/quiz_history`).once('value', (snapshot) => {
         const historyData = snapshot.val() || {};
         container.innerHTML = '';
 
         const keys = Object.keys(historyData).reverse();
         if (keys.length === 0) {
-          container.innerHTML = '<p class="text-xs text-slate-400 italic text-center py-6">Belum ada riwayat kuis tersimpan untuk Ruangan ' + currentRoomCode + '.</p>';
+          container.innerHTML = '<p class="text-xs text-slate-400 italic text-center py-6">Belum ada riwayat kuis tersimpan di akun ' + currentTeacherId + '.</p>';
         } else {
           keys.forEach(key => {
             const h = historyData[key];
@@ -894,7 +1013,7 @@
 
     function deleteHistoryRecord(key) {
       if (!confirm("Hapus catatan rekap ini?")) return;
-      db.ref(`quiz_history/${currentRoomCode}/${key}`).remove(() => openHistoryModal());
+      db.ref(`teachers/${currentTeacherId}/quiz_history/${key}`).remove(() => openHistoryModal());
     }
 
     function closeHistoryModal() {
@@ -1033,7 +1152,7 @@
             });
           });
 
-          // PENGURUTAN PERINGKAT DENGAN KETENTUAN KECEPATAN PENGUMPULAN (TIE-BREAKER)
+          // TIE-BREAKER SKOR & WAKTU KECEPATAN SUBMIT
           groupList.sort((a, b) => {
             if (b.score !== a.score) return b.score - a.score;
             return a.last_submit_time - b.last_submit_time;
@@ -1092,7 +1211,7 @@
             answer: finalAnswer,
             finish_order: passedCount + countWaiting + 1,
             picked_member: null,
-            last_submit_time: Date.now() // MENYIMPAN TIMESTAMP WAKTU PENGUMPULAN PRESISE
+            last_submit_time: Date.now()
           });
           currentSelectedAnswer = "";
         });
@@ -1119,13 +1238,13 @@
         const statusInd = document.getElementById('quiz-status-indicator');
         const toggleBtn = document.getElementById('toggle-quiz-btn');
         if (started) {
-          statusInd.innerText = "Status: 🚀 Kuis Berlangsung";
+          statusInd.innerText = "🚀 Berlangsung";
           toggleBtn.innerText = "🔒 Kunci Kuis";
-          toggleBtn.className = "px-5 py-2.5 bg-rose-600 font-bold rounded-xl text-xs";
+          toggleBtn.className = "px-4 py-2 bg-rose-600 font-bold rounded-xl text-xs";
         } else {
-          statusInd.innerText = "Status: ⏳ Belum Dimulai";
-          toggleBtn.innerText = "🚀 Mulai Kuis Sekarang";
-          toggleBtn.className = "px-5 py-2.5 bg-emerald-600 font-bold rounded-xl text-xs";
+          statusInd.innerText = "⏳ Belum Dimulai";
+          toggleBtn.innerText = "🚀 Mulai Kuis";
+          toggleBtn.className = "px-4 py-2 bg-emerald-600 font-bold rounded-xl text-xs";
         }
       });
 
@@ -1199,7 +1318,7 @@
           container.appendChild(card);
         }
 
-        // PENGURUTAN PERINGKAT DENGAN TIE-BREAKER WAKTU TERCEPAT
+        // PERANGKINGAN ADIL DENGAN KETENTUAN WAKTU KECEPATAN SUBMIT
         groupList.sort((a, b) => {
           if (b.score !== a.score) return b.score - a.score;
           return a.last_submit_time - b.last_submit_time;
