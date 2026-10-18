@@ -68,10 +68,10 @@
       </div>
     </div>
 
-    <!-- HAK CIPTA & PENGEMBANG -->
+    <!-- HAK CIPTA & COPYRIGHT PENGEMBANG -->
     <div class="pt-4 border-t border-slate-700/60">
       <p class="text-[11px] text-slate-300 leading-relaxed font-medium">
-        Dikembangkan oleh <span class="font-bold text-amber-300">Nabilah Burairah</span><br>
+        © 2026 <span class="font-bold text-amber-300">Nabilah Burairah</span>. All Rights Reserved.<br>
         <span class="text-slate-400">Mahasiswa PPG Calon Guru Universitas PGRI Sumatera Barat</span>
       </p>
     </div>
@@ -156,6 +156,13 @@
       <span id="score-display" class="bg-emerald-500/20 text-emerald-300 text-xs font-bold px-3.5 py-2 rounded-full border border-emerald-500/30">Total Skor: 0</span>
     </div>
 
+    <!-- NOTIFIKASI VISUAL REJECT / APPROVE DARI GURU -->
+    <div id="status-feedback-banner" class="hidden p-4 rounded-2xl border text-center animate-bounce shadow-xl">
+      <div id="feedback-icon" class="text-4xl mb-1"></div>
+      <h3 id="feedback-title" class="text-lg font-black uppercase tracking-wide"></h3>
+      <p id="feedback-desc" class="text-xs mt-1 font-semibold"></p>
+    </div>
+
     <div id="quiz-lobby-box" class="glass-card p-8 rounded-3xl border border-sky-500/20 text-center py-12">
       <div class="animate-bounce text-5xl mb-4">⏳</div>
       <h2 class="text-2xl font-extrabold text-amber-300 mb-2">Menunggu Kuis Dimulai</h2>
@@ -185,10 +192,16 @@
         </div>
       </div>
 
+      <!-- SELESAI SELURUH SOAL & PENGUMUMAN JUARA DI SISWA -->
       <div id="finished-all-box" class="hidden text-center py-6">
-        <div class="text-6xl mb-3">🎉</div>
-        <h2 class="text-2xl font-bold text-emerald-300 mb-2">Luar Biasa!</h2>
-        <p class="text-slate-300 text-sm mb-6">Kelompokmu telah menyelesaikan seluruh soal kuis!</p>
+        <div id="student-rank-badge" class="text-3xl font-extrabold text-amber-300 mb-2 animate-bounce"></div>
+        <p id="student-rank-subtitle" class="text-xs text-slate-300 mb-6 italic"></p>
+
+        <!-- FOTO KELOMPOK SISWA -->
+        <div class="relative inline-block mb-6">
+          <img id="student-self-photo" src="" class="w-64 h-44 object-cover rounded-2xl border-4 border-amber-400 shadow-2xl mx-auto" />
+          <span class="absolute -top-3 -right-3 text-3xl">👑</span>
+        </div>
 
         <div class="space-y-3">
           <button type="button" onclick="playClickSound(); toggleExplanations();" class="w-full py-3 bg-sky-600 hover:bg-sky-500 font-bold text-xs rounded-xl shadow-lg transition">
@@ -283,7 +296,7 @@
     <div id="groups-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
   </div>
 
-  <!-- FIREBASE & LOGIKA TERBARU -->
+  <!-- FIREBASE & LOGIKA EFEK SUARA -->
   <script>
     let capturedPhotoData = null;
     let tempPhotoData = null;
@@ -291,6 +304,7 @@
     let currentSelectedAnswer = "";
     let totalConfiguredGroups = 5;
     let currentRoomCode = "DEFAULT";
+    let previousStatus = null;
 
     // WEB AUDIO API
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -308,6 +322,38 @@
       gain.connect(audioCtx.destination);
       osc.start();
       osc.stop(audioCtx.currentTime + 0.08);
+    }
+
+    function playRejectSound() {
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(300, audioCtx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(120, audioCtx.currentTime + 0.3);
+      gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+      gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start();
+      osc.stop(audioCtx.currentTime + 0.3);
+    }
+
+    function playNextRoundSound() {
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+      const notes = [523.25, 659.25, 783.99, 1046.50];
+      notes.forEach((freq, i) => {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(freq, audioCtx.currentTime + i * 0.06);
+        gain.gain.setValueAtTime(0.2, audioCtx.currentTime + i * 0.06);
+        gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + i * 0.06 + 0.15);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start(audioCtx.currentTime + i * 0.06);
+        osc.stop(audioCtx.currentTime + i * 0.06 + 0.15);
+      });
     }
 
     function playCameraShutterSound() {
@@ -450,8 +496,6 @@
 
     function createTeacherRoom() {
       currentRoomCode = generateUniqueRoomCode();
-      
-      // INISIALISASI RUANG DI DATABASE FIREBASE OLEH GURU
       db.ref(`rooms/${currentRoomCode}`).set({
         created_at: Date.now(),
         group_count: 5,
@@ -480,7 +524,6 @@
       validateAndEnterRoom(currentRoomCode);
     }
 
-    // FUNGSI VALIDASI KEBERADAAN RUANG KUIS DIBUAT OLEH GURU
     function validateAndEnterRoom(code) {
       db.ref(`rooms/${code}`).once('value', (snapshot) => {
         if (snapshot.exists()) {
@@ -600,6 +643,31 @@
 
     function toggleExplanations() {
       document.getElementById('explanations-container').classList.toggle('hidden');
+    }
+
+    function showStatusFeedback(type, title, desc) {
+      const banner = document.getElementById('status-feedback-banner');
+      const icon = document.getElementById('feedback-icon');
+      const titleEl = document.getElementById('feedback-title');
+      const descEl = document.getElementById('feedback-desc');
+
+      if (type === 'reject') {
+        playRejectSound();
+        banner.className = "p-4 rounded-2xl border text-center animate-bounce shadow-xl bg-rose-900/80 border-rose-500 text-rose-200 mb-4";
+        icon.innerText = "😢";
+      } else if (type === 'approve') {
+        playNextRoundSound();
+        banner.className = "p-4 rounded-2xl border text-center animate-bounce shadow-xl bg-emerald-900/80 border-emerald-500 text-emerald-200 mb-4";
+        icon.innerText = "🎉";
+      }
+
+      titleEl.innerText = title;
+      descEl.innerText = desc;
+      banner.classList.remove('hidden');
+
+      setTimeout(() => {
+        banner.classList.add('hidden');
+      }, 5000);
     }
 
     function generateQuestionInputs(count) {
@@ -759,18 +827,27 @@
         document.getElementById('quiz-content-wrapper').classList.toggle('hidden', !started);
       });
 
-      db.ref(`rooms/${currentRoomCode}/groups/${selectedGroup}`).on('value', (snapshot) => {
-        const data = snapshot.val();
-        if (!data) return;
+      db.ref(`rooms/${currentRoomCode}/groups`).on('value', (allGroupsSnap) => {
+        const allGroups = allGroupsSnap.val() || {};
+        const myData = allGroups[selectedGroup];
+        if (!myData) return;
 
-        const roundIndex = (data.current_round || 1) - 1;
+        // DETEKSI PERUBAHAN STATUS DISKUSI ULANG / ACC
+        if (previousStatus === 'waiting' && myData.status === 'answering') {
+          showStatusFeedback('reject', 'Yuk Diskusi Ulang!', 'Jawaban kelompok kurang pas. Diskusikan kembali dan pastikan SEMUA anggota kelompok paham!');
+        } else if (previousStatus === 'waiting' && (myData.status === 'answering' || myData.status === 'completed') && myData.finish_order === null) {
+          showStatusFeedback('approve', 'Jawaban ACC! Lanjut!', 'Hebat! Jawaban benar. Bersiap untuk soal berikutnya!');
+        }
+        previousStatus = myData.status;
+
+        const roundIndex = (myData.current_round || 1) - 1;
         const totalRounds = activeQuestions.length;
 
         document.getElementById('dynamic-bg').className = `bg-round-${(roundIndex % 4) + 1} text-white min-h-screen flex flex-col items-center justify-center p-4 relative overflow-x-hidden transition-all duration-1000`;
-        document.getElementById('score-display').innerText = 'Total Skor: ' + (data.total_score || 0);
-        if (data.members) document.getElementById('group-members-display').innerText = 'Anggota: ' + data.members.join(', ');
+        document.getElementById('score-display').innerText = 'Total Skor: ' + (myData.total_score || 0);
+        if (myData.members) document.getElementById('group-members-display').innerText = 'Anggota: ' + myData.members.join(', ');
 
-        if (data.status === 'answering') {
+        if (myData.status === 'answering') {
           document.getElementById('quiz-box').classList.remove('hidden');
           document.getElementById('waiting-box').classList.add('hidden');
           document.getElementById('finished-all-box').classList.add('hidden');
@@ -805,23 +882,46 @@
             answerContainer.appendChild(textarea);
           }
 
-        } else if (data.status === 'waiting') {
+        } else if (myData.status === 'waiting') {
           document.getElementById('quiz-box').classList.add('hidden');
           document.getElementById('waiting-box').classList.remove('hidden');
           document.getElementById('finished-all-box').classList.add('hidden');
-          document.getElementById('finish-order-badge').innerText = 'Urutan Selesai: #' + (data.finish_order || '-');
+          document.getElementById('finish-order-badge').innerText = 'Urutan Selesai: #' + (myData.finish_order || '-');
 
           const pickedBox = document.getElementById('picked-member-box');
-          if (data.picked_member) {
+          if (myData.picked_member) {
             pickedBox.classList.remove('hidden');
-            document.getElementById('picked-member-text').innerText = data.picked_member + ' Wajib Maju!';
+            document.getElementById('picked-member-text').innerText = myData.picked_member + ' Wajib Maju!';
           } else {
             pickedBox.classList.add('hidden');
           }
-        } else if (data.status === 'completed') {
+        } else if (myData.status === 'completed') {
           document.getElementById('quiz-box').classList.add('hidden');
           document.getElementById('waiting-box').classList.add('hidden');
           document.getElementById('finished-all-box').classList.remove('hidden');
+
+          let groupList = [];
+          Object.keys(allGroups).forEach(key => {
+            groupList.push({ id: key, score: allGroups[key].total_score || 0 });
+          });
+          groupList.sort((a, b) => b.score - a.score);
+
+          const myRankIndex = groupList.findIndex(g => g.id === selectedGroup);
+          const myRankNumber = myRankIndex !== -1 ? myRankIndex + 1 : 1;
+
+          const rankTitleEl = document.getElementById('student-rank-badge');
+          const rankSubEl = document.getElementById('student-rank-subtitle');
+
+          if (myRankNumber === 1) rankTitleEl.innerText = "🥇 JUARA 1 KELAS!";
+          else if (myRankNumber === 2) rankTitleEl.innerText = "🥈 JUARA 2 KELAS!";
+          else if (myRankNumber === 3) rankTitleEl.innerText = "🥉 JUARA 3 KELAS!";
+          else rankTitleEl.innerText = `🏆 PERINGKAT KE-${myRankNumber}`;
+
+          rankSubEl.innerText = `Selamat! Kelompokmu memperoleh total ${myData.total_score || 0} Poin.`;
+
+          if (myData.photo) {
+            document.getElementById('student-self-photo').src = myData.photo;
+          }
 
           const expList = document.getElementById('explanation-list');
           expList.innerHTML = '';
