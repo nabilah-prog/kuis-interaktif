@@ -133,7 +133,6 @@
           <button type="button" id="start-cam-btn" onclick="playClickSound(); startCamera();" class="px-3 py-1.5 bg-slate-800 text-xs font-bold rounded-lg border border-slate-700 text-sky-300">📷 Nyalakan Kamera</button>
           <button type="button" id="take-photo-btn" onclick="takePhoto()" class="hidden absolute bottom-3 px-4 py-1.5 bg-emerald-600 text-xs font-bold rounded-xl shadow-lg">📸 Ambil Foto Selfie</button>
           
-          <!-- TOMBOL KONFIRMASI / ULANG FOTO -->
           <div id="photo-action-buttons" class="hidden absolute bottom-3 flex gap-2">
             <button type="button" onclick="retakePhoto()" class="px-3 py-1.5 bg-rose-600 hover:bg-rose-500 text-xs font-bold rounded-xl shadow-lg border border-rose-400 flex items-center gap-1">🔄 Foto Ulang</button>
             <button type="button" onclick="confirmPhoto()" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-xs font-bold rounded-xl shadow-lg border border-emerald-400 flex items-center gap-1">✅ Gunakan Foto Ini</button>
@@ -197,7 +196,6 @@
         <div id="student-rank-badge" class="text-3xl font-extrabold text-amber-300 mb-2 animate-bounce"></div>
         <p id="student-rank-subtitle" class="text-xs text-slate-300 mb-6 italic"></p>
 
-        <!-- FOTO KELOMPOK SISWA -->
         <div class="relative inline-block mb-6">
           <img id="student-self-photo" src="" class="w-64 h-44 object-cover rounded-2xl border-4 border-amber-400 shadow-2xl mx-auto" />
           <span class="absolute -top-3 -right-3 text-3xl">👑</span>
@@ -835,8 +833,8 @@
 
         const currentRoundNum = myData.current_round || 1;
 
-        // PENGIKUTAN REAL-TIME RESPON GURU (DISKUSI ULANG VS ACC LANJUT RONDE)
-        if (previousStatus === 'waiting' && myData.status === 'answering' && myData.finish_order === null && currentRoundNum === previousRound) {
+        // PERBAIKAN LOGIKA DETEKSI NOTIFIKASI DISKUSI ULANG VS ACC
+        if (previousStatus === 'waiting' && myData.status === 'answering' && currentRoundNum === previousRound) {
           showStatusFeedback('reject', 'Yuk Diskusi Ulang!', 'Jawaban kelompok kurang pas. Diskusikan kembali dan pastikan SEMUA anggota kelompok paham!');
         } else if (previousStatus === 'waiting' && (currentRoundNum > previousRound || myData.status === 'completed')) {
           showStatusFeedback('approve', 'Jawaban ACC! Lanjut Ronde Berikutnya!', 'Hebat! Jawaban benar. Bersiap untuk soal berikutnya!');
