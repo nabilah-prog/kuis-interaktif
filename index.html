@@ -90,18 +90,18 @@
     </div>
   </div>
 
-  <!-- MODAL RIWAYAT HASIL KUIS (GURU) -->
+  <!-- MODAL RIWAYAT HASIL KUIS (GURU) - KHUSUS RUANG INI -->
   <div id="history-modal" class="hidden fixed inset-0 bg-black/90 backdrop-blur-md flex items-center justify-center p-4 z-50">
     <div class="glass-card p-6 rounded-3xl border border-amber-400/40 w-full max-w-2xl shadow-2xl space-y-4 max-h-[85vh] flex flex-col">
       <div class="flex justify-between items-center border-b border-slate-700 pb-3">
-        <h2 class="text-xl font-extrabold text-amber-300 flex items-center gap-2">📜 Riwayat & Rekap Nilai Kuis</h2>
+        <h2 class="text-xl font-extrabold text-amber-300 flex items-center gap-2">📜 Riwayat Rekap Nilai Ruangan Ini</h2>
         <button type="button" onclick="playClickSound(); closeHistoryModal();" class="text-slate-400 hover:text-white font-bold text-sm">✕ Tutup</button>
       </div>
 
       <div id="history-list-container" class="space-y-4 overflow-y-auto pr-2 flex-1"></div>
 
       <div class="pt-2 border-t border-slate-800 text-right">
-        <button type="button" onclick="playClickSound(); closeHistoryModal();" class="px-5 py-2.5 bg-slate-800 hover:bg-slate-700 font-bold rounded-xl text-xs text-slate-300">Tutup Pelaporan</button>
+        <button type="button" onclick="playClickSound(); closeHistoryModal();" class="px-5 py-2.5 bg-slate-800 hover:bg-slate-700 font-bold rounded-xl text-xs text-slate-300">Tutup</button>
       </div>
     </div>
   </div>
@@ -246,7 +246,7 @@
         <p class="text-slate-400 text-xs mt-1">Kelola kelompok, bank soal tersimpan, & ACC nilai kuis.</p>
       </div>
       <div class="flex flex-wrap items-center gap-3">
-        <button type="button" onclick="playClickSound(); openHistoryModal();" class="px-3.5 py-2.5 bg-indigo-600 hover:bg-indigo-500 font-bold rounded-xl text-xs flex items-center gap-1.5 shadow-lg">📜 Riwayat & Rekap Nilai Kuis</button>
+        <button type="button" onclick="playClickSound(); openHistoryModal();" class="px-3.5 py-2.5 bg-indigo-600 hover:bg-indigo-500 font-bold rounded-xl text-xs flex items-center gap-1.5 shadow-lg">📜 Riwayat Rekap Nilai</button>
         <div id="quiz-status-indicator" class="px-3.5 py-2 rounded-xl text-xs font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">
           Status: Belum Dimulai
         </div>
@@ -798,7 +798,7 @@
       });
     }
 
-    // MEMASUKKAN FITUR PENYIMPANAN & LOGIKA RIWAYAT REKAP KUIS
+    // SIMPAN REKAP NILAI DENGAN CATATAN TANGGAL SUBMIT AKHIR
     function saveCurrentQuizResults() {
       db.ref(`rooms/${currentRoomCode}/groups`).once('value', (snapshot) => {
         const groupsData = snapshot.val();
@@ -810,37 +810,44 @@
           list.push({
             group_name: key.replace('_', ' ').toUpperCase(),
             score: g.total_score || 0,
-            members: g.members || []
+            members: g.members || [],
+            last_submit_time: g.last_submit_time || 9999999999999
           });
         });
-        list.sort((a, b) => b.score - a.score);
+
+        // PENANGANAN PENENTUAN JUARA (TIE-BREAKER: SKOR TINGGI DAHULU, JIKA SAMA PADA YANG PALING AWAL MENGUMPULKAN)
+        list.sort((a, b) => {
+          if (b.score !== a.score) return b.score - a.score;
+          return a.last_submit_time - b.last_submit_time;
+        });
 
         const now = new Date();
         const timestampStr = now.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
 
-        const newHistoryKey = db.ref('quiz_history').push().key;
-        db.ref(`quiz_history/${newHistoryKey}`).set({
+        const newHistoryKey = db.ref(`quiz_history/${currentRoomCode}`).push().key;
+        db.ref(`quiz_history/${currentRoomCode}/${newHistoryKey}`).set({
           room_code: currentRoomCode,
           date_saved: timestampStr,
           results: list
         }, () => {
-          alert("✅ Rekap Hasil Kuis Berhasil Disimpan ke Riwayat!");
+          alert("✅ Rekap Hasil Kuis Berhasil Disimpan Khusus untuk Ruangan " + currentRoomCode + "!");
         });
       });
     }
 
+    // BUKA REKAP HANYA UNTUK KODE RUANGAN MILIK GURU INI
     function openHistoryModal() {
       const modal = document.getElementById('history-modal');
       const container = document.getElementById('history-list-container');
-      container.innerHTML = '<p class="text-xs text-slate-400 italic text-center py-4">Memuat riwayat rekap nilai...</p>';
+      container.innerHTML = '<p class="text-xs text-slate-400 italic text-center py-4">Memuat riwayat rekap nilai ruang ini...</p>';
 
-      db.ref('quiz_history').once('value', (snapshot) => {
+      db.ref(`quiz_history/${currentRoomCode}`).once('value', (snapshot) => {
         const historyData = snapshot.val() || {};
         container.innerHTML = '';
 
         const keys = Object.keys(historyData).reverse();
         if (keys.length === 0) {
-          container.innerHTML = '<p class="text-xs text-slate-400 italic text-center py-6">Belum ada riwayat kuis yang disimpan.</p>';
+          container.innerHTML = '<p class="text-xs text-slate-400 italic text-center py-6">Belum ada riwayat kuis tersimpan untuk Ruangan ' + currentRoomCode + '.</p>';
         } else {
           keys.forEach(key => {
             const h = historyData[key];
@@ -887,7 +894,7 @@
 
     function deleteHistoryRecord(key) {
       if (!confirm("Hapus catatan rekap ini?")) return;
-      db.ref(`quiz_history/${key}`).remove(() => openHistoryModal());
+      db.ref(`quiz_history/${currentRoomCode}/${key}`).remove(() => openHistoryModal());
     }
 
     function closeHistoryModal() {
@@ -918,7 +925,8 @@
           answer: '',
           picked_member: null,
           members: membersArray,
-          photo: capturedPhotoData
+          photo: capturedPhotoData,
+          last_submit_time: Date.now()
         };
         if (!snapshot.exists()) {
           groupRef.set(payload, attachStudentListener);
@@ -1018,9 +1026,18 @@
 
           let groupList = [];
           Object.keys(allGroups).forEach(key => {
-            groupList.push({ id: key, score: allGroups[key].total_score || 0 });
+            groupList.push({
+              id: key,
+              score: allGroups[key].total_score || 0,
+              last_submit_time: allGroups[key].last_submit_time || 9999999999999
+            });
           });
-          groupList.sort((a, b) => b.score - a.score);
+
+          // PENGURUTAN PERINGKAT DENGAN KETENTUAN KECEPATAN PENGUMPULAN (TIE-BREAKER)
+          groupList.sort((a, b) => {
+            if (b.score !== a.score) return b.score - a.score;
+            return a.last_submit_time - b.last_submit_time;
+          });
 
           const myRankIndex = groupList.findIndex(g => g.id === selectedGroup);
           const myRankNumber = myRankIndex !== -1 ? myRankIndex + 1 : 1;
@@ -1074,7 +1091,8 @@
             status: 'waiting',
             answer: finalAnswer,
             finish_order: passedCount + countWaiting + 1,
-            picked_member: null
+            picked_member: null,
+            last_submit_time: Date.now() // MENYIMPAN TIMESTAMP WAKTU PENGUMPULAN PRESISE
           });
           currentSelectedAnswer = "";
         });
@@ -1131,10 +1149,20 @@
             answer: '',
             picked_member: null,
             members: [],
-            photo: null
+            photo: null,
+            last_submit_time: 9999999999999
           };
 
-          groupList.push({ id: groupId, name: 'Kelompok ' + i, score: group.total_score || 0, status: group.status, members: group.members, photo: group.photo });
+          groupList.push({
+            id: groupId,
+            name: 'Kelompok ' + i,
+            score: group.total_score || 0,
+            status: group.status,
+            members: group.members,
+            photo: group.photo,
+            last_submit_time: group.last_submit_time || 9999999999999
+          });
+
           const scoreEarned = group.finish_order ? (scoreTable[group.finish_order] || 100) : 100;
 
           let statusBadge = '';
@@ -1171,7 +1199,11 @@
           container.appendChild(card);
         }
 
-        groupList.sort((a, b) => b.score - a.score);
+        // PENGURUTAN PERINGKAT DENGAN TIE-BREAKER WAKTU TERCEPAT
+        groupList.sort((a, b) => {
+          if (b.score !== a.score) return b.score - a.score;
+          return a.last_submit_time - b.last_submit_time;
+        });
 
         const calculatedMaxScore = activeQuestions.length * 140;
         const maxScore = Math.max(...groupList.map(g => g.score), calculatedMaxScore);
