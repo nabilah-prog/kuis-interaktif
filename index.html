@@ -305,6 +305,7 @@
     let totalConfiguredGroups = 5;
     let currentRoomCode = "DEFAULT";
     let previousStatus = null;
+    let previousRound = null;
 
     // WEB AUDIO API
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -832,15 +833,19 @@
         const myData = allGroups[selectedGroup];
         if (!myData) return;
 
-        // DETEKSI PERUBAHAN STATUS DISKUSI ULANG / ACC
-        if (previousStatus === 'waiting' && myData.status === 'answering') {
-          showStatusFeedback('reject', 'Yuk Diskusi Ulang!', 'Jawaban kelompok kurang pas. Diskusikan kembali dan pastikan SEMUA anggota kelompok paham!');
-        } else if (previousStatus === 'waiting' && (myData.status === 'answering' || myData.status === 'completed') && myData.finish_order === null) {
-          showStatusFeedback('approve', 'Jawaban ACC! Lanjut!', 'Hebat! Jawaban benar. Bersiap untuk soal berikutnya!');
-        }
-        previousStatus = myData.status;
+        const currentRoundNum = myData.current_round || 1;
 
-        const roundIndex = (myData.current_round || 1) - 1;
+        // PENGIKUTAN REAL-TIME RESPON GURU (DISKUSI ULANG VS ACC LANJUT RONDE)
+        if (previousStatus === 'waiting' && myData.status === 'answering' && myData.finish_order === null && currentRoundNum === previousRound) {
+          showStatusFeedback('reject', 'Yuk Diskusi Ulang!', 'Jawaban kelompok kurang pas. Diskusikan kembali dan pastikan SEMUA anggota kelompok paham!');
+        } else if (previousStatus === 'waiting' && (currentRoundNum > previousRound || myData.status === 'completed')) {
+          showStatusFeedback('approve', 'Jawaban ACC! Lanjut Ronde Berikutnya!', 'Hebat! Jawaban benar. Bersiap untuk soal berikutnya!');
+        }
+
+        previousStatus = myData.status;
+        previousRound = currentRoundNum;
+
+        const roundIndex = currentRoundNum - 1;
         const totalRounds = activeQuestions.length;
 
         document.getElementById('dynamic-bg').className = `bg-round-${(roundIndex % 4) + 1} text-white min-h-screen flex flex-col items-center justify-center p-4 relative overflow-x-hidden transition-all duration-1000`;
