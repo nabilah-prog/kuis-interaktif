@@ -129,8 +129,15 @@
         <div class="relative bg-slate-900 rounded-2xl overflow-hidden border border-slate-700 aspect-video flex flex-col items-center justify-center">
           <video id="webcam-preview" autoplay playsinline class="w-full h-full object-cover hidden"></video>
           <img id="selfie-photo-result" class="w-full h-full object-cover hidden" />
+          
           <button type="button" id="start-cam-btn" onclick="playClickSound(); startCamera();" class="px-3 py-1.5 bg-slate-800 text-xs font-bold rounded-lg border border-slate-700 text-sky-300">📷 Nyalakan Kamera</button>
           <button type="button" id="take-photo-btn" onclick="takePhoto()" class="hidden absolute bottom-3 px-4 py-1.5 bg-emerald-600 text-xs font-bold rounded-xl shadow-lg">📸 Ambil Foto Selfie</button>
+          
+          <!-- TOMBOL KONFIRMASI / ULANG FOTO -->
+          <div id="photo-action-buttons" class="hidden absolute bottom-3 flex gap-2">
+            <button type="button" onclick="retakePhoto()" class="px-3 py-1.5 bg-rose-600 hover:bg-rose-500 text-xs font-bold rounded-xl shadow-lg border border-rose-400 flex items-center gap-1">🔄 Foto Ulang</button>
+            <button type="button" onclick="confirmPhoto()" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-xs font-bold rounded-xl shadow-lg border border-emerald-400 flex items-center gap-1">✅ Gunakan Foto Ini</button>
+          </div>
         </div>
         <p id="photo-status-msg" class="text-[11px] text-rose-400 mt-1 italic font-semibold">*Ambil foto kelompok dulu sebelum masuk kuis</p>
       </div>
@@ -276,9 +283,10 @@
     <div id="groups-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
   </div>
 
-  <!-- FIREBASE & EFEK SUARA -->
+  <!-- FIREBASE & LOGIKA TERBARU -->
   <script>
     let capturedPhotoData = null;
+    let tempPhotoData = null;
     let selectedGroup = null;
     let currentSelectedAnswer = "";
     let totalConfiguredGroups = 5;
@@ -431,7 +439,7 @@
       const roomFromUrl = urlParams.get('room');
       if (roomFromUrl) {
         currentRoomCode = roomFromUrl.toUpperCase();
-        openStudentSetupScreen();
+        validateAndEnterRoom(currentRoomCode);
       }
     });
 
@@ -442,10 +450,19 @@
 
     function createTeacherRoom() {
       currentRoomCode = generateUniqueRoomCode();
-      document.getElementById('role-screen').classList.add('hidden');
-      document.getElementById('teacher-dashboard-screen').classList.remove('hidden');
-      document.getElementById('teacher-room-badge').innerText = "Ruang: " + currentRoomCode;
-      initTeacherDashboard();
+      
+      // INISIALISASI RUANG DI DATABASE FIREBASE OLEH GURU
+      db.ref(`rooms/${currentRoomCode}`).set({
+        created_at: Date.now(),
+        group_count: 5,
+        quiz_started: false,
+        active_quiz_questions: activeQuestions
+      }, () => {
+        document.getElementById('role-screen').classList.add('hidden');
+        document.getElementById('teacher-dashboard-screen').classList.remove('hidden');
+        document.getElementById('teacher-room-badge').innerText = "Ruang: " + currentRoomCode;
+        initTeacherDashboard();
+      });
     }
 
     function showManualCodeModal() {
@@ -460,8 +477,19 @@
       const input = document.getElementById('manual-room-input').value.trim();
       if (!input) return alert("Masukkan kode ruang kuis!");
       currentRoomCode = input.toUpperCase();
-      closeManualCodeModal();
-      openStudentSetupScreen();
+      validateAndEnterRoom(currentRoomCode);
+    }
+
+    // FUNGSI VALIDASI KEBERADAAN RUANG KUIS DIBUAT OLEH GURU
+    function validateAndEnterRoom(code) {
+      db.ref(`rooms/${code}`).once('value', (snapshot) => {
+        if (snapshot.exists()) {
+          closeManualCodeModal();
+          openStudentSetupScreen();
+        } else {
+          alert(`❌ Kode Ruang "${code}" tidak ditemukan!\n\nPastikan Guru sudah menekan "Buat Ruang Kuis" terlebih dahulu.`);
+        }
+      });
     }
 
     function openStudentSetupScreen() {
@@ -515,8 +543,10 @@
         const video = document.getElementById('webcam-preview');
         video.srcObject = stream;
         video.classList.remove('hidden');
+        document.getElementById('selfie-photo-result').classList.add('hidden');
         document.getElementById('start-cam-btn').classList.add('hidden');
         document.getElementById('take-photo-btn').classList.remove('hidden');
+        document.getElementById('photo-action-buttons').classList.add('hidden');
       }).catch(err => alert("Kamera tidak dapat diakses: " + err));
     }
 
@@ -527,22 +557,39 @@
       canvas.width = 320;
       canvas.height = 240;
       canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
-      capturedPhotoData = canvas.toDataURL('image/jpeg', 0.6);
+      tempPhotoData = canvas.toDataURL('image/jpeg', 0.6);
 
-      document.getElementById('selfie-photo-result').src = capturedPhotoData;
+      document.getElementById('selfie-photo-result').src = tempPhotoData;
       document.getElementById('selfie-photo-result').classList.remove('hidden');
       video.classList.add('hidden');
       document.getElementById('take-photo-btn').classList.add('hidden');
+      document.getElementById('photo-action-buttons').classList.remove('hidden');
 
       if (video.srcObject) {
         video.srcObject.getTracks().forEach(track => track.stop());
       }
+    }
 
+    function retakePhoto() {
+      playClickSound();
+      tempPhotoData = null;
+      capturedPhotoData = null;
+      document.getElementById('submit-student-btn').disabled = true;
+      document.getElementById('submit-student-btn').className = "w-full py-4 bg-slate-700 text-slate-400 font-bold rounded-2xl cursor-not-allowed shadow-lg transition";
+      document.getElementById('photo-status-msg').className = "text-[11px] text-rose-400 mt-1 italic font-semibold";
+      document.getElementById('photo-status-msg').innerText = "*Ambil foto kelompok dulu sebelum masuk kuis";
+      startCamera();
+    }
+
+    function confirmPhoto() {
+      playClickSound();
+      capturedPhotoData = tempPhotoData;
+      document.getElementById('photo-action-buttons').classList.add('hidden');
       const submitBtn = document.getElementById('submit-student-btn');
       submitBtn.disabled = false;
       submitBtn.className = "w-full py-4 bg-gradient-to-r from-indigo-600 to-sky-600 font-bold rounded-2xl shadow-lg cursor-pointer";
       document.getElementById('photo-status-msg').className = "text-[11px] text-emerald-400 mt-1 italic font-bold";
-      document.getElementById('photo-status-msg').innerText = "✅ Foto berhasil diambil!";
+      document.getElementById('photo-status-msg').innerText = "✅ Foto dikonfirmasi & siap digunakan!";
     }
 
     function backToRole() {
@@ -900,7 +947,7 @@
             </div>
             <div>
               ${group.status === 'waiting' ? `
-                <button type="button" onclick="approveGroup('${groupId}',${group.current_round || 1}, ${group.total_score || 0},${scoreEarned})" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 font-bold rounded-xl text-sm mb-2 shadow-lg">✅ ACC & Tambah +${scoreEarned} Poin</button>
+                <button type="button" onclick="approveGroup('${groupId}',${group.current_round || 1}, ${group.total_score \vert{}\vert{} 0},${scoreEarned})" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 font-bold rounded-xl text-sm mb-2 shadow-lg">✅ ACC & Tambah +${scoreEarned} Poin</button>
                 <button type="button" onclick="rejectGroup('${groupId}')" class="w-full py-1.5 bg-rose-600/30 text-rose-300 font-bold rounded-xl text-xs">❌ Diskusi Ulang</button>
               ` : `<button type="button" disabled class="w-full py-2 bg-slate-700 text-slate-500 font-semibold rounded-xl text-xs">Menunggu Jawaban Siswa...</button>`}
             </div>
