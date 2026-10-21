@@ -61,8 +61,8 @@
       <p class="text-slate-300 mb-8 text-sm">Media Pembelajaran Real-Time Kelas</p>
       
       <div class="space-y-4 mb-8">
-        <button type="button" onclick="playClickSound(); showManualCodeModal();" class="w-full py-4 bg-gradient-to-r from-indigo-600 to-sky-600 hover:from-indigo-500 hover:to-sky-500 font-bold rounded-2xl transition text-base shadow-lg flex items-center justify-center gap-2">👨‍🎓 Masuk sebagai Siswa</button>
-        <button type="button" onclick="playClickSound(); showTeacherLoginModal();" class="w-full py-3.5 bg-slate-800/80 hover:bg-slate-700/80 font-semibold text-slate-300 rounded-2xl transition text-sm border border-slate-700 flex items-center justify-center gap-2">👨‍🏫 Masuk Akun Guru</button>
+        <button type="button" onclick="showManualCodeModal();" class="w-full py-4 bg-gradient-to-r from-indigo-600 to-sky-600 hover:from-indigo-500 hover:to-sky-500 font-bold rounded-2xl transition text-base shadow-lg flex items-center justify-center gap-2">👨‍🎓 Masuk sebagai Siswa</button>
+        <button type="button" onclick="showTeacherLoginModal();" class="w-full py-3.5 bg-slate-800/80 hover:bg-slate-700/80 font-semibold text-slate-300 rounded-2xl transition text-sm border border-slate-700 flex items-center justify-center gap-2">👨‍🏫 Masuk Akun Guru</button>
       </div>
     </div>
 
@@ -82,8 +82,8 @@
       <p class="text-xs text-slate-300">Masukkan Nama atau ID Unik Guru untuk mengelola kuis.</p>
       <input type="text" id="teacher-id-input" placeholder="Contoh: guru_abil" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-white font-bold text-center focus:outline-none focus:border-sky-400" />
       <div class="flex gap-2">
-        <button type="button" onclick="playClickSound(); closeTeacherLoginModal();" class="w-1/2 py-2.5 bg-slate-700 font-semibold rounded-xl text-xs">Batal</button>
-        <button type="button" onclick="playClickSound(); handleTeacherLogin();" class="w-1/2 py-2.5 bg-sky-600 font-bold rounded-xl text-xs">Masuk / Buat</button>
+        <button type="button" onclick="closeTeacherLoginModal();" class="w-1/2 py-2.5 bg-slate-700 font-semibold rounded-xl text-xs">Batal</button>
+        <button type="button" onclick="handleTeacherLogin();" class="w-1/2 py-2.5 bg-sky-600 font-bold rounded-xl text-xs">Masuk / Buat</button>
       </div>
     </div>
   </div>
@@ -95,13 +95,13 @@
       <p class="text-xs text-slate-300 mb-4">Masukkan Kode Ruang yang ditampilkan Guru di papan tulis.</p>
       <input type="text" id="manual-room-input" placeholder="Contoh: KUIS-8A2F" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-white font-bold uppercase text-center mb-4 focus:outline-none focus:border-sky-400" />
       <div class="flex gap-2">
-        <button type="button" onclick="playClickSound(); closeManualCodeModal();" class="w-1/2 py-2.5 bg-slate-700 font-semibold rounded-xl text-xs">Batal</button>
-        <button type="button" onclick="playClickSound(); enterStudentRoomManual();" class="w-1/2 py-2.5 bg-sky-600 font-bold rounded-xl text-xs">Lanjut</button>
+        <button type="button" onclick="closeManualCodeModal();" class="w-1/2 py-2.5 bg-slate-700 font-semibold rounded-xl text-xs">Batal</button>
+        <button type="button" onclick="enterStudentRoomManual();" class="w-1/2 py-2.5 bg-sky-600 font-bold rounded-xl text-xs">Lanjut</button>
       </div>
     </div>
   </div>
 
-  <!-- MODAL QR CODE BESAR -->
+  <!-- MODAL QR CODE BESAR UNTUK DISCAN SISWA -->
   <div id="qr-modal" class="hidden fixed inset-0 bg-black/90 backdrop-blur-md flex items-center justify-center p-4 z-50">
     <div class="glass-card p-8 rounded-3xl border-2 border-amber-400 max-w-sm w-full text-center shadow-2xl">
       <h2 class="text-2xl font-extrabold text-amber-300 mb-1">📱 Scan QR Code Kuis</h2>
@@ -111,14 +111,14 @@
         <img id="qr-image-display" src="" alt="QR Code Kuis" class="w-52 h-52 mx-auto" />
       </div>
       
-      <p class="text-[11px] text-slate-300 mb-4">Arahkan kamera HP ke QR Code di atas untuk langsung masuk registrasi!</p>
-      <button type="button" onclick="playClickSound(); closeQRModal();" class="w-full py-3 bg-rose-600 font-bold rounded-xl text-xs shadow-lg">Tutup QR Code</button>
+      <p id="qr-desc-text" class="text-[11px] text-slate-300 mb-4">Arahkan kamera HP ke QR Code di atas untuk langsung masuk ke registrasi!</p>
+      <button type="button" onclick="closeQRModal();" class="w-full py-3 bg-rose-600 font-bold rounded-xl text-xs shadow-lg">Tutup QR Code</button>
     </div>
   </div>
 
   <!-- REGISTRASI SISWA + WAJIB SELFIE -->
   <div id="student-setup-screen" class="hidden glass-card p-8 rounded-3xl shadow-2xl w-full max-w-md z-10 border border-sky-500/20">
-    <button type="button" onclick="playClickSound(); backToRole();" class="text-xs text-sky-300 hover:underline mb-4 flex items-center gap-1">← Halaman Utama</button>
+    <button type="button" onclick="backToRole();" class="text-xs text-sky-300 hover:underline mb-4 flex items-center gap-1">← Halaman Utama</button>
     <div class="flex justify-between items-center mb-2">
       <h2 class="text-2xl font-bold text-sky-300">Registrasi Kelompok</h2>
       <span id="room-display-badge" class="bg-indigo-500/20 text-indigo-300 text-xs font-bold px-2.5 py-1 rounded-lg border border-indigo-500/30">Ruang: -</span>
@@ -141,7 +141,7 @@
           <video id="webcam-preview" autoplay playsinline class="w-full h-full object-cover hidden"></video>
           <img id="selfie-photo-result" class="w-full h-full object-cover hidden" />
           
-          <button type="button" id="start-cam-btn" onclick="playClickSound(); startCamera();" class="px-3 py-1.5 bg-slate-800 text-xs font-bold rounded-lg border border-slate-700 text-sky-300">📷 Nyalakan Kamera</button>
+          <button type="button" id="start-cam-btn" onclick="startCamera();" class="px-3 py-1.5 bg-slate-800 text-xs font-bold rounded-lg border border-slate-700 text-sky-300">📷 Nyalakan Kamera</button>
           <button type="button" id="take-photo-btn" onclick="takePhoto()" class="hidden absolute bottom-3 px-4 py-1.5 bg-emerald-600 text-xs font-bold rounded-xl shadow-lg">📸 Ambil Foto Selfie</button>
           
           <div id="photo-action-buttons" class="hidden absolute bottom-3 flex gap-2">
@@ -192,7 +192,7 @@
       <div id="finished-all-box" class="hidden text-center py-6">
         <div id="student-rank-badge" class="text-3xl font-extrabold text-amber-300 mb-2 animate-bounce"></div>
         <p id="student-rank-subtitle" class="text-xs text-slate-300 mb-6 italic"></p>
-        <button type="button" onclick="playClickSound(); location.href=location.pathname;" class="w-full py-3 bg-slate-800 font-bold text-xs rounded-xl border border-slate-700 transition text-slate-300">
+        <button type="button" onclick="location.href=location.pathname;" class="w-full py-3 bg-slate-800 font-bold text-xs rounded-xl border border-slate-700 transition text-slate-300">
           🏠 Kembali ke Halaman Utama
         </button>
       </div>
@@ -207,7 +207,7 @@
           <h1 class="text-2xl font-extrabold text-sky-300">🏆 Dashboard Kontrol Guru</h1>
           <span id="teacher-id-badge" class="bg-indigo-500/20 text-indigo-300 text-xs font-bold px-2.5 py-1 rounded-lg border border-indigo-500/30">👤 Guru: -</span>
           <span id="teacher-room-badge" class="bg-amber-500/20 text-amber-300 text-xs font-bold px-2.5 py-1 rounded-lg border border-amber-500/30">Ruang: -</span>
-          <button type="button" onclick="playClickSound(); openQRModal();" class="px-2.5 py-1 bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold text-xs rounded-lg shadow-md flex items-center gap-1">📱 QR Code</button>
+          <button type="button" onclick="openQRModal();" class="px-2.5 py-1 bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold text-xs rounded-lg shadow-md flex items-center gap-1">📱 QR Code</button>
         </div>
       </div>
 
@@ -286,7 +286,7 @@
       { text: "Soal Ronde 2: Berapakah hasil dari 15 + 25 x 2?", type: "pg", options: ["A. 80", "B. 65", "C. 50", "D. 90"], explanation: "Perkalian dahulukan" }
     ];
 
-    // PEMBACAAN OTOMATIS BEGITU SCAN QR
+    // PEMBACAAN AUTOMATIS SAAT LINK QR DIBUKA PADA HP SISWA
     window.addEventListener('DOMContentLoaded', () => {
       const urlParams = new URLSearchParams(window.location.search);
       let roomCodeDetected = urlParams.get('room');
@@ -368,17 +368,25 @@
       });
     }
 
-    // PENYEMPURNAAN GENERATOR QR CODE BEBAS ERROR SCAN
+    // GENERATOR QR CODE OTOMATIS BERDASARKAN MODE DIBUKA
     function openQRModal() {
       const modal = document.getElementById('qr-modal');
       const imgEl = document.getElementById('qr-image-display');
+      const descEl = document.getElementById('qr-desc-text');
       
-      let targetUrl = window.location.href.split('?')[0].split('#')[0];
-      let fullScanLink = `${targetUrl}?room=${currentRoomCode}`;
+      const isOnlineUrl = window.location.protocol.startsWith('http');
+      let fullScanData = "";
 
-      // Menggunakan QR Server Engine yang Sangat Presisi & BISA DISCAN SEMUA HP
-      imgEl.src = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(fullScanLink)}`;
+      if (isOnlineUrl) {
+        let targetUrl = window.location.href.split('?')[0].split('#')[0];
+        fullScanData = `${targetUrl}?room=${currentRoomCode}`;
+        descEl.innerText = "Arahkan kamera HP ke QR Code di atas. HP siswa akan otomatis membuka web dan langsung masuk ke halaman registrasi!";
+      } else {
+        fullScanData = currentRoomCode;
+        descEl.innerText = "Sebab web dibuka dari file laptop lokal, scan QR ini akan membaca kode " + currentRoomCode + ". Siswa bisa masukkan kode ini untuk langsung masuk!";
+      }
 
+      imgEl.src = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(fullScanData)}`;
       document.getElementById('qr-room-text').innerText = "Kode Ruang: " + currentRoomCode;
       modal.classList.remove('hidden');
     }
