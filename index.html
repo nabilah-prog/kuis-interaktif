@@ -20,12 +20,12 @@
 </style>
 </head>
 <body id="dynamic-bg" class="bg-round-1 text-white min-h-screen flex flex-col items-center justify-center p-4 relative overflow-x-hidden transition-all duration-1000">
-
+ 
 <div class="fixed inset-0 pointer-events-none z-0 opacity-25">
 <svg class="absolute top-10 left-5 w-72 h-44 animate-cloud-slow fill-sky-200" viewBox="0 0 24 24"><path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96z"/></svg>
 <svg class="absolute top-1/3 right-10 w-96 h-56 animate-cloud-fast fill-amber-200" viewBox="0 0 24 24"><path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96z"/></svg>
 </div>
-
+ 
 <!-- HALAMAN UTAMA -->
 <div id="role-screen" class="glass-card p-8 rounded-3xl shadow-2xl w-full max-w-md text-center z-10 flex flex-col">
 <div class="text-5xl mb-3">☁️✨</div>
@@ -37,7 +37,7 @@
 </div>
 <div class="pt-4 border-t border-slate-700/60"><p class="text-[11px] text-slate-300 leading-relaxed font-medium">© 2026 <span class="font-bold text-amber-300">Nabilah Burairah</span>. All Rights Reserved.<br><span class="text-slate-400">Mahasiswa PPG Calon Guru Universitas PGRI Sumatera Barat</span></p></div>
 </div>
-
+ 
 <!-- MODAL GURU -->
 <div id="teacher-login-modal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 z-50">
 <div class="glass-card p-6 rounded-3xl w-full max-w-sm text-center space-y-4">
@@ -46,7 +46,7 @@
 <input type="text" id="teacher-id-input" placeholder="Contoh: guru_abil" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-white font-bold text-center" />
 <div class="flex gap-2"><button type="button" onclick="closeTeacherLoginModal()" class="w-1/2 py-2.5 bg-slate-700 font-semibold rounded-xl text-xs">Batal</button><button type="button" onclick="handleTeacherLogin()" class="w-1/2 py-2.5 bg-sky-600 font-bold rounded-xl text-xs">Masuk / Buat</button></div>
 </div></div>
-
+ 
 <!-- MODAL KODE SISWA -->
 <div id="manual-code-modal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 z-50">
 <div class="glass-card p-6 rounded-3xl w-full max-w-sm text-center">
@@ -55,7 +55,7 @@
 <input type="text" id="manual-room-input" placeholder="Contoh: KUIS-8A2F" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-white font-bold uppercase text-center mb-4" />
 <div class="flex gap-2"><button type="button" onclick="closeManualCodeModal()" class="w-1/2 py-2.5 bg-slate-700 font-semibold rounded-xl text-xs">Batal</button><button type="button" onclick="enterStudentRoomManual()" class="w-1/2 py-2.5 bg-sky-600 font-bold rounded-xl text-xs">Lanjut</button></div>
 </div></div>
-
+ 
 <!-- MODAL QR -->
 <div id="qr-modal" class="hidden fixed inset-0 bg-black/90 backdrop-blur-md flex items-center justify-center p-4 z-50">
 <div class="glass-card p-8 rounded-3xl border-2 border-amber-400 max-w-sm w-full text-center">
@@ -66,7 +66,7 @@
 <p id="qr-desc-text" class="text-[11px] text-slate-300 mb-4"></p>
 <button type="button" onclick="closeQRModal()" class="w-full py-3 bg-rose-600 font-bold rounded-xl text-xs">Tutup QR Code</button>
 </div></div>
-
+ 
 <!-- REGISTRASI SISWA -->
 <div id="student-setup-screen" class="hidden glass-card p-8 rounded-3xl shadow-2xl w-full max-w-md z-10">
 <button type="button" onclick="backToRole()" class="text-xs text-sky-300 hover:underline mb-4">← Halaman Utama</button>
@@ -89,7 +89,7 @@
 </div>
 <button type="button" id="submit-student-btn" disabled onclick="startStudentQuiz()" class="w-full py-4 bg-slate-700 text-slate-400 font-bold rounded-2xl cursor-not-allowed shadow-lg transition">Masuk ke Ruang Kuis</button>
 </div></div>
-
+ 
 <!-- RUANG KUIS SISWA -->
 <div id="student-quiz-screen" class="hidden w-full max-w-xl z-10 space-y-4">
 <div class="glass-card p-5 rounded-2xl flex justify-between items-center">
@@ -120,7 +120,7 @@
 </div>
 </div>
 </div>
-
+ 
 <!-- DASHBOARD GURU -->
 <div id="teacher-dashboard-screen" class="hidden w-full max-w-6xl z-10 my-6 space-y-6">
 <div class="glass-card p-6 rounded-3xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
@@ -135,7 +135,7 @@
 <button type="button" id="tab-btn-papan" onclick="switchTeacherTab('papan')" class="px-4 py-2 rounded-xl text-slate-400">📊 Papan Peringkat</button>
 <button type="button" id="tab-btn-kontrol" onclick="switchTeacherTab('kontrol')" class="px-4 py-2 rounded-xl text-slate-400">✅ Kontrol Jawaban</button>
 </div></div>
-
+ 
 <div id="tab-content-soal" class="glass-card p-6 rounded-3xl space-y-4">
 <h3 class="text-lg font-bold text-sky-300 border-b border-slate-700 pb-3">⚙️ Pengaturan Soal & Sistem Poin Kuis</h3>
 <div class="flex flex-wrap items-center gap-4 text-xs">
@@ -146,31 +146,31 @@
 <div class="bg-slate-900/80 p-4 rounded-2xl border border-slate-800 space-y-2"><h4 class="font-bold text-amber-300 text-xs">🎯 Skor Poin Per Urutan Benar Tercepat:</h4><div id="dynamic-score-inputs-container" class="grid grid-cols-2 sm:grid-cols-5 gap-3 text-xs"></div></div>
 <div id="question-editor-container" class="space-y-4 max-h-96 overflow-y-auto pr-2"></div>
 </div>
-
+ 
 <div id="tab-content-papan" class="hidden glass-card p-6 rounded-3xl space-y-4">
 <h3 class="text-lg font-bold text-amber-300">📊 Papan Peringkat</h3>
 <div id="vertical-leaderboard-container" class="flex justify-around items-end h-72 bg-slate-900/80 rounded-2xl p-4 border border-slate-800 overflow-x-auto"></div>
 </div>
-
+ 
 <div id="tab-content-kontrol" class="hidden space-y-4">
 <div id="control-bar" class="glass-card p-5 rounded-2xl space-y-3"></div>
 <div id="groups-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
 </div>
 </div>
-
+ 
 <script>
 const $ = id => document.getElementById(id);
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-
+ 
 // ====== ISI ALAMAT WEB ONLINE KAMU DI SINI (contoh: "https://kuisabil.netlify.app/") ======
 // Kosongkan jika web dibuka lewat alamat http/https (otomatis terbaca).
 const PUBLIC_URL = "";
-
+ 
 let capturedPhotoData = null, tempPhotoData = null, camStream = null;
 let selectedGroup = null, currentSelectedAnswer = "";
 let totalConfiguredGroups = 2, currentRoomCode = "DEFAULT", currentTeacherId = "GURU_ANONIM";
 let lastRoomCount = null, lastRenderedQ = -1, roomRef = null, answerPending = false;
-
+ 
 const firebaseConfig = {
   apiKey: "AIzaSyDHNH2OpGV1xVyr3vn1KDr4XZILGMXKZEE",
   authDomain: "kuis-interaktif-98daa.firebaseapp.com",
@@ -182,12 +182,12 @@ const firebaseConfig = {
 };
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
-
+ 
 let activeQuestions = [
   { text: "Soal 1: Apa jawaban hasil diskusi kelompok kalian?", type: "uraian", options: ["A. ","B. ","C. ","D. "], key: "", explanation: "Penjelasan Soal 1" },
   { text: "Soal 2: Berapakah hasil dari 15 + 25 x 2?", type: "pg", options: ["A. 80","B. 65","C. 50","D. 90"], key: "B", explanation: "Perkalian didahulukan: 25 x 2 = 50, lalu 15 + 50 = 65" }
 ];
-
+ 
 window.addEventListener('DOMContentLoaded', () => {
   const p = new URLSearchParams(location.search);
   let r = p.get('room');
@@ -196,10 +196,10 @@ window.addEventListener('DOMContentLoaded', () => {
   triggerRealtimeGroupUIUpdate();
   renderEditor();
 });
-
+ 
 const generateUniqueRoomCode = () => `KUIS-${Math.random().toString(36).substring(2,6).toUpperCase()}`;
 function setBg(q){ $('dynamic-bg').className = `bg-round-${(q%4)+1} text-white min-h-screen flex flex-col items-center justify-center p-4 relative overflow-x-hidden transition-all duration-1000`; }
-
+ 
 /* ================= GURU ================= */
 function switchTeacherTab(t){
   ['soal','papan','kontrol'].forEach(n=>{
@@ -257,7 +257,7 @@ function openQRModal(){
   $('qr-modal').classList.remove('hidden');
 }
 function closeQRModal(){ $('qr-modal').classList.add('hidden'); }
-
+ 
 /* Editor soal */
 function generateQuestionInputs(n){
   n = Math.max(1, Math.min(50, parseInt(n)||1));
@@ -288,7 +288,7 @@ function publishActiveQuestions(){
     alert(err ? "Gagal: " + err.message : "Pengaturan berhasil diterbitkan ke siswa!");
   });
 }
-
+ 
 /* Dashboard realtime */
 function initTeacherDashboard(){
   triggerRealtimeGroupUIUpdate();
@@ -307,7 +307,7 @@ function renderTeacher(room){
   const scores = room.scores || [];
   const finished = started && cq >= qs.length;
   if (started && !finished) setBg(cq);
-
+ 
   // Papan peringkat
   const list = [];
   for (let i=1;i<=totalConfiguredGroups;i++) list.push({ i, g: groups['kelompok_'+i] || {} });
@@ -318,7 +318,7 @@ function renderTeacher(room){
       <div class="w-12 bg-slate-950 rounded-t-2xl p-1 flex flex-col justify-end h-full border border-slate-700 overflow-hidden"><div class="w-full bg-gradient-to-t from-indigo-600 to-amber-300 rounded-t-xl bar-grow" style="height:${Math.max(sc/max*100,5)}%"></div></div>
       <span class="text-[11px] font-bold text-slate-300 mt-2 text-center">Kelompok ${i}</span></div>`;
   }).join('');
-
+ 
   // Bar kontrol
   const q = qs[cq];
   let status = !started ? "Kuis belum dimulai" : finished ? "🏁 Kuis selesai" : `Soal ${cq+1} dari ${qs.length}`;
@@ -331,7 +331,7 @@ function renderTeacher(room){
         ${started ? `<button onclick="resetQuiz()" class="px-4 py-2 bg-rose-700 rounded-xl">🔄 Reset Kuis</button>` : ''}
       </div></div>
     ${started && !finished && q ? `<div class="bg-slate-900/80 p-3 rounded-xl text-sm"><p>${esc(q.text)}</p>${q.type==='pg'?`<p class="text-xs text-slate-400 mt-1">${(q.options||[]).map(esc).join(' | ')}</p>`:''}<p class="text-xs text-emerald-300 mt-1">Kunci: ${esc(q.key||'-')}</p></div>` : ''}`;
-
+ 
   // Kartu kelompok
   $('groups-container').innerHTML = list.map(({i,g})=>{
     const gid = 'kelompok_'+i, ans = (g.answers||{})[cq];
@@ -372,7 +372,7 @@ function judge(gid, q, ok){
     base.child(`groups/${gid}/total_score`).transaction(v => (v||0) - prevPts + pts);
   });
 }
-
+ 
 /* ================= SISWA ================= */
 function showManualCodeModal(){ $('manual-code-modal').classList.remove('hidden'); }
 function closeManualCodeModal(){ $('manual-code-modal').classList.add('hidden'); }
@@ -393,7 +393,7 @@ function openStudentSetupScreen(){
     for (let i=1;i<=count;i++){ const o=document.createElement('option'); o.value='kelompok_'+i; o.innerText='Kelompok '+i; sel.appendChild(o); }
   }, err => { alert("Tidak bisa membaca data. Cek Rules Firebase.\n"+err.message); });
 }
-
+ 
 /* Kamera */
 function startCamera(){
   if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) return alert("Kamera tidak didukung. Pastikan web dibuka lewat https.");
@@ -430,7 +430,7 @@ function checkSubmitReady(){
   b.className = ok ? "w-full py-4 bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-bold rounded-2xl shadow-lg transition"
                    : "w-full py-4 bg-slate-700 text-slate-400 font-bold rounded-2xl cursor-not-allowed shadow-lg transition";
 }
-
+ 
 function startStudentQuiz(){
   selectedGroup = $('group-select').value;
   const members = $('members-input').value.split(',').map(s=>s.trim()).filter(Boolean);
@@ -445,16 +445,16 @@ function startStudentQuiz(){
     db.ref(`rooms/${currentRoomCode}`).on('value', s => { if (s.val()) renderStudent(s.val()); });
   });
 }
-
+ 
 function renderStudent(room){
   const g = (room.groups||{})[selectedGroup] || {};
   $('score-display').innerText = "Total Skor: " + (g.total_score||0);
   const qs = room.questions || [], cq = room.current_q || 0;
   if (!room.quiz_started){ $('quiz-lobby-box').classList.remove('hidden'); $('quiz-content-wrapper').classList.add('hidden'); lastRenderedQ=-1; return; }
   $('quiz-lobby-box').classList.add('hidden'); $('quiz-content-wrapper').classList.remove('hidden');
-
+ 
   const show = id => ['quiz-box','waiting-box','finished-all-box'].forEach(x => $(x).classList.toggle('hidden', x!==id));
-
+ 
   if (cq >= qs.length){
     show('finished-all-box'); setBg(0);
     const ranking = Object.keys(room.groups||{}).sort((a,b)=>(room.groups[b].total_score||0)-(room.groups[a].total_score||0));
@@ -464,7 +464,7 @@ function renderStudent(room){
     if (rank===1 && !window._confettiDone){ window._confettiDone=true; confetti({ particleCount:200, spread:90, origin:{ y:.6 } }); }
     return;
   }
-
+ 
   setBg(cq);
   const q = qs[cq], ans = (g.answers||{})[cq];
   if (ans){
@@ -495,7 +495,7 @@ function renderStudent(room){
     }
   }
 }
-
+ 
 function submitAnswer(){
   const room = null;
   db.ref(`rooms/${currentRoomCode}/current_q`).once('value', s => {
@@ -508,3 +508,4 @@ function submitAnswer(){
 </script>
 </body>
 </html>
+ 
