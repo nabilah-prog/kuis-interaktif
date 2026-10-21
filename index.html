@@ -8,7 +8,7 @@
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-  <!-- Library Generate QR Code dengan Fallback CDNs -->
+  <!-- Library QR Code Utama & Fallback -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <style>
     @keyframes floatClouds {
@@ -120,14 +120,13 @@
     </div>
   </div>
 
-  <!-- MODAL DETAIL LENGKAP RIWAYAT KUIS GURU -->
+  <!-- MODAL DETAIL RIWAYAT LENGKAP KUIS PRIBADI GURU -->
   <div id="history-modal" class="hidden fixed inset-0 bg-black/90 backdrop-blur-md flex items-center justify-center p-4 z-50">
-    <div class="glass-card p-6 rounded-3xl border border-amber-400/40 w-full max-w-4xl shadow-2xl space-y-4 max-h-[90vh] flex flex-col">
+    <div class="glass-card p-6 rounded-3xl border border-amber-400/40 w-full max-w-3xl shadow-2xl space-y-4 max-h-[85vh] flex flex-col">
       <div class="flex justify-between items-center border-b border-slate-700 pb-3">
-        <h2 class="text-xl font-extrabold text-amber-300 flex items-center gap-2">📜 Riwayat Kuis Lengkap Saya</h2>
+        <h2 class="text-xl font-extrabold text-amber-300 flex items-center gap-2">📜 Riwayat Kuis Saya</h2>
         <button type="button" onclick="playClickSound(); closeHistoryModal();" class="text-slate-400 hover:text-white font-bold text-sm">✕ Tutup</button>
       </div>
-      <p class="text-xs text-slate-300">Daftar semua sesi kuis yang pernah dijalankan. Klik kuis untuk melihat detail jawaban per soal, foto selfie, dan siapa yang maju!</p>
 
       <div id="history-list-container" class="space-y-4 overflow-y-auto pr-2 flex-1"></div>
 
@@ -144,7 +143,7 @@
       <p id="qr-room-text" class="text-xs text-slate-300 mb-4 font-bold"></p>
       
       <div class="bg-white p-4 rounded-2xl inline-block shadow-xl mb-4">
-        <div id="modal-qrcode"></div>
+        <div id="modal-qrcode" class="flex justify-center items-center min-h-[220px]"></div>
       </div>
       
       <p class="text-xs text-slate-400 mb-4">Siswa cukup mengarahkan kamera HP ke QR Code di atas untuk langsung gabung kuis!</p>
@@ -265,9 +264,8 @@
     </div>
   </div>
 
-  <!-- 4. DASHBOARD GURU DENGAN 3 TAB KATEGORI BERSAHAJA -->
+  <!-- 4. DASHBOARD GURU & 3 TAB DEDIKASI -->
   <div id="teacher-dashboard-screen" class="hidden w-full max-w-6xl z-10 my-6 space-y-6">
-    <!-- NAVBAR ATAS & STATS GURU -->
     <div class="glass-card p-6 rounded-3xl border border-sky-500/20 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
       <div>
         <div class="flex items-center gap-2">
@@ -276,36 +274,30 @@
           <span id="teacher-room-badge" class="bg-amber-500/20 text-amber-300 text-xs font-bold px-2.5 py-1 rounded-lg border border-amber-500/30">Ruang: -</span>
           <button type="button" onclick="playClickSound(); openQRModal();" class="px-2.5 py-1 bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold text-xs rounded-lg shadow-md flex items-center gap-1">📱 QR Code</button>
         </div>
-        <p class="text-slate-400 text-xs mt-1">Kelola kuis, awasi peringkat kelompok, dan verifikasi jawaban secara terpisah.</p>
+        <p class="text-slate-400 text-xs mt-1">Kelola bank soal pribadi & publik, simpan rekap nilai lengkap, serta ACC kuis real-time.</p>
       </div>
       <div class="flex flex-wrap items-center gap-2">
         <button type="button" onclick="playClickSound(); openPublicBankModal();" class="px-3 py-2 bg-emerald-600 hover:bg-emerald-500 font-bold rounded-xl text-xs flex items-center gap-1 shadow-lg">🌐 Bank Soal Publik</button>
         <button type="button" onclick="playClickSound(); openHistoryModal();" class="px-3 py-2 bg-indigo-600 hover:bg-indigo-500 font-bold rounded-xl text-xs flex items-center gap-1 shadow-lg">📜 Riwayat Kuis Saya</button>
-        <div id="quiz-status-indicator" class="px-3 py-2 rounded-xl text-xs font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">
-          Belum Dimulai
-        </div>
-        <button type="button" id="toggle-quiz-btn" onclick="toggleQuizState()" class="px-4 py-2 bg-emerald-600 font-bold rounded-xl text-xs">🚀 Mulai Kuis</button>
-        <button type="button" onclick="playClickSound(); saveCurrentQuizResults();" class="px-3 py-2 bg-amber-600 hover:bg-amber-500 text-white font-bold rounded-xl text-xs shadow-lg">💾 Simpan Sesi Kuis Lengkap</button>
         <button type="button" onclick="playClickSound(); location.href=location.pathname;" class="px-3 py-2 bg-slate-800 rounded-xl text-xs font-bold">← Keluar</button>
-        <button type="button" onclick="resetAllGame()" class="px-3 py-2 bg-rose-600/80 font-bold rounded-xl text-xs">🔄 Reset Kuis</button>
       </div>
     </div>
 
-    <!-- TOMBOL TABS NAVIGASI 3 KATEGORI DASHBOARD -->
-    <div class="flex flex-wrap gap-2 border-b border-slate-700/80 pb-2">
-      <button type="button" id="tab-btn-settings" onclick="switchTeacherTab('settings')" class="px-5 py-3 rounded-2xl font-bold text-xs bg-sky-600 text-white shadow-lg border border-sky-400 transition flex items-center gap-2">
+    <!-- NAVIGASI TAB UTAMA DASBOR GURU -->
+    <div class="flex border-b border-slate-700/80 gap-2">
+      <button type="button" id="tab-btn-questions" onclick="playClickSound(); switchTeacherTab('questions')" class="py-3 px-5 font-bold text-xs rounded-t-2xl bg-indigo-600 text-white border-t border-x border-indigo-400/30">
         📝 Soal & Pengaturan
       </button>
-      <button type="button" id="tab-btn-leaderboard" onclick="switchTeacherTab('leaderboard')" class="px-5 py-3 rounded-2xl font-bold text-xs bg-slate-800 text-slate-300 hover:bg-slate-700 border border-slate-700 transition flex items-center gap-2">
+      <button type="button" id="tab-btn-leaderboard" onclick="playClickSound(); switchTeacherTab('leaderboard')" class="py-3 px-5 font-bold text-xs rounded-t-2xl bg-slate-800 text-slate-400 hover:text-white">
         📊 Papan Peringkat
       </button>
-      <button type="button" id="tab-btn-control" onclick="switchTeacherTab('control')" class="px-5 py-3 rounded-2xl font-bold text-xs bg-slate-800 text-slate-300 hover:bg-slate-700 border border-slate-700 transition flex items-center gap-2">
+      <button type="button" id="tab-btn-answers" onclick="playClickSound(); switchTeacherTab('answers')" class="py-3 px-5 font-bold text-xs rounded-t-2xl bg-slate-800 text-slate-400 hover:text-white">
         ✅ Kontrol Jawaban
       </button>
     </div>
 
     <!-- TAB 1: SOAL & PENGATURAN -->
-    <div id="tab-content-settings" class="glass-card p-6 rounded-3xl border border-sky-500/20 space-y-4">
+    <div id="tab-content-questions" class="glass-card p-6 rounded-b-3xl rounded-tr-3xl border border-sky-500/20 space-y-4">
       <div class="flex flex-wrap justify-between items-center gap-3 border-b border-slate-700 pb-3">
         <div>
           <h3 class="text-lg font-bold text-sky-300">⚙️ Pengaturan Soal & Sistem Poin Kuis</h3>
@@ -322,21 +314,21 @@
       <div class="flex flex-wrap items-center gap-4 text-xs">
         <div class="flex items-center gap-2">
           <label class="font-bold text-amber-300">Jumlah Kelompok:</label>
-          <input type="number" id="total-groups-input" min="2" max="20" value="5" onchange="handleGroupCountInputChange(this.value)" onkeyup="handleGroupCountInputChange(this.value)" class="w-16 bg-slate-900 border border-slate-700 rounded-lg p-1.5 text-center text-white font-bold" />
+          <input type="number" id="total-groups-input" min="2" max="20" value="5" oninput="handleGroupCountInputChange(this.value)" onchange="handleGroupCountInputChange(this.value)" class="w-16 bg-slate-900 border border-slate-700 rounded-lg p-1.5 text-center text-white font-bold" />
         </div>
 
         <div class="flex items-center gap-2">
           <label class="font-bold text-amber-300">Jumlah Soal Kuis:</label>
-          <input type="number" id="total-questions-input" min="1" max="50" value="4" onchange="generateQuestionInputs(this.value)" onkeyup="generateQuestionInputs(this.value)" class="w-16 bg-slate-900 border border-slate-700 rounded-lg p-1.5 text-center text-white font-bold" />
+          <input type="number" id="total-questions-input" min="1" max="50" value="4" onchange="generateQuestionInputs(this.value)" class="w-16 bg-slate-900 border border-slate-700 rounded-lg p-1.5 text-center text-white font-bold" />
         </div>
 
         <button type="button" onclick="publishActiveQuestions()" class="ml-auto px-4 py-2 bg-emerald-600 hover:bg-emerald-500 font-bold rounded-xl text-xs shadow-lg">🚀 Terapkan Pengaturan ke Siswa</button>
       </div>
 
-      <!-- PENGATURAN SKOR POIN DINAMIS BERDASARKAN JUMLAH KELOMPOK -->
+      <!-- PENGATURAN SKOR POIN DINAMIS -->
       <div class="bg-slate-900/80 p-4 rounded-2xl border border-slate-800 space-y-2">
-        <h4 class="font-bold text-amber-300 text-xs flex items-center gap-1">🎯 Pengaturan Skor Poin Per Urutan Selesai (Dinamis Sesuai Jumlah Kelompok):</h4>
-        <div id="score-inputs-container" class="grid grid-cols-2 sm:grid-cols-5 gap-3 text-xs"></div>
+        <h4 class="font-bold text-amber-300 text-xs flex items-center gap-1">🎯 Pengaturan Skor Poin Per Urutan Selesai (Bisa Diubah Bebas):</h4>
+        <div id="dynamic-score-inputs-container" class="grid grid-cols-2 sm:grid-cols-5 gap-3 text-xs"></div>
       </div>
 
       <div id="question-editor-container" class="space-y-4 max-h-96 overflow-y-auto pr-2"></div>
@@ -360,18 +352,23 @@
       <!-- DIAGRAM BATANG VERTIKAL FULL KETINGGIAN -->
       <div class="glass-card p-6 rounded-3xl border border-sky-500/20 space-y-4">
         <h3 class="text-lg font-bold text-amber-300">📊 Papan Peringkat Diagram Batang Vertikal</h3>
-        <div id="vertical-leaderboard-container" class="flex justify-around items-end h-80 bg-slate-900/80 rounded-2xl p-4 border border-slate-800 overflow-x-auto"></div>
+        <div id="vertical-leaderboard-container" class="flex justify-around items-end h-72 bg-slate-900/80 rounded-2xl p-4 border border-slate-800 overflow-x-auto"></div>
       </div>
     </div>
 
     <!-- TAB 3: KONTROL JAWABAN -->
-    <div id="tab-content-control" class="hidden space-y-4">
-      <div class="glass-card p-4 rounded-2xl border border-sky-500/20 flex justify-between items-center">
-        <div>
-          <h3 class="text-base font-bold text-sky-300">✅ Kontrol Verifikasi Jawaban Kelompok</h3>
-          <p class="text-xs text-slate-400">Urutan #1, #2, dst. diurutkan berdasarkan waktu pengumpulan tercepat secara global (siapa duluan mengumpulkan jawaban, dialah yang pertama diperiksa).</p>
+    <div id="tab-content-answers" class="hidden space-y-4">
+      <div class="glass-card p-4 rounded-2xl border border-sky-500/20 flex flex-wrap justify-between items-center gap-3">
+        <div class="flex items-center gap-3">
+          <div id="quiz-status-indicator" class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">
+            Status: Belum Dimulai
+          </div>
+          <button type="button" id="toggle-quiz-btn" onclick="toggleQuizState()" class="px-5 py-2 bg-emerald-600 font-bold rounded-xl text-xs shadow-md">🚀 Mulai Kuis</button>
+          <button type="button" onclick="resetAllGame()" class="px-3.5 py-2 bg-rose-600/80 font-bold rounded-xl text-xs shadow-md">🔄 Reset Kuis</button>
         </div>
+        <button type="button" onclick="playClickSound(); saveCurrentQuizResults();" class="px-4 py-2 bg-amber-600 hover:bg-amber-500 text-white font-bold rounded-xl text-xs shadow-lg">💾 Simpan Rekap Kuis Lengkap</button>
       </div>
+
       <!-- KARTU VERIFIKASI KELOMPOK -->
       <div id="groups-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
     </div>
@@ -554,8 +551,43 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    // SKEMA SKOR DEFAULT
-    let customScoreTable = { 1: 140, 2: 130, 3: 120, 4: 110, 5: 100 };
+    let customScoreTable = {};
+
+    function updateScoreInputsForGroupCount(count) {
+      const container = document.getElementById('dynamic-score-inputs-container');
+      if (!container) return;
+      container.innerHTML = '';
+
+      const labels = ['🥇 Urutan #1', '🥈 Urutan #2', '🥉 Urutan #3', '🏅 Urutan #4', '🎗️ Urutan #5'];
+      const defaultValues = [140, 130, 120, 110, 100];
+
+      for (let i = 1; i <= count; i++) {
+        const val = customScoreTable[i] !== undefined ? customScoreTable[i] : (defaultValues[i-1] || Math.max(100 - (i-5)*10, 10));
+        customScoreTable[i] = val;
+
+        const div = document.createElement('div');
+        div.innerHTML = `
+          <label class="block text-[11px] text-slate-400 mb-1">${labels[i-1] || 'Urutan #' + i}:</label>
+          <input type="number" id="score-p${i}" value="${val}" onchange="customScoreTable[${i}] = parseInt(this.value) || 0" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-center font-bold text-amber-300" />
+        `;
+        container.appendChild(div);
+      }
+    }
+
+    function handleGroupCountInputChange(val) {
+      const count = parseInt(val) || 2;
+      totalConfiguredGroups = Math.max(2, Math.min(20, count));
+      updateScoreInputsForGroupCount(totalConfiguredGroups);
+      triggerRealtimeGroupUIUpdate();
+    }
+
+    function triggerRealtimeGroupUIUpdate() {
+      if (currentRoomCode && currentRoomCode !== "DEFAULT") {
+        db.ref(`rooms/${currentRoomCode}/groups`).once('value', (snap) => {
+          renderTeacherDashboardGroups(snap.val() || {});
+        });
+      }
+    }
     
     let activeQuestions = [
       { text: "Soal Ronde 1: Apa jawaban hasil diskusi kelompok kalian?", type: "uraian", explanation: "Penjelasan Soal 1" },
@@ -565,100 +597,37 @@
     ];
 
     window.addEventListener('DOMContentLoaded', () => {
-      // PENANGANAN SINKRONISASI KODE RUANG SCAN QR CODE SECARA AKURAT
       const urlParams = new URLSearchParams(window.location.search);
-      let roomFromUrl = urlParams.get('room');
-      
-      // Fallback jika dikirim via URL Hash / Fragment
-      if (!roomFromUrl && window.location.hash) {
-        const match = window.location.hash.match(/room=([^&]+)/);
-        if (match) roomFromUrl = match[1];
-      }
-
+      const roomFromUrl = urlParams.get('room');
       if (roomFromUrl) {
-        // Pembersihan karakter aneh dari hasil scan QR
-        const cleanRoom = roomFromUrl.trim().replace(/[^a-zA-Z0-9_-]/g, '').toUpperCase();
-        if (cleanRoom) {
-          currentRoomCode = cleanRoom;
-          // Tunggu koneksi instan Firebase siap
-          setTimeout(() => {
-            validateAndEnterRoom(currentRoomCode);
-          }, 300);
-        }
+        currentRoomCode = roomFromUrl.toUpperCase().trim();
+        validateAndEnterRoom(currentRoomCode);
       }
     });
 
-    // PERPINDAHAN TAB DASHBOARD GURU
-    function switchTeacherTab(tabName) {
-      playClickSound();
-      const tabSettings = document.getElementById('tab-content-settings');
-      const tabLeaderboard = document.getElementById('tab-content-leaderboard');
-      const tabControl = document.getElementById('tab-content-control');
-
-      const btnSettings = document.getElementById('tab-btn-settings');
-      const btnLeaderboard = document.getElementById('tab-btn-leaderboard');
-      const btnControl = document.getElementById('tab-btn-control');
-
-      tabSettings.classList.add('hidden');
-      tabLeaderboard.classList.add('hidden');
-      tabControl.classList.add('hidden');
-
-      btnSettings.className = "px-5 py-3 rounded-2xl font-bold text-xs bg-slate-800 text-slate-300 hover:bg-slate-700 border border-slate-700 transition flex items-center gap-2";
-      btnLeaderboard.className = "px-5 py-3 rounded-2xl font-bold text-xs bg-slate-800 text-slate-300 hover:bg-slate-700 border border-slate-700 transition flex items-center gap-2";
-      btnControl.className = "px-5 py-3 rounded-2xl font-bold text-xs bg-slate-800 text-slate-300 hover:bg-slate-700 border border-slate-700 transition flex items-center gap-2";
-
-      if (tabName === 'settings') {
-        tabSettings.classList.remove('hidden');
-        btnSettings.className = "px-5 py-3 rounded-2xl font-bold text-xs bg-sky-600 text-white shadow-lg border border-sky-400 transition flex items-center gap-2";
-      } else if (tabName === 'leaderboard') {
-        tabLeaderboard.classList.remove('hidden');
-        btnLeaderboard.className = "px-5 py-3 rounded-2xl font-bold text-xs bg-amber-600 text-white shadow-lg border border-amber-400 transition flex items-center gap-2";
-      } else if (tabName === 'control') {
-        tabControl.classList.remove('hidden');
-        btnControl.className = "px-5 py-3 rounded-2xl font-bold text-xs bg-emerald-600 text-white shadow-lg border border-emerald-400 transition flex items-center gap-2";
-      }
-    }
-
-    // HANDLER JIKA JUMLAH KELOMPOK DIUBAH DI INPUT
-    function handleGroupCountInputChange(val) {
-      const parsed = Math.max(1, parseInt(val) || 1);
-      totalConfiguredGroups = parsed;
-      generateScoreInputs(parsed);
-      document.getElementById('configured-group-count-display').innerText = parsed;
-      triggerRealtimeGroupUIUpdate();
-    }
-
-    // GENERATE DINAMIS INPUT POIN PER URUTAN KELOMPOK
-    function generateScoreInputs(count) {
-      const groupCount = Math.max(1, parseInt(count) || 1);
-      const container = document.getElementById('score-inputs-container');
-      container.innerHTML = '';
-
-      const medals = ['🥇', '🥈', '🥉', '🏅', '🎗️'];
-      const textColors = ['text-amber-300', 'text-slate-200', 'text-amber-600', 'text-slate-300', 'text-slate-400'];
-
-      for (let i = 1; i <= groupCount; i++) {
-        const medal = medals[i-1] || '🏅';
-        const textColor = textColors[i-1] || 'text-slate-300';
-        const defaultVal = customScoreTable[i] || Math.max(100, 150 - (i * 10));
-
-        const div = document.createElement('div');
-        div.innerHTML = `
-          <label class="block text-[11px] text-slate-400 mb-1">${medal} Urutan #${i}:</label>
-          <input type="number" id="score-p${i}" value="${defaultVal}" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-center font-bold ${textColor}" />
-        `;
-        container.appendChild(div);
-      }
-    }
-
     function getCustomScoreFromInputs() {
-      const count = Math.max(1, parseInt(document.getElementById('total-groups-input').value) || 1);
       let scores = {};
-      for (let i = 1; i <= count; i++) {
+      for (let i = 1; i <= totalConfiguredGroups; i++) {
         const el = document.getElementById(`score-p${i}`);
-        scores[i] = el ? (parseInt(el.value) || (150 - i * 10)) : (150 - i * 10);
+        scores[i] = el ? (parseInt(el.value) || 0) : (customScoreTable[i] || 100);
       }
       return scores;
+    }
+
+    function switchTeacherTab(tabName) {
+      const tabs = ['questions', 'leaderboard', 'answers'];
+      tabs.forEach(t => {
+        const btn = document.getElementById(`tab-btn-${t}`);
+        const content = document.getElementById(`tab-content-${t}`);
+        
+        if (t === tabName) {
+          btn.className = "py-3 px-5 font-bold text-xs rounded-t-2xl bg-indigo-600 text-white border-t border-x border-indigo-400/30";
+          content.classList.remove('hidden');
+        } else {
+          btn.className = "py-3 px-5 font-bold text-xs rounded-t-2xl bg-slate-800 text-slate-400 hover:text-white";
+          content.classList.add('hidden');
+        }
+      });
     }
 
     function generateUniqueRoomCode() {
@@ -688,7 +657,7 @@
       db.ref(`rooms/${currentRoomCode}`).set({
         created_at: Date.now(),
         teacher_id: currentTeacherId,
-        group_count: 5,
+        group_count: totalConfiguredGroups,
         quiz_started: false,
         score_table: getCustomScoreFromInputs(),
         active_quiz_questions: activeQuestions
@@ -712,21 +681,18 @@
     function enterStudentRoomManual() {
       const input = document.getElementById('manual-room-input').value.trim();
       if (!input) return alert("Masukkan kode ruang kuis!");
-      currentRoomCode = input.toUpperCase().replace(/[^a-zA-Z0-9_-]/g, '');
+      currentRoomCode = input.toUpperCase();
       validateAndEnterRoom(currentRoomCode);
     }
 
     function validateAndEnterRoom(code) {
-      if (!code) return;
       db.ref(`rooms/${code}`).once('value', (snapshot) => {
         if (snapshot.exists()) {
           closeManualCodeModal();
           openStudentSetupScreen();
         } else {
-          alert(`❌ Ruang Kuis "${code}" tidak ditemukan!\n\nPastikan Guru sudah membuat ruang kuis di layar utama.`);
+          alert(`❌ Kode Ruang "${code}" tidak ditemukan!\n\nPastikan Guru sudah menekan "Masuk Akun Guru" terlebih dahulu.`);
         }
-      }, (error) => {
-        alert("Gagal terhubung ke database. Silakan coba scan QR/masukkan kode kembali.");
       });
     }
 
@@ -735,7 +701,7 @@
       document.getElementById('student-setup-screen').classList.remove('hidden');
       document.getElementById('room-display-badge').innerText = "Ruang: " + currentRoomCode;
 
-      db.ref(`rooms/${currentRoomCode}/group_count`).on('value', (snapshot) => {
+      db.ref(`rooms/${currentRoomCode}/group_count`).once('value', (snapshot) => {
         const count = snapshot.val() || 5;
         const select = document.getElementById('group-select');
         select.innerHTML = '';
@@ -753,21 +719,22 @@
       const container = document.getElementById('modal-qrcode');
       container.innerHTML = '';
       
-      // FORMALISASI URL BERSIH BEBAS SALAH BACA BARCODE SCANNER
-      const cleanOrigin = window.location.origin + window.location.pathname;
+      const cleanOrigin = window.location.origin.includes('localhost') ? window.location.origin : window.location.href.split('?')[0].split('#')[0];
       const fullUrl = `${cleanOrigin}?room=${currentRoomCode}`;
       document.getElementById('qr-room-text').innerText = "Kode Ruang: " + currentRoomCode;
 
-      if (typeof QRCode !== 'undefined') {
-        new QRCode(container, {
-          text: fullUrl,
-          width: 220,
-          height: 220,
-          correctLevel: QRCode.CorrectLevel.H
-        });
-      } else {
-        // Fallback generator QR Code gambar statis
-        container.innerHTML = `<img src="https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(fullUrl)}" alt="QR Code" class="mx-auto rounded-xl" />`;
+      try {
+        if (typeof QRCode !== 'undefined') {
+          new QRCode(container, {
+            text: fullUrl,
+            width: 200,
+            height: 200
+          });
+        } else {
+          throw new Error("Library QRCode tidak terdeteksi");
+        }
+      } catch (err) {
+        container.innerHTML = `<img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(fullUrl)}" alt="QR Code" class="mx-auto rounded-lg shadow-md" />`;
       }
 
       modal.classList.remove('hidden');
@@ -942,7 +909,7 @@
       db.ref(`rooms/${currentRoomCode}/active_quiz_questions`).set(activeQuestions);
       db.ref(`rooms/${currentRoomCode}/score_table`).set(customScoreTable);
       db.ref(`rooms/${currentRoomCode}/group_count`).set(totalConfiguredGroups, () => {
-        alert("Pengaturan Soal, Poin, & Jumlah Kelompok Berhasil Diterbitkan!");
+        alert("Pengaturan Soal, Poin, & Kelompok Berhasil Diterbitkan ke Siswa!");
       });
     }
 
@@ -999,7 +966,7 @@
 
           if (data.score_table) {
             customScoreTable = data.score_table;
-            generateScoreInputs(totalConfiguredGroups);
+            updateScoreInputsForGroupCount(totalConfiguredGroups);
           }
         }
       });
@@ -1055,27 +1022,25 @@
       document.getElementById('public-bank-modal').classList.add('hidden');
     }
 
-    // SIMPAN SELURUH DETAIL PERJALANAN SESI KUIS
+    // SIMPAN REKAP KUIS LENGKAP DENGAN DETAIL JAWABAN KELOMPOK
     function saveCurrentQuizResults() {
-      db.ref(`rooms/${currentRoomCode}`).once('value', (snapshot) => {
-        const roomData = snapshot.val() || {};
-        const groupsData = roomData.groups || {};
-        if (!groupsData || Object.keys(groupsData).length === 0) return alert("Belum ada data kuis kelompok yang berjalan!");
+      db.ref(`rooms/${currentRoomCode}/groups`).once('value', (snapshot) => {
+        const groupsData = snapshot.val();
+        if (!groupsData) return alert("Belum ada data nilai kelompok untuk disimpan!");
 
         let list = [];
-        for (let i = 1; i <= totalConfiguredGroups; i++) {
-          const key = 'kelompok_' + i;
-          const g = groupsData[key] || {};
+        Object.keys(groupsData).forEach(key => {
+          const g = groupsData[key];
           list.push({
             group_id: key,
             group_name: key.replace('_', ' ').toUpperCase(),
             score: g.total_score || 0,
             members: g.members || [],
-            photo: g.photo || null,
             answers_history: g.answers_history || {},
-            last_submit_time: g.last_submit_time || 9999999999999
+            last_submit_time: g.last_submit_time || 9999999999999,
+            photo: g.photo || null
           });
-        }
+        });
 
         list.sort((a, b) => {
           if (b.score !== a.score) return b.score - a.score;
@@ -1089,20 +1054,20 @@
         db.ref(`teachers/${currentTeacherId}/quiz_history/${newHistoryKey}`).set({
           room_code: currentRoomCode,
           date_saved: timestampStr,
-          total_groups: totalConfiguredGroups,
-          questions: roomData.active_quiz_questions || activeQuestions,
+          questions_snapshot: activeQuestions,
+          winner_name: list[0] ? list[0].group_name : '-',
+          winner_photo: list[0] ? list[0].photo : null,
           results: list
         }, () => {
-          alert("✅ SELURUH Detail Sesi Kuis Berhasil Disimpan Ke Akun Guru " + currentTeacherId + "!");
+          alert("✅ Rekap Kuis Lengkap Berhasil Disimpan ke Akun Guru " + currentTeacherId + "!");
         });
       });
     }
 
-    // TAMPILAN DETAIL RIWAYAT LENGKAP KUIS
     function openHistoryModal() {
       const modal = document.getElementById('history-modal');
       const container = document.getElementById('history-list-container');
-      container.innerHTML = '<p class="text-xs text-slate-400 italic text-center py-4">Memuat riwayat kuis lengkap milikmu...</p>';
+      container.innerHTML = '<p class="text-xs text-slate-400 italic text-center py-4">Memuat riwayat kuis milikmu...</p>';
 
       db.ref(`teachers/${currentTeacherId}/quiz_history`).once('value', (snapshot) => {
         const historyData = snapshot.val() || {};
@@ -1115,98 +1080,57 @@
           keys.forEach(key => {
             const h = historyData[key];
             const div = document.createElement('div');
-            div.className = "bg-slate-900/90 p-5 rounded-2xl border border-slate-800 space-y-4 text-xs shadow-xl";
+            div.className = "bg-slate-900/90 p-4 rounded-2xl border border-slate-800 space-y-3 text-xs";
 
-            const winner = h.results && h.results.length > 0 ? h.results[0] : null;
-
-            let leaderboardRows = '';
+            let groupTables = '';
             h.results.forEach((item, index) => {
-              leaderboardRows += `
-                <tr class="border-b border-slate-800/60">
-                  <td class="py-2 font-bold ${index === 0 ? 'text-amber-300' : 'text-slate-300'}">#${index+1} ${item.group_name}</td>
-                  <td class="py-2 text-slate-400 italic">${item.members ? item.members.join(', ') : '-'}</td>
-                  <td class="py-2 text-right font-extrabold text-emerald-400">${item.score} Poin</td>
-                </tr>
+              let answerRows = '';
+              if (item.answers_history) {
+                Object.keys(item.answers_history).forEach(roundKey => {
+                  const rec = item.answers_history[roundKey];
+                  answerRows += `
+                    <div class="bg-slate-950 p-2 rounded-lg my-1 border border-slate-800">
+                      <div class="flex justify-between font-bold text-amber-300 text-[11px]">
+                        <span>Soal ${roundKey.replace('round_', '')}</span>
+                        <span class="text-emerald-400">+${rec.score_earned || 0} Poin (Urutan #${rec.finish_order || 1})</span>
+                      </div>
+                      <p class="text-slate-200 text-xs italic mt-0.5">Jawaban: "${rec.answer || '-'}"</p>
+                      ${rec.picked_member ? `<p class="text-[10px] text-indigo-300">Dipanggil Maju: ${rec.picked_member}</p>` : ''}
+                    </div>
+                  `;
+                });
+              } else {
+                answerRows = '<p class="text-slate-500 italic">Tidak ada catatan rincian jawaban.</p>';
+              }
+
+              groupTables += `
+                <div class="bg-slate-800/60 p-3 rounded-xl border border-slate-700/60 space-y-1">
+                  <div class="flex justify-between items-center">
+                    <span class="font-extrabold ${index === 0 ? 'text-amber-300 text-sm' : 'text-slate-200'}">
+                      ${index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : '#' + (index+1)} ${item.group_name}
+                    </span>
+                    <span class="font-black text-emerald-400 text-sm">${item.score} Poin</span>
+                  </div>
+                  <p class="text-[11px] text-slate-400 italic">Anggota: ${item.members.join(', ')}</p>
+                  <div class="pt-2">
+                    <p class="text-[11px] font-bold text-sky-300 border-b border-slate-700 pb-1">Detail Jawaban Ronde Soal:</p>
+                    ${answerRows}
+                  </div>
+                </div>
               `;
             });
 
-            // COMPREHENSIVE DETAIL AUDIT LOG PER KELOMPOK & PER SOAL
-            let detailedAuditHTML = '';
-            if (h.results) {
-              h.results.forEach((groupItem) => {
-                let roundAuditRows = '';
-                if (h.questions) {
-                  h.questions.forEach((q, qIndex) => {
-                    const roundNum = qIndex + 1;
-                    const ansRecord = (groupItem.answers_history && groupItem.answers_history[roundNum]) ? groupItem.answers_history[roundNum] : null;
-                    
-                    roundAuditRows += `
-                      <div class="bg-slate-950 p-3 rounded-xl border border-slate-800/80 space-y-1">
-                        <div class="flex justify-between items-center">
-                          <span class="font-bold text-amber-300">Soal #${roundNum}: ${q.text || ''}</span>
-                          <span class="text-[10px] text-emerald-400 font-bold bg-emerald-950 px-2 py-0.5 rounded-full border border-emerald-800">+${ansRecord ? ansRecord.earned_score : 0} Poin</span>
-                        </div>
-                        <p class="text-slate-200"><strong>Jawaban Kelompok:</strong> <span class="italic text-sky-200">${ansRecord ? ansRecord.answer : 'Tidak menjawab / Belum selesai'}</span></p>
-                        <div class="flex justify-between text-[11px] text-slate-400 pt-1 border-t border-slate-900">
-                          <span>🎲 Maju Diskusi: <strong class="text-amber-300">${ansRecord && ansRecord.picked_member ? ansRecord.picked_member : 'N/A'}</strong></span>
-                          <span>🏁 Selesai Ke-#${ansRecord && ansRecord.finish_order ? ansRecord.finish_order : '-'}</span>
-                        </div>
-                      </div>
-                    `;
-                  });
-                }
-
-                detailedAuditHTML += `
-                  <details class="bg-slate-800/60 rounded-xl border border-slate-700/80 p-3">
-                    <summary class="font-bold cursor-pointer text-sky-300 flex justify-between items-center">
-                      <span>📌 Jawaban Lengkap: ${groupItem.group_name} (${groupItem.score} Poin)</span>
-                      <span class="text-[10px] text-slate-400">Klik untuk Buka/Tutup ▾</span>
-                    </summary>
-                    <div class="mt-3 space-y-2">
-                      ${groupItem.photo ? `<div class="flex items-center gap-3 bg-slate-900 p-2 rounded-xl mb-2"><img src="${groupItem.photo}" class="w-20 h-14 object-cover rounded-lg border border-amber-400 shadow-md" /><span class="text-[11px] text-slate-300 italic">Swafoto Kelompok</span></div>` : ''}
-                      ${roundAuditRows}
-                    </div>
-                  </details>
-                `;
-              });
-            }
-
             div.innerHTML = `
-              <div class="flex flex-wrap justify-between items-center border-b border-slate-800 pb-2">
+              <div class="flex justify-between items-center border-b border-slate-800 pb-2">
                 <div>
-                  <span class="font-extrabold text-amber-300 text-sm">🏛️ Ruang Kuis: ${h.room_code}</span>
-                  <p class="text-[11px] text-slate-400">Disimpan pada: ${h.date_saved}</p>
+                  <span class="font-extrabold text-sky-300 text-sm">Ruang: ${h.room_code}</span>
+                  <p class="text-[10px] text-slate-400">Disimpan: ${h.date_saved}</p>
                 </div>
-                <button type="button" onclick="deleteHistoryRecord('${key}')" class="text-xs text-rose-400 hover:text-rose-300 font-semibold flex items-center gap-1">🗑️ Hapus Kuis Ini</button>
+                <button type="button" onclick="deleteHistoryRecord('${key}')" class="text-[11px] text-rose-400 hover:underline">🗑️ Hapus Rekap</button>
               </div>
 
-              ${winner ? `
-                <div class="bg-gradient-to-r from-amber-950/60 to-indigo-950/60 p-3 rounded-xl border border-amber-500/30 flex items-center gap-3">
-                  ${winner.photo ? `<img src="${winner.photo}" class="w-16 h-12 object-cover rounded-lg border-2 border-amber-400" />` : '<span class="text-2xl">👑</span>'}
-                  <div>
-                    <span class="text-[11px] text-amber-300 font-bold uppercase">👑 Pemenang Utama:</span>
-                    <h4 class="font-extrabold text-sm text-white">${winner.group_name} (${winner.score} Poin)</h4>
-                  </div>
-                </div>
-              ` : ''}
-
-              <div>
-                <h5 class="font-bold text-slate-300 mb-1">📊 Papan Peringkat Akhir:</h5>
-                <table class="w-full text-left bg-slate-950/60 rounded-xl p-2">
-                  <thead>
-                    <tr class="text-[11px] text-slate-500 border-b border-slate-800">
-                      <th class="p-2">Kelompok</th>
-                      <th class="p-2">Anggota</th>
-                      <th class="p-2 text-right">Skor Total</th>
-                    </tr>
-                  </thead>
-                  <tbody>${leaderboardRows}</tbody>
-                </table>
-              </div>
-
-              <div class="space-y-2 pt-2 border-t border-slate-800">
-                <h5 class="font-bold text-amber-300 text-xs">📝 Detail Perjalanan Jawaban Per Soal & Per Kelompok:</h5>
-                ${detailedAuditHTML}
+              <div class="space-y-2">
+                ${groupTables}
               </div>
             `;
             container.appendChild(div);
@@ -1218,7 +1142,7 @@
     }
 
     function deleteHistoryRecord(key) {
-      if (!confirm("Hapus catatan detail kuis ini secara permanen?")) return;
+      if (!confirm("Hapus catatan rekap ini?")) return;
       db.ref(`teachers/${currentTeacherId}/quiz_history/${key}`).remove(() => openHistoryModal());
     }
 
@@ -1251,8 +1175,7 @@
           picked_member: null,
           members: membersArray,
           photo: capturedPhotoData,
-          answers_history: {},
-          last_submit_time: 9999999999999
+          last_submit_time: Date.now()
         };
         if (!snapshot.exists()) {
           groupRef.set(payload, attachStudentListener);
@@ -1336,23 +1259,19 @@
           document.getElementById('quiz-box').classList.add('hidden');
           document.getElementById('waiting-box').classList.remove('hidden');
           document.getElementById('finished-all-box').classList.add('hidden');
-          
-          // HITUNG URUTAN PENGUMPULAN GLOBAL DENGAN MENGURUTKAN WAKTU SUBMIT SELURUH KELOMPOK
-          let waitingQueue = [];
+
+          // HITUNG URUTAN ANTREAN TERPUSAT SAMA SEPERTI DI DASHBOARD GURU
+          let waitingList = [];
           Object.keys(allGroups).forEach(k => {
             if (allGroups[k].status === 'waiting') {
-              waitingQueue.push({
-                id: k,
-                last_submit_time: allGroups[k].last_submit_time || 9999999999999
-              });
+              waitingList.push({ id: k, time: allGroups[k].last_submit_time || 9999999999999 });
             }
           });
-          waitingQueue.sort((a, b) => a.last_submit_time - b.last_submit_time);
-          
-          const myPosIndex = waitingQueue.findIndex(item => item.id === selectedGroup);
-          const posNum = myPosIndex !== -1 ? myPosIndex + 1 : (myData.finish_order || 1);
+          waitingList.sort((a, b) => a.time - b.time);
+          const myPos = waitingList.findIndex(x => x.id === selectedGroup);
+          const queueNum = myPos !== -1 ? myPos + 1 : 1;
 
-          document.getElementById('finish-order-badge').innerText = 'Urutan Pengumpulan Global: #' + posNum;
+          document.getElementById('finish-order-badge').innerText = 'Urutan Antrean Periksa: #' + queueNum;
 
           const pickedBox = document.getElementById('picked-member-box');
           if (myData.picked_member) {
@@ -1367,16 +1286,13 @@
           document.getElementById('finished-all-box').classList.remove('hidden');
 
           let groupList = [];
-          for (let i = 1; i <= totalConfiguredGroups; i++) {
-            const key = 'kelompok_' + i;
-            if (allGroups[key]) {
-              groupList.push({
-                id: key,
-                score: allGroups[key].total_score || 0,
-                last_submit_time: allGroups[key].last_submit_time || 9999999999999
-              });
-            }
-          }
+          Object.keys(allGroups).forEach(key => {
+            groupList.push({
+              id: key,
+              score: allGroups[key].total_score || 0,
+              last_submit_time: allGroups[key].last_submit_time || 9999999999999
+            });
+          });
 
           groupList.sort((a, b) => {
             if (b.score !== a.score) return b.score - a.score;
@@ -1421,150 +1337,180 @@
 
       if (!finalAnswer.trim()) return alert("Pilih atau isi jawaban kelompokmu dulu!");
 
-      const submitTimestamp = Date.now();
+      db.ref(`rooms/${currentRoomCode}/groups/${selectedGroup}`).update({
+        status: 'waiting',
+        answer: finalAnswer,
+        finish_order: null,
+        picked_member: null,
+        last_submit_time: Date.now()
+      });
+      currentSelectedAnswer = "";
+    }
 
-      db.ref(`rooms/${currentRoomCode}/groups`).once('value', (snapshot) => {
-        const groups = snapshot.val() || {};
-        
-        // Hitung urutan di antara yang sedang waiting berdasarkan timestamp submit global
-        let waitingList = [];
-        Object.keys(groups).forEach(k => {
-          if (groups[k].status === 'waiting') {
-            waitingList.push(groups[k].last_submit_time || 9999999999999);
-          }
-        });
-        
-        const myGlobalOrder = waitingList.length + 1;
+    // DASHBOARD GURU
+    function initTeacherDashboard() {
+      db.ref(`rooms/${currentRoomCode}/active_quiz_questions`).once('value', (snapshot) => {
+        if (snapshot.val()) activeQuestions = snapshot.val();
+        document.getElementById('total-questions-input').value = activeQuestions.length;
+        generateQuestionInputs(activeQuestions.length);
+      });
 
-        db.ref(`rooms/${currentRoomCode}/groups/${selectedGroup}`).update({
-          status: 'waiting',
-          answer: finalAnswer,
-          finish_order: myGlobalOrder,
-          picked_member: null,
-          last_submit_time: submitTimestamp
-        });
-        currentSelectedAnswer = "";
+      db.ref(`rooms/${currentRoomCode}/score_table`).on('value', (snapshot) => {
+        if (snapshot.val()) {
+          customScoreTable = snapshot.val();
+          updateScoreInputsForGroupCount(totalConfiguredGroups);
+        }
+      });
+
+      db.ref(`rooms/${currentRoomCode}/group_count`).on('value', (snapshot) => {
+        totalConfiguredGroups = snapshot.val() || 5;
+        document.getElementById('total-groups-input').value = totalConfiguredGroups;
+        updateScoreInputsForGroupCount(totalConfiguredGroups);
+        triggerRealtimeGroupUIUpdate();
+      });
+
+      loadPresetsList();
+
+      db.ref(`rooms/${currentRoomCode}/quiz_started`).on('value', (snapshot) => {
+        const started = snapshot.val() === true;
+        const statusInd = document.getElementById('quiz-status-indicator');
+        const toggleBtn = document.getElementById('toggle-quiz-btn');
+        if (started) {
+          statusInd.innerText = "Status: 🚀 Kuis Berlangsung";
+          toggleBtn.innerText = "🔒 Kunci Kuis";
+          toggleBtn.className = "px-5 py-2 bg-rose-600 font-bold rounded-xl text-xs shadow-md";
+        } else {
+          statusInd.innerText = "Status: ⏳ Belum Dimulai";
+          toggleBtn.innerText = "🚀 Mulai Kuis";
+          toggleBtn.className = "px-5 py-2 bg-emerald-600 font-bold rounded-xl text-xs shadow-md";
+        }
+      });
+
+      db.ref(`rooms/${currentRoomCode}/groups`).on('value', (snapshot) => {
+        const data = snapshot.val() || {};
+        renderTeacherDashboardGroups(data);
       });
     }
 
-    let latestFirebaseGroupsData = {};
-
-    function renderTeacherUIViews() {
-      const data = latestFirebaseGroupsData || {};
+    function renderTeacherDashboardGroups(data) {
       const container = document.getElementById('groups-container');
       const verticalLeaderboardContainer = document.getElementById('vertical-leaderboard-container');
       const winnerPodiumSection = document.getElementById('winner-podium-section');
 
-      if (container) container.innerHTML = '';
-      if (verticalLeaderboardContainer) verticalLeaderboardContainer.innerHTML = '';
+      if (!container || !verticalLeaderboardContainer) return;
 
-      // MENGHITUNG KELOMPOK DENGAN STATUS WAITING DAN MENGURUTKAN BERDASARKAN SUBMIT TIME GLOBAL
-      let waitingGroupsList = [];
-      for (let i = 1; i <= totalConfiguredGroups; i++) {
-        const groupId = 'kelompok_' + i;
-        const group = data[groupId];
-        if (group && group.status === 'waiting') {
-          waitingGroupsList.push({
-            id: groupId,
-            last_submit_time: group.last_submit_time || 9999999999999
-          });
+      container.innerHTML = '';
+      verticalLeaderboardContainer.innerHTML = '';
+
+      db.ref(`rooms/${currentRoomCode}/quiz_started`).once('value', (startedSnap) => {
+        const isQuizStarted = startedSnap.val() === true;
+
+        let waitingQueue = [];
+        Object.keys(data).forEach(k => {
+          if (data[k] && data[k].status === 'waiting') {
+            waitingQueue.push({ id: k, time: data[k].last_submit_time || 9999999999999 });
+          }
+        });
+        waitingQueue.sort((a, b) => a.time - b.time);
+
+        let groupList = [];
+        for (let i = 1; i <= totalConfiguredGroups; i++) {
+          const groupId = 'kelompok_' + i;
+          const group = data[groupId] || null;
+
+          if (!group || !group.members || group.members.length === 0) {
+            groupList.push({ id: groupId, name: 'Kelompok ' + i, score: 0, status: 'unregistered', members: [], photo: null, last_submit_time: 9999999999999 });
+
+            const card = document.createElement('div');
+            card.className = "glass-card border border-slate-800 rounded-2xl p-5 shadow-xl flex flex-col justify-between opacity-60";
+            card.innerHTML = `
+              <div class="text-center py-8">
+                <div class="text-3xl mb-2 opacity-40">👥</div>
+                <h2 class="text-xl font-bold text-slate-400">Kelompok ${i}</h2>
+                <span class="inline-block mt-2 bg-slate-800 text-slate-500 text-[11px] px-3 py-1 rounded-full font-semibold border border-slate-700">Belum Ada Siswa</span>
+              </div>
+              <button type="button" disabled class="w-full py-2 bg-slate-800 text-slate-600 font-semibold rounded-xl text-xs">Menunggu Pendaftaran...</button>
+            `;
+            container.appendChild(card);
+          } else {
+            let globalQueuePos = null;
+            if (group.status === 'waiting') {
+              const posIdx = waitingQueue.findIndex(x => x.id === groupId);
+              globalQueuePos = posIdx !== -1 ? posIdx + 1 : 1;
+            }
+
+            groupList.push({
+              id: groupId,
+              name: 'Kelompok ' + i,
+              score: group.total_score || 0,
+              status: group.status,
+              members: group.members,
+              photo: group.photo,
+              last_submit_time: group.last_submit_time || 9999999999999
+            });
+
+            const currentScores = getCustomScoreFromInputs();
+            const scoreEarned = globalQueuePos ? (currentScores[globalQueuePos] || currentScores[totalConfiguredGroups] || 100) : (currentScores[totalConfiguredGroups] || 100);
+
+            let statusBadge = '';
+            if (group.status === 'waiting') {
+              statusBadge = `<span class="bg-amber-500/20 text-amber-300 text-xs px-2.5 py-1 font-extrabold rounded-full animate-pulse border border-amber-500/40">Menunggu (#${globalQueuePos})</span>`;
+            } else if (group.status === 'completed') {
+              statusBadge = '<span class="bg-emerald-500/20 text-emerald-300 text-xs px-2.5 py-1 font-bold rounded-full">Selesai</span>';
+            } else {
+              if (isQuizStarted) {
+                statusBadge = '<span class="bg-blue-500/20 text-blue-300 text-xs px-2.5 py-1 font-semibold rounded-full">Sedang Mengerjakan</span>';
+              } else {
+                statusBadge = '<span class="bg-indigo-500/20 text-indigo-300 text-xs px-2.5 py-1 font-semibold rounded-full">Telah Terdaftar</span>';
+              }
+            }
+
+            const card = document.createElement('div');
+            card.className = "glass-card border border-slate-700 rounded-2xl p-5 shadow-xl flex flex-col justify-between";
+            card.innerHTML = `
+              <div>
+                <div class="flex justify-between items-center mb-2">
+                  <h2 class="text-xl font-bold text-white">Kelompok ${i}</h2>
+                  ${statusBadge}
+                </div>
+                <div class="flex items-center gap-3 mb-3">
+                  ${group.photo ? `<img src="${group.photo}" class="w-12 h-12 rounded-xl object-cover border border-amber-300 shadow-md" />` : ''}
+                  <p class="text-xs text-slate-300 italic font-medium leading-relaxed">Anggota: ${group.members.join(', ')}</p>
+                </div>
+                <div class="text-sm text-slate-300 space-y-1 mb-4">
+                  <p>Ronde Sekarang: <strong class="text-indigo-400">Soal ${group.current_round || 1}</strong></p>
+                  <p>Total Skor: <strong class="text-emerald-400">${group.total_score || 0} Poin</strong></p>
+                </div>
+                ${group.status === 'waiting' ? `<div class="bg-slate-900/80 p-3 rounded-xl mb-4 border border-amber-500/30"><p class="text-xs text-slate-400">Jawaban Siswa:</p><p class="text-sm text-slate-100 italic font-bold">"${group.answer || '-'}"</p></div>` : ''}
+                <div class="bg-slate-900/50 p-3 rounded-xl mb-4 text-center border border-slate-800">
+                  <button type="button" onclick="pickRandomMember('${groupId}')" class="text-xs bg-indigo-600/30 hover:bg-indigo-600/50 text-indigo-300 px-3 py-1.5 rounded-lg mb-2 font-bold transition">🎲 Tunjuk Anggota Maju</button>
+                  <div class="text-sm font-bold text-amber-300">${group.picked_member ? 'Yang Maju: ' + group.picked_member : 'Belum Ditunjuk'}</div>
+                </div>
+              </div>
+              <div>
+                ${group.status === 'waiting' ? `
+                  <button type="button" onclick="approveGroup('${groupId}', ${group.current_round || 1}, ${group.total_score || 0}, ${scoreEarned}, '${group.answer || ''}', '${group.picked_member || ''}', ${globalQueuePos})" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 font-bold rounded-xl text-sm mb-2 shadow-lg">✅ ACC & Tambah +${scoreEarned} Poin</button>
+                  <button type="button" onclick="rejectGroup('${groupId}')" class="w-full py-1.5 bg-rose-600/30 hover:bg-rose-600/50 text-rose-300 font-bold rounded-xl text-xs">❌ Diskusi Ulang</button>
+                ` : `<button type="button" disabled class="w-full py-2 bg-slate-800 text-slate-500 font-semibold rounded-xl text-xs">Menunggu Jawaban Siswa...</button>`}
+              </div>
+            `;
+            container.appendChild(card);
+          }
         }
-      }
-      waitingGroupsList.sort((a, b) => a.last_submit_time - b.last_submit_time);
 
-      // PETA LOKASI URUTAN DIBUAT DENGAN PRESISI CHRONOLOGICAL
-      let globalQueueMap = {};
-      waitingGroupsList.forEach((item, index) => {
-        globalQueueMap[item.id] = index + 1;
-      });
-
-      let groupList = [];
-      
-      for (let i = 1; i <= totalConfiguredGroups; i++) {
-        const groupId = 'kelompok_' + i;
-        const group = data[groupId] || {
-          current_round: 1,
-          status: 'answering',
-          finish_order: null,
-          total_score: 0,
-          answer: '',
-          picked_member: null,
-          members: [],
-          photo: null,
-          answers_history: {},
-          last_submit_time: 9999999999999
-        };
-
-        groupList.push({
-          id: groupId,
-          name: 'Kelompok ' + i,
-          score: group.total_score || 0,
-          status: group.status,
-          members: group.members,
-          photo: group.photo,
-          last_submit_time: group.last_submit_time || 9999999999999
+        groupList.sort((a, b) => {
+          if (b.score !== a.score) return b.score - a.score;
+          return a.last_submit_time - b.last_submit_time;
         });
 
-        const currentScores = getCustomScoreFromInputs();
-        const defaultLastScore = currentScores[totalConfiguredGroups] || 100;
-        
-        // URUTAN QUEUE GLOBAL CHRONOLOGICAL
-        const globalOrderNumber = globalQueueMap[groupId] || group.finish_order || 1;
-        const scoreEarned = currentScores[globalOrderNumber] || defaultLastScore;
+        const activeScores = getCustomScoreFromInputs();
+        const maxSingleRoundScore = activeScores[1] || 140;
+        const calculatedMaxScore = activeQuestions.length * maxSingleRoundScore;
+        const maxScore = Math.max(...groupList.map(g => g.score), calculatedMaxScore);
 
-        let statusBadge = '';
-        if (group.status === 'answering') statusBadge = '<span class="bg-blue-500/20 text-blue-300 text-xs px-2.5 py-1 rounded-full">Sedang Mengerjakan</span>';
-        else if (group.status === 'waiting') statusBadge = '<span class="bg-amber-500/20 text-amber-300 text-xs px-2.5 py-1 font-bold rounded-full animate-pulse">Menunggu (#' + globalOrderNumber + ')</span>';
-        else if (group.status === 'completed') statusBadge = '<span class="bg-emerald-500/20 text-emerald-300 text-xs px-2.5 py-1 rounded-full">Selesai</span>';
+        const activeGroups = groupList.filter(g => g.members && g.members.length > 0);
+        const isAllFinished = activeGroups.length > 0 && activeGroups.every(g => g.status === 'completed');
 
-        if (container) {
-          const card = document.createElement('div');
-          card.className = `glass-card border ${group.status === 'waiting' ? 'border-amber-400/80 shadow-amber-500/10' : 'border-slate-700'} rounded-2xl p-5 shadow-xl flex flex-col justify-between transition-all duration-300`;
-          card.innerHTML = `
-            <div>
-              <div class="flex justify-between items-center mb-2">
-                <div class="flex items-center gap-2">
-                  <h2 class="text-xl font-bold text-white">Kelompok ${i}</h2>
-                  ${group.status === 'waiting' ? `<span class="bg-amber-500 text-slate-950 font-black text-xs px-2 py-0.5 rounded-md shadow-md">#${globalOrderNumber}</span>` : ''}
-                </div>
-                ${statusBadge}
-              </div>
-              <p class="text-xs text-slate-400 italic mb-3">Anggota: ${group.members && group.members.length > 0 ? group.members.join(', ') : 'Belum mendaftar'}</p>
-              <div class="text-sm text-slate-300 space-y-1 mb-4">
-                <p>Ronde Sekarang: <strong class="text-indigo-400">Soal ${group.current_round || 1}</strong></p>
-                <p>Total Skor: <strong class="text-emerald-400">${group.total_score || 0} Poin</strong></p>
-              </div>
-              ${group.status === 'waiting' ? `<div class="bg-slate-900/90 p-3.5 rounded-xl mb-4 border border-amber-500/30"><p class="text-xs text-amber-300 font-bold mb-1">Jawaban Siswa (Soal #${group.current_round || 1}):</p><p class="text-sm text-slate-100 italic font-bold">"${group.answer || '-'}"</p></div>` : ''}
-              <div class="bg-slate-900/50 p-3 rounded-xl mb-4 text-center">
-                <button type="button" onclick="pickRandomMember('${groupId}')" class="text-xs bg-indigo-600/30 text-indigo-300 px-3 py-1.5 rounded-lg mb-2 hover:bg-indigo-600/50 transition">🎲 Tunjuk Anggota Maju</button>
-                <div class="text-sm font-bold text-amber-300">${group.picked_member ? 'Yang Maju: ' + group.picked_member : 'Belum Ditunjuk'}</div>
-              </div>
-            </div>
-            <div>
-              ${group.status === 'waiting' ? `
-                <button type="button" onclick="approveGroup('${groupId}', ${group.current_round || 1}, ${group.total_score || 0}, ${scoreEarned}, ${globalOrderNumber})" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 font-bold rounded-xl text-sm mb-2 shadow-lg flex items-center justify-center gap-1">✅ ACC (Urutan #${globalOrderNumber}: +${scoreEarned} Poin)</button>
-                <button type="button" onclick="rejectGroup('${groupId}')" class="w-full py-1.5 bg-rose-600/30 hover:bg-rose-600/50 text-rose-300 font-bold rounded-xl text-xs transition">❌ Diskusi Ulang</button>
-              ` : `<button type="button" disabled class="w-full py-2 bg-slate-700/50 text-slate-500 font-semibold rounded-xl text-xs">Menunggu Jawaban Siswa...</button>`}
-            </div>
-          `;
-          container.appendChild(card);
-        }
-      }
-
-      groupList.sort((a, b) => {
-        if (b.score !== a.score) return b.score - a.score;
-        return a.last_submit_time - b.last_submit_time;
-      });
-
-      const activeScores = getCustomScoreFromInputs();
-      const maxSingleRoundScore = activeScores[1] || 140;
-      const calculatedMaxScore = activeQuestions.length * maxSingleRoundScore;
-      const maxScore = Math.max(...groupList.map(g => g.score), calculatedMaxScore);
-
-      const activeGroups = groupList.filter(g => g.members && g.members.length > 0);
-      const isAllFinished = activeGroups.length > 0 && activeGroups.every(g => g.status === 'completed');
-
-      if (winnerPodiumSection) {
         if (isAllFinished) {
           const winner = groupList[0];
           winnerPodiumSection.classList.remove('hidden');
@@ -1581,9 +1527,7 @@
         } else {
           winnerPodiumSection.classList.add('hidden');
         }
-      }
 
-      if (verticalLeaderboardContainer) {
         groupList.forEach((item) => {
           const heightPercent = Math.max((item.score / maxScore) * 100, 8);
 
@@ -1600,56 +1544,6 @@
           `;
           verticalLeaderboardContainer.appendChild(barCol);
         });
-      }
-    }
-
-    function triggerRealtimeGroupUIUpdate() {
-      renderTeacherUIViews();
-    }
-
-    // DASHBOARD GURU
-    function initTeacherDashboard() {
-      db.ref(`rooms/${currentRoomCode}/active_quiz_questions`).once('value', (snapshot) => {
-        if (snapshot.val()) activeQuestions = snapshot.val();
-        document.getElementById('total-questions-input').value = activeQuestions.length;
-        generateQuestionInputs(activeQuestions.length);
-      });
-
-      db.ref(`rooms/${currentRoomCode}/score_table`).on('value', (snapshot) => {
-        if (snapshot.val()) {
-          customScoreTable = snapshot.val();
-          generateScoreInputs(totalConfiguredGroups);
-        }
-      });
-
-      db.ref(`rooms/${currentRoomCode}/group_count`).on('value', (snapshot) => {
-        totalConfiguredGroups = snapshot.val() || 5;
-        document.getElementById('total-groups-input').value = totalConfiguredGroups;
-        document.getElementById('configured-group-count-display').innerText = totalConfiguredGroups;
-        generateScoreInputs(totalConfiguredGroups);
-        triggerRealtimeGroupUIUpdate();
-      });
-
-      loadPresetsList();
-
-      db.ref(`rooms/${currentRoomCode}/quiz_started`).on('value', (snapshot) => {
-        const started = snapshot.val() === true;
-        const statusInd = document.getElementById('quiz-status-indicator');
-        const toggleBtn = document.getElementById('toggle-quiz-btn');
-        if (started) {
-          statusInd.innerText = "🚀 Berlangsung";
-          toggleBtn.innerText = "🔒 Kunci Kuis";
-          toggleBtn.className = "px-4 py-2 bg-rose-600 font-bold rounded-xl text-xs";
-        } else {
-          statusInd.innerText = "⏳ Belum Dimulai";
-          toggleBtn.innerText = "🚀 Mulai Kuis";
-          toggleBtn.className = "px-4 py-2 bg-emerald-600 font-bold rounded-xl text-xs";
-        }
-      });
-
-      db.ref(`rooms/${currentRoomCode}/groups`).on('value', (snapshot) => {
-        latestFirebaseGroupsData = snapshot.val() || {};
-        renderTeacherUIViews();
       });
     }
 
@@ -1670,42 +1564,36 @@
       });
     }
 
-    function approveGroup(groupId, currentRound, currentScore, addedScore, assignedOrderNumber) {
+    function approveGroup(groupId, currentRound, currentScore, addedScore, studentAnswer, pickedMember, finishOrderNum) {
       playApproveScoreSound();
       const nextRound = currentRound + 1;
       const isCompleted = nextRound > activeQuestions.length;
 
-      db.ref(`rooms/${currentRoomCode}/groups/${groupId}`).once('value', (snap) => {
-        const gData = snap.val() || {};
-        const roundRecord = {
-          round: currentRound,
-          answer: gData.answer || '-',
-          finish_order: assignedOrderNumber,
-          picked_member: gData.picked_member || 'N/A',
-          earned_score: addedScore,
-          timestamp: Date.now()
-        };
+      const answerRecord = {
+        question_text: activeQuestions[currentRound - 1] ? activeQuestions[currentRound - 1].text : 'Soal ' + currentRound,
+        answer: studentAnswer,
+        score_earned: addedScore,
+        finish_order: finishOrderNum || 1,
+        picked_member: pickedMember || null,
+        timestamp: Date.now()
+      };
 
-        let updatedHistory = gData.answers_history || {};
-        updatedHistory[currentRound] = roundRecord;
+      db.ref(`rooms/${currentRoomCode}/groups/${groupId}/answers_history/round_${currentRound}`).set(answerRecord);
 
-        db.ref(`rooms/${currentRoomCode}/groups/${groupId}`).update({
-          current_round: isCompleted ? currentRound : nextRound,
-          status: isCompleted ? 'completed' : 'answering',
-          total_score: currentScore + addedScore,
-          finish_order: null,
-          answer: '',
-          picked_member: null,
-          last_submit_time: 9999999999999,
-          answers_history: updatedHistory
-        });
+      db.ref(`rooms/${currentRoomCode}/groups/${groupId}`).update({
+        current_round: isCompleted ? currentRound : nextRound,
+        status: isCompleted ? 'completed' : 'answering',
+        total_score: currentScore + addedScore,
+        finish_order: null,
+        answer: '',
+        picked_member: null,
+        last_submit_time: 9999999999999
       });
     }
 
     function rejectGroup(rejectedGroupId) {
       playClickSound();
-      if (!confirm("Tolak jawaban kelompok ini dan minta diskusi ulang?")) return;
-      
+      if (!confirm("Tolak jawaban kelompok ini?")) return;
       db.ref(`rooms/${currentRoomCode}/groups/${rejectedGroupId}`).update({
         status: 'answering',
         finish_order: null,
@@ -1719,7 +1607,6 @@
       playClickSound();
       if (!confirm("Yakin ingin mereset seluruh kuis di ruangan ini?")) return;
       db.ref(`rooms/${currentRoomCode}/quiz_started`).set(false);
-      db.ref(`rooms/${currentRoomCode}/round_passed_count`).remove();
       db.ref(`rooms/${currentRoomCode}/groups`).remove(() => alert("Berhasil reset kuis!"));
     }
   </script>
