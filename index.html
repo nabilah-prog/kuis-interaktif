@@ -8,7 +8,7 @@
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-  <!-- Library QR Code Handal -->
+  <!-- Library Generator QR Code Paling Stabil -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <style>
     @keyframes floatClouds {
@@ -28,7 +28,7 @@
 
     @keyframes glowPulse {
       0%, 100% { box-shadow: 0 0 25px rgba(251, 191, 36, 0.6); }
-      50% { shadow: 0 0 50px rgba(251, 191, 36, 0.9); }
+      50% { box-shadow: 0 0 50px rgba(251, 191, 36, 0.9); }
     }
     .glow-gold { animation: glowPulse 2s infinite ease-in-out; }
 
@@ -81,7 +81,7 @@
   <div id="teacher-login-modal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 z-50">
     <div class="glass-card p-6 rounded-3xl border border-sky-500/30 w-full max-w-sm text-center shadow-2xl space-y-4">
       <h2 class="text-xl font-bold text-sky-300">👨‍🏫 Masuk Akun Guru</h2>
-      <p class="text-xs text-slate-300">Masukkan Nama atau ID Unik Guru untuk mengelola bank soal & riwayat kuis.</p>
+      <p class="text-xs text-slate-300">Masukkan Nama atau ID Unik Guru untuk mengelola kuis.</p>
       <input type="text" id="teacher-id-input" placeholder="Contoh: guru_abil" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-white font-bold text-center focus:outline-none focus:border-sky-400" />
       <div class="flex gap-2">
         <button type="button" onclick="playClickSound(); closeTeacherLoginModal();" class="w-1/2 py-2.5 bg-slate-700 font-semibold rounded-xl text-xs">Batal</button>
@@ -107,13 +107,13 @@
   <div id="qr-modal" class="hidden fixed inset-0 bg-black/90 backdrop-blur-md flex items-center justify-center p-4 z-50">
     <div class="glass-card p-8 rounded-3xl border-2 border-amber-400 max-w-sm w-full text-center shadow-2xl">
       <h2 class="text-2xl font-extrabold text-amber-300 mb-1">📱 Scan QR Code Kuis</h2>
-      <p id="qr-room-text" class="text-xs text-slate-300 mb-4 font-bold"></p>
+      <p id="qr-room-text" class="text-xs text-slate-300 mb-2 font-bold"></p>
       
-      <div class="bg-white p-4 rounded-2xl inline-block shadow-xl mb-4">
+      <div class="bg-white p-4 rounded-2xl inline-block shadow-xl mb-3">
         <div id="modal-qrcode"></div>
       </div>
       
-      <p class="text-xs text-slate-400 mb-4">Siswa mengarahkan kamera HP ke QR Code di atas untuk otomatis gabung kuis!</p>
+      <p class="text-[11px] text-slate-400 mb-4">Arahkan kamera HP ke QR Code di atas. Siswa akan otomatis langsung masuk ke registrasi!</p>
       <button type="button" onclick="playClickSound(); closeQRModal();" class="w-full py-3 bg-rose-600 font-bold rounded-xl text-xs shadow-lg">Tutup QR Code</button>
     </div>
   </div>
@@ -201,7 +201,7 @@
     </div>
   </div>
 
-  <!-- DASHBOARD GURU DENGAN 3 TAB DEDIKASI -->
+  <!-- DASHBOARD GURU -->
   <div id="teacher-dashboard-screen" class="hidden w-full max-w-6xl z-10 my-6 space-y-6">
     <div class="glass-card p-6 rounded-3xl border border-sky-500/20 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
       <div>
@@ -235,15 +235,14 @@
 
         <div class="flex items-center gap-2">
           <label class="font-bold text-amber-300">Jumlah Soal Kuis:</label>
-          <input type="number" id="total-questions-input" min="1" max="50" value="4" onchange="generateQuestionInputs(this.value)" class="w-16 bg-slate-900 border border-slate-700 rounded-lg p-1.5 text-center text-white font-bold" />
+          <input type="number" id="total-questions-input" min="1" max="50" value="2" onchange="generateQuestionInputs(this.value)" class="w-16 bg-slate-900 border border-slate-700 rounded-lg p-1.5 text-center text-white font-bold" />
         </div>
 
         <button type="button" onclick="publishActiveQuestions()" class="ml-auto px-4 py-2 bg-emerald-600 hover:bg-emerald-500 font-bold rounded-xl text-xs shadow-lg">🚀 Terapkan Pengaturan ke Siswa</button>
       </div>
 
-      <!-- CONTAINER ATURAN POIN TER-SINKRONISASI PRESISI -->
       <div class="bg-slate-900/80 p-4 rounded-2xl border border-slate-800 space-y-2">
-        <h4 class="font-bold text-amber-300 text-xs">🎯 Pengaturan Skor Poin Per Urutan Selesai (Otomatis Menyesuaikan Kelompok):</h4>
+        <h4 class="font-bold text-amber-300 text-xs">🎯 Pengaturan Skor Poin Per Urutan Selesai:</h4>
         <div id="dynamic-score-inputs-container" class="grid grid-cols-2 sm:grid-cols-5 gap-3 text-xs"></div>
       </div>
 
@@ -289,12 +288,22 @@
       { text: "Soal Ronde 2: Berapakah hasil dari 15 + 25 x 2?", type: "pg", options: ["A. 80", "B. 65", "C. 50", "D. 90"], explanation: "Perkalian dahulukan" }
     ];
 
+    // PEMBACAAN OTOMATIS SAAT SISWA MEMINDAI QR CODE
     window.addEventListener('DOMContentLoaded', () => {
-      const urlParams = new URLSearchParams(window.location.search);
-      const roomFromUrl = urlParams.get('room');
-      if (roomFromUrl) {
-        currentRoomCode = roomFromUrl.toUpperCase();
-        validateAndEnterRoom(currentRoomCode);
+      // Buka via Hash URL (#KUIS-XXXX) atau URL Param (?room=KUIS-XXXX)
+      let roomCodeDetected = null;
+      
+      if (window.location.hash) {
+        roomCodeDetected = window.location.hash.replace('#', '').trim().toUpperCase();
+      } else {
+        const urlParams = new URLSearchParams(window.location.search);
+        roomCodeDetected = urlParams.get('room') ? urlParams.get('room').trim().toUpperCase() : null;
+      }
+
+      if (roomCodeDetected && roomCodeDetected.startsWith('KUIS-')) {
+        currentRoomCode = roomCodeDetected;
+        // LANGSUNG MASUKKAN SISWA KE REGISTRASI KELOMPOK
+        openStudentSetupScreen();
       }
     });
 
@@ -365,19 +374,23 @@
       });
     }
 
+    // PEMBUATAN QR CODE DENGAN FORMAT URL SANGAT BERSIH BISA SCAN
     function openQRModal() {
       const modal = document.getElementById('qr-modal');
       const container = document.getElementById('modal-qrcode');
       container.innerHTML = '';
       
-      const currentUrlClean = window.location.origin + window.location.pathname;
-      const fullUrl = `${currentUrlClean}?room=${currentRoomCode}`;
+      // Ambil Base URL tempat web ini di-host (misal di Netlify/GitHub)
+      const baseUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
+      const fullQrUrl = `${baseUrl}#${currentRoomCode}`;
+      
       document.getElementById('qr-room-text').innerText = "Kode Ruang: " + currentRoomCode;
 
       new QRCode(container, {
-        text: fullUrl,
+        text: fullQrUrl,
         width: 220,
-        height: 220
+        height: 220,
+        correctLevel: QRCode.CorrectLevel.M
       });
 
       modal.classList.remove('hidden');
@@ -399,27 +412,17 @@
       const input = document.getElementById('manual-room-input').value.trim();
       if (!input) return alert("Masukkan kode ruang!");
       currentRoomCode = input.toUpperCase();
-      validateAndEnterRoom(currentRoomCode);
-    }
-
-    function validateAndEnterRoom(code) {
-      db.ref(`rooms/${code}`).once('value', (snapshot) => {
-        if (snapshot.exists()) {
-          closeManualCodeModal();
-          openStudentSetupScreen();
-        } else {
-          alert(`❌ Kode Ruang "${code}" tidak ditemukan di database.`);
-        }
-      });
+      openStudentSetupScreen();
     }
 
     function openStudentSetupScreen() {
       document.getElementById('role-screen').classList.add('hidden');
+      document.getElementById('manual-code-modal').classList.add('hidden');
       document.getElementById('student-setup-screen').classList.remove('hidden');
       document.getElementById('room-display-badge').innerText = "Ruang: " + currentRoomCode;
 
       db.ref(`rooms/${currentRoomCode}/group_count`).once('value', (snapshot) => {
-        const count = snapshot.val() || 2;
+        const count = snapshot.val() || totalConfiguredGroups || 2;
         const select = document.getElementById('group-select');
         select.innerHTML = '';
         for (let i = 1; i <= count; i++) {
