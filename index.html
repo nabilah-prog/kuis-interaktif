@@ -8,8 +8,6 @@
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-  <!-- Library Generator QR Code Paling Stabil -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <style>
     @keyframes floatClouds {
       0% { transform: translateX(-10%); }
@@ -107,13 +105,13 @@
   <div id="qr-modal" class="hidden fixed inset-0 bg-black/90 backdrop-blur-md flex items-center justify-center p-4 z-50">
     <div class="glass-card p-8 rounded-3xl border-2 border-amber-400 max-w-sm w-full text-center shadow-2xl">
       <h2 class="text-2xl font-extrabold text-amber-300 mb-1">📱 Scan QR Code Kuis</h2>
-      <p id="qr-room-text" class="text-xs text-slate-300 mb-2 font-bold"></p>
+      <p id="qr-room-text" class="text-xs text-slate-300 mb-3 font-bold"></p>
       
       <div class="bg-white p-4 rounded-2xl inline-block shadow-xl mb-3">
-        <div id="modal-qrcode"></div>
+        <img id="qr-image-display" src="" alt="QR Code Kuis" class="w-52 h-52 mx-auto" />
       </div>
       
-      <p class="text-[11px] text-slate-400 mb-4">Arahkan kamera HP ke QR Code di atas. Siswa akan otomatis langsung masuk ke registrasi!</p>
+      <p class="text-[11px] text-slate-300 mb-4">Arahkan kamera HP ke QR Code di atas untuk langsung masuk registrasi!</p>
       <button type="button" onclick="playClickSound(); closeQRModal();" class="w-full py-3 bg-rose-600 font-bold rounded-xl text-xs shadow-lg">Tutup QR Code</button>
     </div>
   </div>
@@ -288,21 +286,17 @@
       { text: "Soal Ronde 2: Berapakah hasil dari 15 + 25 x 2?", type: "pg", options: ["A. 80", "B. 65", "C. 50", "D. 90"], explanation: "Perkalian dahulukan" }
     ];
 
-    // PEMBACAAN OTOMATIS SAAT SISWA MEMINDAI QR CODE
+    // PEMBACAAN OTOMATIS BEGITU SCAN QR
     window.addEventListener('DOMContentLoaded', () => {
-      // Buka via Hash URL (#KUIS-XXXX) atau URL Param (?room=KUIS-XXXX)
-      let roomCodeDetected = null;
+      const urlParams = new URLSearchParams(window.location.search);
+      let roomCodeDetected = urlParams.get('room');
       
-      if (window.location.hash) {
-        roomCodeDetected = window.location.hash.replace('#', '').trim().toUpperCase();
-      } else {
-        const urlParams = new URLSearchParams(window.location.search);
-        roomCodeDetected = urlParams.get('room') ? urlParams.get('room').trim().toUpperCase() : null;
+      if (!roomCodeDetected && window.location.hash) {
+        roomCodeDetected = window.location.hash.replace('#', '').trim();
       }
 
-      if (roomCodeDetected && roomCodeDetected.startsWith('KUIS-')) {
-        currentRoomCode = roomCodeDetected;
-        // LANGSUNG MASUKKAN SISWA KE REGISTRASI KELOMPOK
+      if (roomCodeDetected) {
+        currentRoomCode = roomCodeDetected.toUpperCase();
         openStudentSetupScreen();
       }
     });
@@ -374,25 +368,18 @@
       });
     }
 
-    // PEMBUATAN QR CODE DENGAN FORMAT URL SANGAT BERSIH BISA SCAN
+    // PENYEMPURNAAN GENERATOR QR CODE BEBAS ERROR SCAN
     function openQRModal() {
       const modal = document.getElementById('qr-modal');
-      const container = document.getElementById('modal-qrcode');
-      container.innerHTML = '';
+      const imgEl = document.getElementById('qr-image-display');
       
-      // Ambil Base URL tempat web ini di-host (misal di Netlify/GitHub)
-      const baseUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
-      const fullQrUrl = `${baseUrl}#${currentRoomCode}`;
-      
+      let targetUrl = window.location.href.split('?')[0].split('#')[0];
+      let fullScanLink = `${targetUrl}?room=${currentRoomCode}`;
+
+      // Menggunakan QR Server Engine yang Sangat Presisi & BISA DISCAN SEMUA HP
+      imgEl.src = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(fullScanLink)}`;
+
       document.getElementById('qr-room-text').innerText = "Kode Ruang: " + currentRoomCode;
-
-      new QRCode(container, {
-        text: fullQrUrl,
-        width: 220,
-        height: 220,
-        correctLevel: QRCode.CorrectLevel.M
-      });
-
       modal.classList.remove('hidden');
     }
 
