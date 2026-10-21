@@ -289,12 +289,12 @@
       </div>
     </div>
 
-    <!-- PENGATURAN SOAL & BANK PRESET AKUN GURU -->
+    <!-- PENGATURAN SOAL, KELOMPOK, DAN SISTEM POIN DINAMIS -->
     <div class="glass-card p-6 rounded-3xl border border-sky-500/20 space-y-4">
       <div class="flex flex-wrap justify-between items-center gap-3 border-b border-slate-700 pb-3">
         <div>
-          <h3 class="text-lg font-bold text-sky-300">⚙️ Pengaturan Soal & Bank Preset Akun</h3>
-          <p class="text-xs text-slate-400">Pilih bank soal yang sudah disimpan atau buat preset baru.</p>
+          <h3 class="text-lg font-bold text-sky-300">⚙️ Pengaturan Soal & Sistem Poin Kuis</h3>
+          <p class="text-xs text-slate-400">Atur bank soal, jumlah kelompok, dan bobot poin tiap urutan selesai.</p>
         </div>
         <div class="flex items-center gap-2">
           <select id="preset-selector" onchange="loadSelectedPreset(this.value)" class="bg-slate-900 border border-slate-700 text-xs rounded-xl p-2 text-white">
@@ -316,6 +316,33 @@
         </div>
 
         <button type="button" onclick="publishActiveQuestions()" class="ml-auto px-4 py-2 bg-emerald-600 hover:bg-emerald-500 font-bold rounded-xl text-xs shadow-lg">🚀 Terapkan Pengaturan ke Siswa</button>
+      </div>
+
+      <!-- PENGATURAN SKOR POIN DINAMIS -->
+      <div class="bg-slate-900/80 p-4 rounded-2xl border border-slate-800 space-y-2">
+        <h4 class="font-bold text-amber-300 text-xs flex items-center gap-1">🎯 Pengaturan Skor Poin Per Urutan Selesai (Bisa Diubah Bebas):</h4>
+        <div class="grid grid-cols-2 sm:grid-cols-5 gap-3 text-xs">
+          <div>
+            <label class="block text-[11px] text-slate-400 mb-1">🥇 Urutan #1:</label>
+            <input type="number" id="score-p1" value="140" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-center font-bold text-amber-300" />
+          </div>
+          <div>
+            <label class="block text-[11px] text-slate-400 mb-1">🥈 Urutan #2:</label>
+            <input type="number" id="score-p2" value="130" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-center font-bold text-slate-200" />
+          </div>
+          <div>
+            <label class="block text-[11px] text-slate-400 mb-1">🥉 Urutan #3:</label>
+            <input type="number" id="score-p3" value="120" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-center font-bold text-amber-600" />
+          </div>
+          <div>
+            <label class="block text-[11px] text-slate-400 mb-1">🏅 Urutan #4:</label>
+            <input type="number" id="score-p4" value="110" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-center font-bold text-slate-300" />
+          </div>
+          <div>
+            <label class="block text-[11px] text-slate-400 mb-1">🎗️ Urutan #5+:</label>
+            <input type="number" id="score-p5" value="100" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-center font-bold text-slate-400" />
+          </div>
+        </div>
       </div>
 
       <div id="question-editor-container" class="space-y-4 max-h-96 overflow-y-auto pr-2"></div>
@@ -521,7 +548,8 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    const scoreTable = { 1: 140, 2: 130, 3: 120, 4: 110, 5: 100 };
+    // SKEMA SKOR DEFAULT KALO GURU NGGAK NGATUR (BISA DISUATU DINAMIKAN)
+    let customScoreTable = { 1: 140, 2: 130, 3: 120, 4: 110, 5: 100 };
     
     let activeQuestions = [
       { text: "Soal Ronde 1: Apa jawaban hasil diskusi kelompok kalian?", type: "uraian", explanation: "Penjelasan Soal 1" },
@@ -538,6 +566,16 @@
         validateAndEnterRoom(currentRoomCode);
       }
     });
+
+    function getCustomScoreFromInputs() {
+      return {
+        1: parseInt(document.getElementById('score-p1').value) || 140,
+        2: parseInt(document.getElementById('score-p2').value) || 130,
+        3: parseInt(document.getElementById('score-p3').value) || 120,
+        4: parseInt(document.getElementById('score-p4').value) || 110,
+        5: parseInt(document.getElementById('score-p5').value) || 100
+      };
+    }
 
     function generateUniqueRoomCode() {
       const rand = Math.random().toString(36).substring(2, 6).toUpperCase();
@@ -568,6 +606,7 @@
         teacher_id: currentTeacherId,
         group_count: 5,
         quiz_started: false,
+        score_table: getCustomScoreFromInputs(),
         active_quiz_questions: activeQuestions
       }, () => {
         document.getElementById('role-screen').classList.add('hidden');
@@ -803,34 +842,34 @@
       playClickSound();
       activeQuestions = collectQuestionsFromEditor();
       totalConfiguredGroups = parseInt(document.getElementById('total-groups-input').value);
+      customScoreTable = getCustomScoreFromInputs();
 
       db.ref(`rooms/${currentRoomCode}/active_quiz_questions`).set(activeQuestions);
+      db.ref(`rooms/${currentRoomCode}/score_table`).set(customScoreTable);
       db.ref(`rooms/${currentRoomCode}/group_count`).set(totalConfiguredGroups, () => {
-        alert("Pengaturan Soal & Jumlah Kelompok Berhasil Diterbitkan ke Ruang " + currentRoomCode);
+        alert("Pengaturan Soal, Poin, & Kelompok Berhasil Diterbitkan ke Siswa!");
       });
     }
 
-    // SIMPAN PRESET AKUN GURU DENGAN PILIHAN (PRIVAT ATAU PUBLIK)
     function saveAsNewPreset() {
       const presetName = prompt("Masukkan nama simpanan bank soal ini (contoh: Ulangan Bab 1):");
       if (!presetName) return;
 
-      const isPublic = confirm("Apakah bank soal ini ingin DIPUBLIKASIKAN ke Guru lain?\n\n[OK] = 🌐 Publik (Dapat dilihat & disalin guru lain)\n[Cancel] = 🔒 Privat (Hanya untuk akunmu)");
+      const isPublic = confirm("Apakah bank soal ini ingin DIPUBLIKASIKAN ke Guru lain?\n\n[OK] = 🌐 Publik\n[Cancel] = 🔒 Privat");
       const questionsToSave = collectQuestionsFromEditor();
       const key = presetName.replace(/[^a-zA-Z0-9]/g, '_');
 
       const presetData = {
         title: presetName,
         questions: questionsToSave,
+        score_table: getCustomScoreFromInputs(),
         is_public: isPublic,
         author: currentTeacherId,
         created_at: Date.now()
       };
 
-      // SIMPAN KE PRESET AKUN GURU PRIBADI
       db.ref(`teachers/${currentTeacherId}/presets/${key}`).set(presetData);
 
-      // JIKA DIPILIH PUBLIK, SIMPAN JUGA KE BANK SOAL BERSAMA
       if (isPublic) {
         db.ref(`public_bank/${key}`).set(presetData);
       }
@@ -862,11 +901,18 @@
           activeQuestions = data.questions;
           document.getElementById('total-questions-input').value = activeQuestions.length;
           generateQuestionInputs(activeQuestions.length);
+
+          if (data.score_table) {
+            document.getElementById('score-p1').value = data.score_table[1] || 140;
+            document.getElementById('score-p2').value = data.score_table[2] || 130;
+            document.getElementById('score-p3').value = data.score_table[3] || 120;
+            document.getElementById('score-p4').value = data.score_table[4] || 110;
+            document.getElementById('score-p5').value = data.score_table[5] || 100;
+          }
         }
       });
     }
 
-    // BANK SOAL PUBLIK KOMUNITAS GURU
     function openPublicBankModal() {
       const modal = document.getElementById('public-bank-modal');
       const container = document.getElementById('public-bank-list-container');
@@ -905,7 +951,7 @@
         const data = snapshot.val();
         if (!data) return;
 
-        data.is_public = false; // Disalin sebagai milik pribadi
+        data.is_public = false;
         db.ref(`teachers/${currentTeacherId}/presets/${key}`).set(data, () => {
           alert(`✅ Bank Soal "${data.title}" berhasil disalin ke akun milikmu (${currentTeacherId})!`);
           closePublicBankModal();
@@ -917,7 +963,6 @@
       document.getElementById('public-bank-modal').classList.add('hidden');
     }
 
-    // SIMPAN REKAP NILAI KHUSUS AKUN GURU
     function saveCurrentQuizResults() {
       db.ref(`rooms/${currentRoomCode}/groups`).once('value', (snapshot) => {
         const groupsData = snapshot.val();
@@ -934,7 +979,6 @@
           });
         });
 
-        // TIE-BREAKER: SKOR TINGGI DAHULU, JIKA SAMA MAKA YANG LEBIH CEPAT SUBMIT LEST_SUBMIT_TIME
         list.sort((a, b) => {
           if (b.score !== a.score) return b.score - a.score;
           return a.last_submit_time - b.last_submit_time;
@@ -954,7 +998,6 @@
       });
     }
 
-    // BUKA REKAP HANYA UNTUK AKUN GURU INI
     function openHistoryModal() {
       const modal = document.getElementById('history-modal');
       const container = document.getElementById('history-list-container');
@@ -1152,7 +1195,6 @@
             });
           });
 
-          // TIE-BREAKER SKOR & WAKTU KECEPATAN SUBMIT
           groupList.sort((a, b) => {
             if (b.score !== a.score) return b.score - a.score;
             return a.last_submit_time - b.last_submit_time;
@@ -1226,6 +1268,17 @@
         generateQuestionInputs(activeQuestions.length);
       });
 
+      db.ref(`rooms/${currentRoomCode}/score_table`).on('value', (snapshot) => {
+        if (snapshot.val()) {
+          customScoreTable = snapshot.val();
+          document.getElementById('score-p1').value = customScoreTable[1] || 140;
+          document.getElementById('score-p2').value = customScoreTable[2] || 130;
+          document.getElementById('score-p3').value = customScoreTable[3] || 120;
+          document.getElementById('score-p4').value = customScoreTable[4] || 110;
+          document.getElementById('score-p5').value = customScoreTable[5] || 100;
+        }
+      });
+
       db.ref(`rooms/${currentRoomCode}/group_count`).on('value', (snapshot) => {
         totalConfiguredGroups = snapshot.val() || 5;
         document.getElementById('total-groups-input').value = totalConfiguredGroups;
@@ -1282,7 +1335,9 @@
             last_submit_time: group.last_submit_time || 9999999999999
           });
 
-          const scoreEarned = group.finish_order ? (scoreTable[group.finish_order] || 100) : 100;
+          // KALKULASI POIN DINAMIS BERDASARKAN ATURAN SKOR YANG DIISI GURU
+          const currentScores = getCustomScoreFromInputs();
+          const scoreEarned = group.finish_order ? (currentScores[group.finish_order] || currentScores[5] || 100) : (currentScores[5] || 100);
 
           let statusBadge = '';
           if (group.status === 'answering') statusBadge = '<span class="bg-blue-500/20 text-blue-300 text-xs px-2.5 py-1 rounded-full">Sedang Mengerjakan</span>';
@@ -1310,7 +1365,7 @@
             </div>
             <div>
               ${group.status === 'waiting' ? `
-                <button type="button" onclick="approveGroup('${groupId}',${group.current_round || 1}, ${group.total_score || 0},${scoreEarned})" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 font-bold rounded-xl text-sm mb-2 shadow-lg">✅ ACC & Tambah +${scoreEarned} Poin</button>
+                <button type="button" onclick="approveGroup('${groupId}', ${group.current_round || 1}, ${group.total_score || 0}, ${scoreEarned})" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 font-bold rounded-xl text-sm mb-2 shadow-lg">✅ ACC & Tambah +${scoreEarned} Poin</button>
                 <button type="button" onclick="rejectGroup('${groupId}')" class="w-full py-1.5 bg-rose-600/30 text-rose-300 font-bold rounded-xl text-xs">❌ Diskusi Ulang</button>
               ` : `<button type="button" disabled class="w-full py-2 bg-slate-700 text-slate-500 font-semibold rounded-xl text-xs">Menunggu Jawaban Siswa...</button>`}
             </div>
@@ -1318,13 +1373,14 @@
           container.appendChild(card);
         }
 
-        // PERANGKINGAN ADIL DENGAN KETENTUAN WAKTU KECEPATAN SUBMIT
         groupList.sort((a, b) => {
           if (b.score !== a.score) return b.score - a.score;
           return a.last_submit_time - b.last_submit_time;
         });
 
-        const calculatedMaxScore = activeQuestions.length * 140;
+        const activeScores = getCustomScoreFromInputs();
+        const maxSingleRoundScore = activeScores[1] || 140;
+        const calculatedMaxScore = activeQuestions.length * maxSingleRoundScore;
         const maxScore = Math.max(...groupList.map(g => g.score), calculatedMaxScore);
 
         const activeGroups = groupList.filter(g => g.members && g.members.length > 0);
