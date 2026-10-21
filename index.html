@@ -8,7 +8,7 @@
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-  <!-- Library Generate QR Code -->
+  <!-- Library Generate QR Code dengan Fallback CDNs -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <style>
     @keyframes floatClouds {
@@ -565,11 +565,26 @@
     ];
 
     window.addEventListener('DOMContentLoaded', () => {
+      // PENANGANAN SINKRONISASI KODE RUANG SCAN QR CODE SECARA AKURAT
       const urlParams = new URLSearchParams(window.location.search);
-      const roomFromUrl = urlParams.get('room');
+      let roomFromUrl = urlParams.get('room');
+      
+      // Fallback jika dikirim via URL Hash / Fragment
+      if (!roomFromUrl && window.location.hash) {
+        const match = window.location.hash.match(/room=([^&]+)/);
+        if (match) roomFromUrl = match[1];
+      }
+
       if (roomFromUrl) {
-        currentRoomCode = roomFromUrl.toUpperCase();
-        validateAndEnterRoom(currentRoomCode);
+        // Pembersihan karakter aneh dari hasil scan QR
+        const cleanRoom = roomFromUrl.trim().replace(/[^a-zA-Z0-9_-]/g, '').toUpperCase();
+        if (cleanRoom) {
+          currentRoomCode = cleanRoom;
+          // Tunggu koneksi instan Firebase siap
+          setTimeout(() => {
+            validateAndEnterRoom(currentRoomCode);
+          }, 300);
+        }
       }
     });
 
@@ -697,18 +712,21 @@
     function enterStudentRoomManual() {
       const input = document.getElementById('manual-room-input').value.trim();
       if (!input) return alert("Masukkan kode ruang kuis!");
-      currentRoomCode = input.toUpperCase();
+      currentRoomCode = input.toUpperCase().replace(/[^a-zA-Z0-9_-]/g, '');
       validateAndEnterRoom(currentRoomCode);
     }
 
     function validateAndEnterRoom(code) {
+      if (!code) return;
       db.ref(`rooms/${code}`).once('value', (snapshot) => {
         if (snapshot.exists()) {
           closeManualCodeModal();
           openStudentSetupScreen();
         } else {
-          alert(`❌ Kode Ruang "${code}" tidak ditemukan!\n\nPastikan Guru sudah menekan "Masuk Akun Guru" terlebih dahulu.`);
+          alert(`❌ Ruang Kuis "${code}" tidak ditemukan!\n\nPastikan Guru sudah membuat ruang kuis di layar utama.`);
         }
+      }, (error) => {
+        alert("Gagal terhubung ke database. Silakan coba scan QR/masukkan kode kembali.");
       });
     }
 
@@ -735,14 +753,22 @@
       const container = document.getElementById('modal-qrcode');
       container.innerHTML = '';
       
-      const fullUrl = `${window.location.origin}${window.location.pathname}?room=${currentRoomCode}`;
+      // FORMALISASI URL BERSIH BEBAS SALAH BACA BARCODE SCANNER
+      const cleanOrigin = window.location.origin + window.location.pathname;
+      const fullUrl = `${cleanOrigin}?room=${currentRoomCode}`;
       document.getElementById('qr-room-text').innerText = "Kode Ruang: " + currentRoomCode;
 
-      new QRCode(container, {
-        text: fullUrl,
-        width: 220,
-        height: 220
-      });
+      if (typeof QRCode !== 'undefined') {
+        new QRCode(container, {
+          text: fullUrl,
+          width: 220,
+          height: 220,
+          correctLevel: QRCode.CorrectLevel.H
+        });
+      } else {
+        // Fallback generator QR Code gambar statis
+        container.innerHTML = `<img src="https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(fullUrl)}" alt="QR Code" class="mx-auto rounded-xl" />`;
+      }
 
       modal.classList.remove('hidden');
     }
