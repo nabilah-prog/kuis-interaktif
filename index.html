@@ -79,7 +79,7 @@
     </div>
   </div>
 
-  <!-- MODAL LOGIN GURU DENGAN ID UNIK -->
+  <!-- MODAL LOGIN GURU -->
   <div id="teacher-login-modal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 z-50">
     <div class="glass-card p-6 rounded-3xl border border-sky-500/30 w-full max-w-sm text-center shadow-2xl space-y-4">
       <h2 class="text-xl font-bold text-sky-300">👨‍🏫 Masuk Akun Guru</h2>
@@ -105,7 +105,7 @@
     </div>
   </div>
 
-  <!-- MODAL BANK SOAL PUBLIK KOMUNITAS -->
+  <!-- MODAL BANK SOAL PUBLIK -->
   <div id="public-bank-modal" class="hidden fixed inset-0 bg-black/90 backdrop-blur-md flex items-center justify-center p-4 z-50">
     <div class="glass-card p-6 rounded-3xl border border-emerald-400/40 w-full max-w-2xl shadow-2xl space-y-4 max-h-[85vh] flex flex-col">
       <div class="flex justify-between items-center border-b border-slate-700 pb-3">
@@ -119,7 +119,7 @@
     </div>
   </div>
 
-  <!-- MODAL DETAIL RIWAYAT LENGKAP KUIS PRIBADI GURU -->
+  <!-- MODAL RIWAYAT KUIS GURU -->
   <div id="history-modal" class="hidden fixed inset-0 bg-black/90 backdrop-blur-md flex items-center justify-center p-4 z-50">
     <div class="glass-card p-6 rounded-3xl border border-amber-400/40 w-full max-w-3xl shadow-2xl space-y-4 max-h-[85vh] flex flex-col">
       <div class="flex justify-between items-center border-b border-slate-700 pb-3">
@@ -132,7 +132,7 @@
     </div>
   </div>
 
-  <!-- MODAL QR CODE BESAR UNTUK DIPAPARKAN GURU -->
+  <!-- MODAL QR CODE -->
   <div id="qr-modal" class="hidden fixed inset-0 bg-black/90 backdrop-blur-md flex items-center justify-center p-4 z-50">
     <div class="glass-card p-8 rounded-3xl border-2 border-amber-400 max-w-sm w-full text-center shadow-2xl">
       <h2 id="qr-room-header" class="text-2xl font-extrabold text-amber-300 mb-4 tracking-wider"></h2>
@@ -234,7 +234,7 @@
         <p id="student-rank-subtitle" class="text-xs text-slate-300 mb-6 italic"></p>
 
         <div class="relative inline-block mb-6">
-          <img id="student-self-photo" src="" class="w-64 h-44 object-cover rounded-2xl border-4 border-amber-400 shadow-2xl mx-auto" />
+          <img id="student-self-photo" src="" class="w-64 h-44 object-cover rounded-2xl border-4 border-amber-400 shadow-2xl mx-auto mirror-cam" />
           <span class="absolute -top-3 -right-3 text-3xl">👑</span>
         </div>
 
@@ -255,7 +255,7 @@
     </div>
   </div>
 
-  <!-- 4. DASHBOARD GURU & 3 TAB DEDIKASI -->
+  <!-- 4. DASHBOARD GURU -->
   <div id="teacher-dashboard-screen" class="hidden w-full max-w-6xl z-10 my-6 space-y-6">
     <div class="glass-card p-6 rounded-3xl border border-sky-500/20 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
       <div>
@@ -272,7 +272,7 @@
       </div>
     </div>
 
-    <!-- NAVIGASI TAB UTAMA DASBOR GURU -->
+    <!-- TAB NAVIGASI GURU -->
     <div class="flex border-b border-slate-700/80 gap-2">
       <button type="button" id="tab-btn-questions" onclick="playClickSound(); switchTeacherTab('questions')" class="py-3 px-5 font-bold text-xs rounded-t-2xl bg-indigo-600 text-white border-t border-x border-indigo-400/30">
         📝 Soal & Pengaturan
@@ -314,7 +314,6 @@
         <button type="button" onclick="publishActiveQuestions()" class="ml-auto px-4 py-2 bg-emerald-600 hover:bg-emerald-500 font-bold rounded-xl text-xs shadow-lg">🚀 Terapkan Pengaturan ke Siswa</button>
       </div>
 
-      <!-- PENGATURAN SKOR POIN DINAMIS -->
       <div class="bg-slate-900/80 p-4 rounded-2xl border border-slate-800 space-y-2">
         <h4 class="font-bold text-amber-300 text-xs flex items-center gap-1">🎯 Skor Poin Per Urutan Selesai:</h4>
         <div id="dynamic-score-inputs-container" class="grid grid-cols-2 sm:grid-cols-5 gap-3 text-xs"></div>
@@ -330,7 +329,7 @@
         
         <div class="inline-block relative bg-slate-900/90 border-4 border-amber-400 rounded-3xl p-8 shadow-2xl max-w-lg w-full animate-winner-pop glow-gold">
           <div class="text-6xl mb-2 animate-pulse">👑</div>
-          <img id="winner-photo-img" src="" class="w-72 h-52 object-cover rounded-2xl mx-auto border-4 border-amber-300 shadow-2xl mb-4" />
+          <img id="winner-photo-img" src="" class="w-72 h-52 object-cover rounded-2xl mx-auto border-4 border-amber-300 shadow-2xl mb-4 mirror-cam" />
           <h3 id="winner-group-title" class="text-3xl font-extrabold text-amber-300 uppercase tracking-wide"></h3>
           <p id="winner-members-text" class="text-sm text-slate-200 mt-2 italic font-semibold"></p>
           <div id="winner-score-badge" class="mt-6 inline-block bg-gradient-to-r from-amber-400 to-yellow-500 text-slate-950 font-black px-8 py-3 rounded-full text-lg shadow-xl"></div>
@@ -748,6 +747,7 @@
       }).catch(err => alert("Kamera tidak dapat diakses: " + err));
     }
 
+    // PENGAMBILAN FOTO SELFIE MIRROR
     function takePhoto() {
       playCameraShutterSound();
       const video = document.getElementById('webcam-preview');
@@ -756,8 +756,7 @@
       canvas.height = 240;
       const ctx = canvas.getContext('2d');
 
-      ctx.translate(canvas.width, 0);
-      ctx.scale(-1, 1);
+      // Gambar mirror tanpa terbalik
       ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
       tempPhotoData = canvas.toDataURL('image/jpeg', 0.6);
@@ -1012,6 +1011,7 @@
       document.getElementById('public-bank-modal').classList.add('hidden');
     }
 
+    // SIMPAN REKAP KUIS -> KUIS SELESAI -> SISWA OTOMATIS KEMBALI KE LAMAN UTAMA
     function saveCurrentQuizResults() {
       db.ref(`rooms/${currentRoomCode}/groups`).once('value', (snapshot) => {
         const groupsData = snapshot.val();
@@ -1048,9 +1048,13 @@
           date_saved: timestampStr,
           results: list
         }, () => {
-          alert(`✅ Rekap Kuis "${historyTitle}" Berhasil Disimpan!\n\nLaman Kontrol Jawaban telah dibersihkan dan siap untuk pendaftaran kuis berikutnya.`);
+          alert(`✅ Rekap Kuis "${historyTitle}" Berhasil Disimpan!\n\nKuis di ruangan ini telah selesai secara resmi.`);
           
-          db.ref(`rooms/${currentRoomCode}/quiz_started`).set(false);
+          // SET STATUS ROOM DENGAN SIGN KUIS SELESAI FINAL
+          db.ref(`rooms/${currentRoomCode}`).update({
+            quiz_started: false,
+            quiz_finished_final: true
+          });
           db.ref(`rooms/${currentRoomCode}/groups`).remove();
         });
       });
@@ -1212,6 +1216,25 @@
         if (snapshot.val()) activeQuestions = snapshot.val();
       });
 
+      // MONITOR JIKA KUIS SELESAI FINAL / DI-RESET OLEH GURU
+      db.ref(`rooms/${currentRoomCode}`).on('value', (roomSnap) => {
+        const roomData = roomSnap.val() || {};
+        
+        // JIKA GURU SIMPAN REKAP (KUIS SELESAI FINAL) -> SISWA KEMBALI KE HALAMAN UTAMA
+        if (roomData.quiz_finished_final) {
+          alert("🏁 Kuis telah selesai & disimpan oleh Guru! Kamu akan dikembalikan ke Halaman Utama.");
+          location.href = location.pathname;
+          return;
+        }
+
+        // JIKA GURU TEKAN RESET KUIS -> SISWA KEMBALI KE REGISTRASI KELOMPOK (DATA FOTO & ANGGOTA TETAP ADA)
+        if (roomData.reset_event_timestamp) {
+          document.getElementById('student-quiz-screen').classList.add('hidden');
+          document.getElementById('student-setup-screen').classList.remove('hidden');
+          return;
+        }
+      });
+
       db.ref(`rooms/${currentRoomCode}/quiz_started`).on('value', (snapshot) => {
         const started = snapshot.val() === true;
         if (started) playStartQuizFanfare();
@@ -1282,7 +1305,6 @@
           document.getElementById('waiting-box').classList.remove('hidden');
           document.getElementById('finished-all-box').classList.add('hidden');
 
-          // HITUNG ANTREAN PERIKSA SISWA BERDASARKAN ANTREAN PADA RONDE/SOAL YANG SAMA
           let waitingList = [];
           Object.keys(allGroups).forEach(k => {
             if (allGroups[k].status === 'waiting' && (allGroups[k].current_round || 1) === currentRoundNum) {
@@ -1449,7 +1471,6 @@
           } else {
             const groupRound = group.current_round || 1;
 
-            // HITUNG PERINGKAT URUTAN SELESAI PADA SOAL / RONDE YANG SPESIFIK
             let approvedCountForThisRound = 0;
             Object.keys(data).forEach(otherKey => {
               const otherGroup = data[otherKey];
@@ -1458,7 +1479,6 @@
               }
             });
 
-            // HITUNG POSISI URUTAN DI ANTREAN VERIFIKASI GURU KHUSUS UNTUK RONDE INI
             let waitingQueueForThisRound = [];
             Object.keys(data).forEach(k => {
               if (data[k] && data[k].status === 'waiting' && (data[k].current_round || 1) === groupRound) {
@@ -1473,7 +1493,6 @@
               roundQueuePos = posIdx !== -1 ? posIdx + 1 : 1;
             }
 
-            // PERINGKAT KELOMPOK TERSEBUT PADA SOAL INI = SUDAH ACC SEBELUMNYA + ANTREAN SAAT INI
             const roundFinishOrderRank = approvedCountForThisRound + roundQueuePos;
 
             groupList.push({
@@ -1491,7 +1510,7 @@
 
             let statusBadge = '';
             if (group.status === 'waiting') {
-              statusBadge = `<span class="bg-amber-500/20 text-amber-300 text-xs px-2.5 py-1 font-extrabold rounded-full animate-pulse border border-amber-500/40">Menunggu (Urutan ${roundFinishOrderRank} Soal ${groupRound})</span>`;
+              statusBadge = `<span class="bg-amber-500/20 text-amber-300 text-xs px-2.5 py-1 font-extrabold rounded-full animate-pulse border border-amber-500/40">Urutan #${roundFinishOrderRank}</span>`;
             } else if (group.status === 'completed') {
               statusBadge = '<span class="bg-emerald-500/20 text-emerald-300 text-xs px-2.5 py-1 font-bold rounded-full">Selesai Seluruh Soal</span>';
             } else {
@@ -1509,10 +1528,11 @@
               </div>
             ` : '';
 
+            // TOMBOL ACC DAN DISKUSI ULANG BERSIH TANPA TEKS BERLEBIHAN
             let actionButtons = '';
             if (group.status === 'waiting') {
               actionButtons = `
-                <button type="button" onclick="approveGroup('${groupId}', ${groupRound}, ${group.total_score || 0}, ${scoreEarned}, '${group.answer || ''}', '${group.picked_member || ''}', ${roundFinishOrderRank})" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 font-bold rounded-xl text-sm mb-2 shadow-lg">✅ ACC & Tambah +${scoreEarned} Poin (Urutan ${roundFinishOrderRank} Soal ${groupRound})</button>
+                <button type="button" onclick="approveGroup('${groupId}', ${groupRound}, ${group.total_score || 0}, ${scoreEarned}, '${group.answer || ''}', '${group.picked_member || ''}', ${roundFinishOrderRank})" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 font-bold rounded-xl text-sm mb-2 shadow-lg">✅ ACC & Tambah +${scoreEarned} Poin</button>
                 <button type="button" onclick="rejectGroup('${groupId}')" class="w-full py-1.5 bg-rose-600/30 hover:bg-rose-600/50 text-rose-300 font-bold rounded-xl text-xs">❌ Diskusi Ulang</button>
               `;
             } else if (group.status === 'completed') {
@@ -1655,11 +1675,30 @@
       });
     }
 
+    // RESET SELURUH KUIS (LAMAN SISWA KEMBALI KE REGISTRASI TAPI NAMA & FOTO TERISI)
     function resetAllGame() {
       playClickSound();
       if (!confirm("Yakin ingin mereset seluruh kuis di ruangan ini?")) return;
-      db.ref(`rooms/${currentRoomCode}/quiz_started`).set(false);
-      db.ref(`rooms/${currentRoomCode}/groups`).remove(() => alert("Berhasil reset kuis!"));
+      db.ref(`rooms/${currentRoomCode}`).update({
+        quiz_started: false,
+        reset_event_timestamp: Date.now()
+      });
+
+      db.ref(`rooms/${currentRoomCode}/groups`).once('value', (snap) => {
+        const groups = snap.val() || {};
+        Object.keys(groups).forEach(gKey => {
+          db.ref(`rooms/${currentRoomCode}/groups/${gKey}`).update({
+            current_round: 1,
+            status: 'answering',
+            total_score: 0,
+            answer: '',
+            picked_member: null,
+            answers_history: null,
+            last_submit_time: 9999999999999
+          });
+        });
+        alert("Berhasil mereset kuis! Semua kelompok dapat berpartisipasi kembali.");
+      });
     }
   </script>
 </body>
