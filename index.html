@@ -87,7 +87,7 @@
       <input type="text" id="teacher-id-input" placeholder="Contoh: guru_abil" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-white font-bold text-center focus:outline-none focus:border-sky-400" />
       <div class="flex gap-2">
         <button type="button" onclick="playClickSound(); closeTeacherLoginModal();" class="w-1/2 py-2.5 bg-slate-700 font-semibold rounded-xl text-xs">Batal</button>
-        <button type="button" onclick="playClickSound(); handleTeacherLogin();" class="w-1/2 py-2.5 bg-sky-600 font-bold rounded-xl text-xs">Buat</button>
+        <button type="button" onclick="playClickSound(); handleTeacherLogin();" class="w-1/2 py-2.5 bg-sky-600 font-bold rounded-xl text-xs">Masuk Ruang Guru</button>
       </div>
     </div>
   </div>
@@ -260,7 +260,8 @@
         <div class="flex items-center gap-2">
           <h1 class="text-2xl font-extrabold text-sky-300">🏆 Dashboard Guru</h1>
           <span id="teacher-id-badge" class="bg-indigo-500/20 text-indigo-300 text-xs font-bold px-2.5 py-1 rounded-lg border border-indigo-500/30">👤 Guru: -</span>
-          <button type="button" onclick="playClickSound(); openQRModal();" class="px-2.5 py-1 bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold text-xs rounded-lg shadow-md flex items-center gap-1">📱 QR Code</button>
+          <span id="room-badge-top" class="hidden bg-amber-500/20 text-amber-300 text-xs font-bold px-2.5 py-1 rounded-lg border border-amber-500/30">🔑 Ruang: -</span>
+          <button type="button" id="qr-btn-top" onclick="playClickSound(); openQRModal();" class="hidden px-2.5 py-1 bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold text-xs rounded-lg shadow-md flex items-center gap-1">📱 QR Code</button>
         </div>
       </div>
       <div class="flex flex-wrap items-center gap-2">
@@ -288,7 +289,7 @@
       <div class="flex flex-wrap justify-between items-center gap-3 border-b border-slate-700 pb-3">
         <div>
           <h3 class="text-lg font-bold text-sky-300">⚙️ Pengaturan Soal & Sistem Poin Kuis</h3>
-          <p class="text-xs text-slate-400">Atur soal, jumlah kelompok, dan poin tiap urutan selesai.</p>
+          <p class="text-xs text-slate-400">Atur soal, jumlah kelompok, dan poin tiap urutan selesai sebelum membuat kuis.</p>
         </div>
         <div class="flex items-center gap-2">
           <select id="preset-selector" onchange="loadSelectedPreset(this.value)" class="bg-slate-900 border border-slate-700 text-xs rounded-xl p-2 text-white">
@@ -309,7 +310,10 @@
           <input type="number" id="total-questions-input" min="1" max="50" value="4" onchange="generateQuestionInputs(this.value)" class="w-16 bg-slate-900 border border-slate-700 rounded-lg p-1.5 text-center text-white font-bold" />
         </div>
 
-        <button type="button" onclick="publishActiveQuestions()" class="ml-auto px-4 py-2 bg-emerald-600 hover:bg-emerald-500 font-bold rounded-xl text-xs shadow-lg">🚀 Terapkan Pengaturan ke Siswa</button>
+        <!-- TOMBOL UTAMA DEDIKASI BUAT KUIS & GENERATE KODE RUANG -->
+        <button type="button" onclick="createNewQuizRoomAndSwitch()" class="ml-auto px-5 py-2.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 font-extrabold rounded-xl text-xs shadow-xl flex items-center gap-2">
+          🚀 Buat Kuis & Dapatkan Kode Ruang
+        </button>
       </div>
 
       <div class="bg-slate-900/80 p-4 rounded-2xl border border-slate-800 space-y-2">
@@ -342,18 +346,27 @@
 
     <!-- TAB 3: KONTROL JAWABAN -->
     <div id="tab-content-answers" class="hidden space-y-4">
-      <div class="glass-card p-4 rounded-2xl border border-sky-500/20 flex flex-wrap justify-between items-center gap-3">
-        <div class="flex items-center gap-3">
-          <div id="quiz-status-indicator" class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">
-            Status: Belum Dimulai
-          </div>
-          <button type="button" id="toggle-quiz-btn" onclick="toggleQuizState()" class="px-5 py-2 bg-emerald-600 font-bold rounded-xl text-xs shadow-md">🚀 Mulai Kuis</button>
-          <button type="button" onclick="resetAllGame()" class="px-3.5 py-2 bg-rose-600/80 font-bold rounded-xl text-xs shadow-md">🔄 Reset Kuis</button>
-        </div>
-        <button type="button" onclick="playClickSound(); saveCurrentQuizResults();" class="px-4 py-2 bg-amber-600 hover:bg-amber-500 text-white font-bold rounded-xl text-xs shadow-lg">💾 Simpan Rekap Kuis</button>
+      <div id="no-room-warning" class="glass-card p-12 rounded-3xl border border-amber-500/30 text-center space-y-3">
+        <div class="text-5xl animate-bounce">⚠️</div>
+        <h3 class="text-xl font-bold text-amber-300">Ruang Kuis Belum Dibuat</h3>
+        <p class="text-xs text-slate-300 max-w-md mx-auto">Atur dan selesaikan soal terlebih dahulu di tab <strong>"📝 Soal & Pengaturan"</strong>, lalu tekan tombol <strong>"🚀 Buat Kuis & Dapatkan Kode Ruang"</strong> untuk memulai.</p>
+        <button type="button" onclick="switchTeacherTab('questions')" class="px-5 py-2.5 bg-indigo-600 font-bold text-xs rounded-xl shadow-lg mt-2">Go to Soal & Pengaturan →</button>
       </div>
 
-      <div id="groups-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+      <div id="active-room-controls" class="hidden space-y-4">
+        <div class="glass-card p-4 rounded-2xl border border-sky-500/20 flex flex-wrap justify-between items-center gap-3">
+          <div class="flex items-center gap-3">
+            <div id="quiz-status-indicator" class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">
+              Status: Belum Dimulai
+            </div>
+            <button type="button" id="toggle-quiz-btn" onclick="toggleQuizState()" class="px-5 py-2 bg-emerald-600 font-bold rounded-xl text-xs shadow-md">🚀 Mulai Kuis</button>
+            <button type="button" onclick="resetAllGame()" class="px-3.5 py-2 bg-rose-600/80 font-bold rounded-xl text-xs shadow-md">🔄 Reset Kuis</button>
+          </div>
+          <button type="button" onclick="playClickSound(); saveCurrentQuizResults();" class="px-4 py-2 bg-amber-600 hover:bg-amber-500 text-white font-bold rounded-xl text-xs shadow-lg">💾 Simpan Rekap Kuis</button>
+        </div>
+
+        <div id="groups-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+      </div>
     </div>
   </div>
 
@@ -364,7 +377,7 @@
     let selectedGroup = null;
     let currentSelectedAnswer = "";
     let totalConfiguredGroups = 5;
-    let currentRoomCode = "DEFAULT";
+    let currentRoomCode = null;
     let currentTeacherId = "GURU_ANONIM";
     let previousStatus = null;
     let previousRound = null;
@@ -564,7 +577,7 @@
     }
 
     function triggerRealtimeGroupUIUpdate() {
-      if (currentRoomCode && currentRoomCode !== "DEFAULT") {
+      if (currentRoomCode) {
         db.ref(`rooms/${currentRoomCode}/groups`).once('value', (snap) => {
           renderTeacherDashboardGroups(snap.val() || {});
         });
@@ -631,23 +644,40 @@
       currentTeacherId = rawId.toLowerCase().replace(/[^a-z0-9_]/g, '_');
       
       closeTeacherLoginModal();
-      createTeacherRoom();
+      document.getElementById('role-screen').classList.add('hidden');
+      document.getElementById('teacher-dashboard-screen').classList.remove('hidden');
+      document.getElementById('teacher-id-badge').innerText = "👤 Guru: " + currentTeacherId;
+      
+      initTeacherDashboard();
     }
 
-    function createTeacherRoom() {
+    // ALUR BARU: TEKAN BUAT KUIS -> REKAM SOAL & POIN -> GENERATE KODE RUANG -> BUKA TAB KONTROL & QR
+    function createNewQuizRoomAndSwitch() {
+      playClickSound();
+      activeQuestions = collectQuestionsFromEditor();
+      totalConfiguredGroups = parseInt(document.getElementById('total-groups-input').value);
+      customScoreTable = getCustomScoreFromInputs();
+
       currentRoomCode = generateUniqueRoomCode();
+
       db.ref(`rooms/${currentRoomCode}`).set({
         created_at: Date.now(),
         teacher_id: currentTeacherId,
         group_count: totalConfiguredGroups,
         quiz_started: false,
-        score_table: getCustomScoreFromInputs(),
+        score_table: customScoreTable,
         active_quiz_questions: activeQuestions
       }, () => {
-        document.getElementById('role-screen').classList.add('hidden');
-        document.getElementById('teacher-dashboard-screen').classList.remove('hidden');
-        document.getElementById('teacher-id-badge').innerText = "👤 Guru: " + currentTeacherId;
-        initTeacherDashboard();
+        document.getElementById('room-badge-top').innerText = "🔑 Ruang: " + currentRoomCode;
+        document.getElementById('room-badge-top').classList.remove('hidden');
+        document.getElementById('qr-btn-top').classList.remove('hidden');
+
+        document.getElementById('no-room-warning').classList.add('hidden');
+        document.getElementById('active-room-controls').classList.remove('hidden');
+
+        switchTeacherTab('answers');
+        attachRoomRealtimeListeners();
+        openQRModal();
       });
     }
 
@@ -696,6 +726,7 @@
     }
 
     function openQRModal() {
+      if (!currentRoomCode) return alert("Buat Kuis terlebih dahulu untuk mendapatkan Kode Ruang!");
       const modal = document.getElementById('qr-modal');
       const container = document.getElementById('modal-qrcode');
       container.innerHTML = '';
@@ -885,19 +916,6 @@
       return newQuestions;
     }
 
-    function publishActiveQuestions() {
-      playClickSound();
-      activeQuestions = collectQuestionsFromEditor();
-      totalConfiguredGroups = parseInt(document.getElementById('total-groups-input').value);
-      customScoreTable = getCustomScoreFromInputs();
-
-      db.ref(`rooms/${currentRoomCode}/active_quiz_questions`).set(activeQuestions);
-      db.ref(`rooms/${currentRoomCode}/score_table`).set(customScoreTable);
-      db.ref(`rooms/${currentRoomCode}/group_count`).set(totalConfiguredGroups, () => {
-        alert("Pengaturan Soal, Poin, & Kelompok Berhasil Diterbitkan ke Siswa!");
-      });
-    }
-
     function saveAsNewPreset() {
       const presetName = prompt("Masukkan nama simpanan bank soal ini (contoh: Ulangan Bab 1):");
       if (!presetName) return;
@@ -1008,6 +1026,7 @@
     }
 
     function saveCurrentQuizResults() {
+      if (!currentRoomCode) return alert("Belum ada kuis yang aktif!");
       db.ref(`rooms/${currentRoomCode}/groups`).once('value', (snapshot) => {
         const groupsData = snapshot.val();
         if (!groupsData) return alert("Belum ada data nilai kelompok untuk disimpan!");
@@ -1296,7 +1315,6 @@
           document.getElementById('waiting-box').classList.remove('hidden');
           document.getElementById('finished-all-box').classList.add('hidden');
 
-          // HITUNG ANTREAN GLOBAL WAKTU NYATA UNTUK DIPERIKSA GURU
           let globalWaitingList = [];
           Object.keys(allGroups).forEach(k => {
             if (allGroups[k].status === 'waiting') {
@@ -1385,11 +1403,13 @@
 
     // DASHBOARD GURU
     function initTeacherDashboard() {
-      db.ref(`rooms/${currentRoomCode}/active_quiz_questions`).once('value', (snapshot) => {
-        if (snapshot.val()) activeQuestions = snapshot.val();
-        document.getElementById('total-questions-input').value = activeQuestions.length;
-        generateQuestionInputs(activeQuestions.length);
-      });
+      generateQuestionInputs(activeQuestions.length);
+      updateScoreInputsForGroupCount(totalConfiguredGroups);
+      loadPresetsList();
+    }
+
+    function attachRoomRealtimeListeners() {
+      if (!currentRoomCode) return;
 
       db.ref(`rooms/${currentRoomCode}/score_table`).on('value', (snapshot) => {
         if (snapshot.val()) {
@@ -1404,8 +1424,6 @@
         updateScoreInputsForGroupCount(totalConfiguredGroups);
         triggerRealtimeGroupUIUpdate();
       });
-
-      loadPresetsList();
 
       db.ref(`rooms/${currentRoomCode}/quiz_started`).on('value', (snapshot) => {
         const started = snapshot.val() === true;
@@ -1441,7 +1459,6 @@
       db.ref(`rooms/${currentRoomCode}/quiz_started`).once('value', (startedSnap) => {
         const isQuizStarted = startedSnap.val() === true;
 
-        // HITUNG ANTREAN GLOBAL SELURUH KELOMPOK YANG STATUSNYA 'WAITING' BERDASARKAN WAKTU SUBMIT
         let globalWaitingList = [];
         Object.keys(data).forEach(k => {
           if (data[k] && data[k].status === 'waiting') {
@@ -1472,14 +1489,12 @@
           } else {
             const groupRound = group.current_round || 1;
 
-            // URUTAN GLOBAL SANGAT PRESISI BERDASARKAN SIAPA DULUAN YANG MENGUMPULKAN PADA DASBOR
             let globalQueuePos = 1;
             if (group.status === 'waiting') {
               const posIdx = globalWaitingList.findIndex(x => x.id === groupId);
               globalQueuePos = posIdx !== -1 ? posIdx + 1 : 1;
             }
 
-            // HITUNG PERINGKAT FINISH PADA RONDE/SOAL YANG SPESIFIK UNTUK HITUNGAN POIN
             let approvedCountForThisRound = 0;
             Object.keys(data).forEach(otherKey => {
               const otherGroup = data[otherKey];
@@ -1517,7 +1532,6 @@
             const currentScores = getCustomScoreFromInputs();
             const scoreEarned = currentScores[roundFinishOrderRank] !== undefined ? currentScores[roundFinishOrderRank] : (currentScores[totalConfiguredGroups] || 100);
 
-            // MENAMPILKAN "MENUNGGU #X" SESUAI ANTREAN PENGUMPULAN GLOBAL
             let statusBadge = '';
             if (group.status === 'waiting') {
               statusBadge = `<span class="bg-amber-500/20 text-amber-300 text-xs px-2.5 py-1 font-extrabold rounded-full animate-pulse border border-amber-500/40">Menunggu #${globalQueuePos}</span>`;
@@ -1629,6 +1643,7 @@
     }
 
     function toggleQuizState() {
+      if (!currentRoomCode) return;
       playClickSound();
       db.ref(`rooms/${currentRoomCode}/quiz_started`).once('value', (snapshot) => {
         db.ref(`rooms/${currentRoomCode}/quiz_started`).set(snapshot.val() !== true);
@@ -1636,6 +1651,7 @@
     }
 
     function pickRandomMember(groupId) {
+      if (!currentRoomCode) return;
       playDiceRollSound();
       db.ref(`rooms/${currentRoomCode}/groups/${groupId}`).once('value', (snapshot) => {
         const group = snapshot.val();
@@ -1685,6 +1701,7 @@
     }
 
     function resetAllGame() {
+      if (!currentRoomCode) return;
       playClickSound();
       if (!confirm("Yakin ingin mereset seluruh kuis di ruangan ini?")) return;
       db.ref(`rooms/${currentRoomCode}`).update({
