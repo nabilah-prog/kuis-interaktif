@@ -1462,6 +1462,14 @@
               }
             }
 
+            // BAGIAN KONTROL PENUNJUKAN ANGGOTA HANYA MUNCUL JIKA KUIS SUDAH DIMULAI
+            const pickMemberSection = isQuizStarted ? `
+              <div class="bg-slate-900/50 p-3 rounded-xl mb-4 text-center border border-slate-800">
+                <button type="button" onclick="pickRandomMember('${groupId}')" class="text-xs bg-indigo-600/30 hover:bg-indigo-600/50 text-indigo-300 px-3 py-1.5 rounded-lg mb-2 font-bold transition">🎲 Tunjuk Anggota Maju</button>
+                <div class="text-sm font-bold text-amber-300">${group.picked_member ? 'Yang Maju: ' + group.picked_member : 'Belum Ditunjuk'}</div>
+              </div>
+            ` : '';
+
             const card = document.createElement('div');
             card.className = "glass-card border border-slate-700 rounded-2xl p-5 shadow-xl flex flex-col justify-between";
             card.innerHTML = `
@@ -1479,10 +1487,7 @@
                   <p>Total Skor: <strong class="text-emerald-400">${group.total_score || 0} Poin</strong></p>
                 </div>
                 ${group.status === 'waiting' ? `<div class="bg-slate-900/80 p-3 rounded-xl mb-4 border border-amber-500/30"><p class="text-xs text-slate-400">Jawaban Siswa:</p><p class="text-sm text-slate-100 italic font-bold">"${group.answer || '-'}"</p></div>` : ''}
-                <div class="bg-slate-900/50 p-3 rounded-xl mb-4 text-center border border-slate-800">
-                  <button type="button" onclick="pickRandomMember('${groupId}')" class="text-xs bg-indigo-600/30 hover:bg-indigo-600/50 text-indigo-300 px-3 py-1.5 rounded-lg mb-2 font-bold transition">🎲 Tunjuk Anggota Maju</button>
-                  <div class="text-sm font-bold text-amber-300">${group.picked_member ? 'Yang Maju: ' + group.picked_member : 'Belum Ditunjuk'}</div>
-                </div>
+                ${pickMemberSection}
               </div>
               <div>
                 ${group.status === 'waiting' ? `
