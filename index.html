@@ -8,7 +8,6 @@
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-  <!-- Library QR Code Utama & Fallback -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <style>
     @keyframes floatClouds {
@@ -46,7 +45,6 @@
       transition: height 1.2s cubic-bezier(0.34, 1.56, 0.64, 1);
     }
 
-    /* CSS Mirror Kamera Selfie */
     .mirror-cam {
       transform: scaleX(-1);
     }
@@ -73,7 +71,6 @@
       </div>
     </div>
 
-    <!-- HAK CIPTA & COPYRIGHT PENGEMBANG -->
     <div class="pt-4 border-t border-slate-700/60">
       <p class="text-[11px] text-slate-300 leading-relaxed font-medium">
         © 2026 <span class="font-bold text-amber-300">Nabilah Burairah</span>. All Rights Reserved.<br>
@@ -115,9 +112,7 @@
         <h2 class="text-xl font-extrabold text-emerald-300 flex items-center gap-2">🌐 Bank Soal</h2>
       </div>
       <p class="text-xs text-slate-300">Bank soal yang dipublikasikan oleh guru-guru lain. Kamu bisa menyalinnya langsung ke akunmu!</p>
-
       <div id="public-bank-list-container" class="space-y-4 overflow-y-auto pr-2 flex-1"></div>
-
       <div class="pt-2 border-t border-slate-800 text-right">
         <button type="button" onclick="playClickSound(); closePublicBankModal();" class="px-5 py-2.5 bg-slate-800 hover:bg-slate-700 font-bold rounded-xl text-xs text-slate-300">Tutup</button>
       </div>
@@ -130,9 +125,7 @@
       <div class="flex justify-between items-center border-b border-slate-700 pb-3">
         <h2 class="text-xl font-extrabold text-amber-300 flex items-center gap-2">📜 Riwayat Kuis Saya</h2>
       </div>
-
       <div id="history-list-container" class="space-y-4 overflow-y-auto pr-2 flex-1"></div>
-
       <div class="pt-2 border-t border-slate-800 text-right">
         <button type="button" onclick="playClickSound(); closeHistoryModal();" class="px-5 py-2.5 bg-slate-800 hover:bg-slate-700 font-bold rounded-xl text-xs text-slate-300">Tutup</button>
       </div>
@@ -143,11 +136,9 @@
   <div id="qr-modal" class="hidden fixed inset-0 bg-black/90 backdrop-blur-md flex items-center justify-center p-4 z-50">
     <div class="glass-card p-8 rounded-3xl border-2 border-amber-400 max-w-sm w-full text-center shadow-2xl">
       <h2 id="qr-room-header" class="text-2xl font-extrabold text-amber-300 mb-4 tracking-wider"></h2>
-      
       <div class="bg-white p-4 rounded-2xl inline-block shadow-xl mb-4">
         <div id="modal-qrcode" class="flex justify-center items-center min-h-[220px]"></div>
       </div>
-      
       <p class="text-xs text-slate-300 mb-4 font-medium">Siswa cukup mengarahkan kamera HP ke QR Code di atas untuk langsung gabung kuis!</p>
       <button type="button" onclick="playClickSound(); closeQRModal();" class="w-full py-3 bg-rose-600 font-bold rounded-xl text-xs shadow-lg">Tutup QR Code</button>
     </div>
@@ -175,7 +166,6 @@
       <div>
         <label class="block text-xs font-semibold text-amber-300 mb-1">📸 Selfie Bersama Kelompok:</label>
         <div class="relative bg-slate-900 rounded-2xl overflow-hidden border border-slate-700 aspect-video flex flex-col items-center justify-center">
-          <!-- MIRROR KAMERA PREVIEW DAN HASIL FOTO -->
           <video id="webcam-preview" autoplay playsinline class="w-full h-full object-cover mirror-cam hidden"></video>
           <img id="selfie-photo-result" class="w-full h-full object-cover mirror-cam hidden" />
           
@@ -204,7 +194,6 @@
       <span id="score-display" class="bg-emerald-500/20 text-emerald-300 text-xs font-bold px-3.5 py-2 rounded-full border border-emerald-500/30">Total Skor: 0</span>
     </div>
 
-    <!-- NOTIFIKASI VISUAL REJECT / APPROVE DARI GURU -->
     <div id="status-feedback-banner" class="hidden p-4 rounded-2xl border text-center animate-bounce shadow-xl">
       <div id="feedback-icon" class="text-4xl mb-1"></div>
       <h3 id="feedback-title" class="text-lg font-black uppercase tracking-wide"></h3>
@@ -240,7 +229,6 @@
         </div>
       </div>
 
-      <!-- SELESAI SELURUH SOAL & PENGUMUMAN JUARA DI SISWA -->
       <div id="finished-all-box" class="hidden text-center py-6">
         <div id="student-rank-badge" class="text-3xl font-extrabold text-amber-300 mb-2 animate-bounce"></div>
         <p id="student-rank-subtitle" class="text-xs text-slate-300 mb-6 italic"></p>
@@ -337,7 +325,6 @@
 
     <!-- TAB 2: PAPAN PERINGKAT -->
     <div id="tab-content-leaderboard" class="hidden space-y-6">
-      <!-- PODIUM JUARA 1 GEDE BERGERAK -->
       <div id="winner-podium-section" class="hidden glass-card p-10 rounded-3xl border-2 border-amber-400 text-center bg-gradient-to-b from-indigo-950 via-slate-900 to-slate-950 shadow-2xl relative overflow-hidden">
         <h2 class="text-4xl font-extrabold text-amber-300 mb-6 tracking-wider animate-bounce">👑 PEMENANG KELAS 👑</h2>
         
@@ -350,7 +337,6 @@
         </div>
       </div>
 
-      <!-- DIAGRAM BATANG VERTIKAL FULL KETINGGIAN -->
       <div class="glass-card p-6 rounded-3xl border border-sky-500/20 space-y-4">
         <h3 class="text-lg font-bold text-amber-300">📊 Peringkat</h3>
         <div id="vertical-leaderboard-container" class="flex justify-around items-end h-72 bg-slate-900/80 rounded-2xl p-4 border border-slate-800 overflow-x-auto"></div>
@@ -370,7 +356,6 @@
         <button type="button" onclick="playClickSound(); saveCurrentQuizResults();" class="px-4 py-2 bg-amber-600 hover:bg-amber-500 text-white font-bold rounded-xl text-xs shadow-lg">💾 Simpan Rekap Kuis</button>
       </div>
 
-      <!-- KARTU VERIFIKASI KELOMPOK -->
       <div id="groups-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
     </div>
   </div>
@@ -387,7 +372,6 @@
     let previousStatus = null;
     let previousRound = null;
 
-    // WEB AUDIO API
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
     function playClickSound() {
@@ -764,7 +748,6 @@
       }).catch(err => alert("Kamera tidak dapat diakses: " + err));
     }
 
-    // PENGAMBILAN FOTO DENGAN HASIL TIDAK TERBALIK (DISESUAIKAN DENGAN Cermin/MIRROR)
     function takePhoto() {
       playCameraShutterSound();
       const video = document.getElementById('webcam-preview');
@@ -773,7 +756,6 @@
       canvas.height = 240;
       const ctx = canvas.getContext('2d');
 
-      // Gambar secara terbalik (mirrored) agar pas dengan gaya foto selfie
       ctx.translate(canvas.width, 0);
       ctx.scale(-1, 1);
       ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
@@ -1030,7 +1012,6 @@
       document.getElementById('public-bank-modal').classList.add('hidden');
     }
 
-    // SIMPAN REKAP KUIS LALU BERSIHKAN TAB KONTROL JAWABAN KE SETELAN AWAL (TANPA PINDAH KE MENU AWAL)
     function saveCurrentQuizResults() {
       db.ref(`rooms/${currentRoomCode}/groups`).once('value', (snapshot) => {
         const groupsData = snapshot.val();
@@ -1069,7 +1050,6 @@
         }, () => {
           alert(`✅ Rekap Kuis "${historyTitle}" Berhasil Disimpan!\n\nLaman Kontrol Jawaban telah dibersihkan dan siap untuk pendaftaran kuis berikutnya.`);
           
-          // UBAH STATUS KUIS MENJADI NORMALLY STOPPED & HAPUS KELOMPOK DARI RUANG INI
           db.ref(`rooms/${currentRoomCode}/quiz_started`).set(false);
           db.ref(`rooms/${currentRoomCode}/groups`).remove();
         });
@@ -1164,7 +1144,6 @@
                 </div>
               </div>
 
-              <!-- PAPAN PERINGKAT HASIL DETAIL KUIS (ACCORDION) -->
               <div id="history-detail-${key}" class="hidden pt-3 border-t border-slate-800 space-y-3">
                 <div class="bg-indigo-950/40 p-3 rounded-2xl border border-indigo-500/20 text-center">
                   <h4 class="font-extrabold text-sky-300 text-sm">🏆 HASIL PAPAN PERINGKAT KELAS</h4>
@@ -1303,10 +1282,10 @@
           document.getElementById('waiting-box').classList.remove('hidden');
           document.getElementById('finished-all-box').classList.add('hidden');
 
-          // HITUNG URUTAN ANTREAN TERPUSAT SAMA SEPERTI DI DASHBOARD GURU
+          // HITUNG ANTREAN PERIKSA SISWA BERDASARKAN ANTREAN PADA RONDE/SOAL YANG SAMA
           let waitingList = [];
           Object.keys(allGroups).forEach(k => {
-            if (allGroups[k].status === 'waiting') {
+            if (allGroups[k].status === 'waiting' && (allGroups[k].current_round || 1) === currentRoundNum) {
               waitingList.push({ id: k, time: allGroups[k].last_submit_time || 9999999999999 });
             }
           });
@@ -1314,7 +1293,7 @@
           const myPos = waitingList.findIndex(x => x.id === selectedGroup);
           const queueNum = myPos !== -1 ? myPos + 1 : 1;
 
-          document.getElementById('finish-order-badge').innerText = 'Urutan Antrean Periksa: #' + queueNum;
+          document.getElementById('finish-order-badge').innerText = 'Urutan Periksa Soal ' + currentRoundNum + ': #' + queueNum;
 
           const pickedBox = document.getElementById('picked-member-box');
           if (myData.picked_member) {
@@ -1448,14 +1427,6 @@
       db.ref(`rooms/${currentRoomCode}/quiz_started`).once('value', (startedSnap) => {
         const isQuizStarted = startedSnap.val() === true;
 
-        let waitingQueue = [];
-        Object.keys(data).forEach(k => {
-          if (data[k] && data[k].status === 'waiting') {
-            waitingQueue.push({ id: k, time: data[k].last_submit_time || 9999999999999 });
-          }
-        });
-        waitingQueue.sort((a, b) => a.time - b.time);
-
         let groupList = [];
         for (let i = 1; i <= totalConfiguredGroups; i++) {
           const groupId = 'kelompok_' + i;
@@ -1476,11 +1447,34 @@
             `;
             container.appendChild(card);
           } else {
-            let globalQueuePos = null;
+            const groupRound = group.current_round || 1;
+
+            // HITUNG PERINGKAT URUTAN SELESAI PADA SOAL / RONDE YANG SPESIFIK
+            let approvedCountForThisRound = 0;
+            Object.keys(data).forEach(otherKey => {
+              const otherGroup = data[otherKey];
+              if (otherGroup && otherGroup.answers_history && otherGroup.answers_history[`round_${groupRound}`]) {
+                approvedCountForThisRound++;
+              }
+            });
+
+            // HITUNG POSISI URUTAN DI ANTREAN VERIFIKASI GURU KHUSUS UNTUK RONDE INI
+            let waitingQueueForThisRound = [];
+            Object.keys(data).forEach(k => {
+              if (data[k] && data[k].status === 'waiting' && (data[k].current_round || 1) === groupRound) {
+                waitingQueueForThisRound.push({ id: k, time: data[k].last_submit_time || 9999999999999 });
+              }
+            });
+            waitingQueueForThisRound.sort((a, b) => a.time - b.time);
+
+            let roundQueuePos = 1;
             if (group.status === 'waiting') {
-              const posIdx = waitingQueue.findIndex(x => x.id === groupId);
-              globalQueuePos = posIdx !== -1 ? posIdx + 1 : 1;
+              const posIdx = waitingQueueForThisRound.findIndex(x => x.id === groupId);
+              roundQueuePos = posIdx !== -1 ? posIdx + 1 : 1;
             }
+
+            // PERINGKAT KELOMPOK TERSEBUT PADA SOAL INI = SUDAH ACC SEBELUMNYA + ANTREAN SAAT INI
+            const roundFinishOrderRank = approvedCountForThisRound + roundQueuePos;
 
             groupList.push({
               id: groupId,
@@ -1493,11 +1487,11 @@
             });
 
             const currentScores = getCustomScoreFromInputs();
-            const scoreEarned = globalQueuePos ? (currentScores[globalQueuePos] || currentScores[totalConfiguredGroups] || 100) : (currentScores[totalConfiguredGroups] || 100);
+            const scoreEarned = currentScores[roundFinishOrderRank] !== undefined ? currentScores[roundFinishOrderRank] : (currentScores[totalConfiguredGroups] || 100);
 
             let statusBadge = '';
             if (group.status === 'waiting') {
-              statusBadge = `<span class="bg-amber-500/20 text-amber-300 text-xs px-2.5 py-1 font-extrabold rounded-full animate-pulse border border-amber-500/40">Menunggu (#${globalQueuePos})</span>`;
+              statusBadge = `<span class="bg-amber-500/20 text-amber-300 text-xs px-2.5 py-1 font-extrabold rounded-full animate-pulse border border-amber-500/40">Menunggu (Urutan ${roundFinishOrderRank} Soal ${groupRound})</span>`;
             } else if (group.status === 'completed') {
               statusBadge = '<span class="bg-emerald-500/20 text-emerald-300 text-xs px-2.5 py-1 font-bold rounded-full">Selesai Seluruh Soal</span>';
             } else {
@@ -1518,7 +1512,7 @@
             let actionButtons = '';
             if (group.status === 'waiting') {
               actionButtons = `
-                <button type="button" onclick="approveGroup('${groupId}', ${group.current_round || 1}, ${group.total_score || 0}, ${scoreEarned}, '${group.answer || ''}', '${group.picked_member || ''}', ${globalQueuePos})" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 font-bold rounded-xl text-sm mb-2 shadow-lg">✅ ACC & Tambah +${scoreEarned} Poin</button>
+                <button type="button" onclick="approveGroup('${groupId}', ${groupRound}, ${group.total_score || 0}, ${scoreEarned}, '${group.answer || ''}', '${group.picked_member || ''}', ${roundFinishOrderRank})" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 font-bold rounded-xl text-sm mb-2 shadow-lg">✅ ACC & Tambah +${scoreEarned} Poin (Urutan ${roundFinishOrderRank} Soal ${groupRound})</button>
                 <button type="button" onclick="rejectGroup('${groupId}')" class="w-full py-1.5 bg-rose-600/30 hover:bg-rose-600/50 text-rose-300 font-bold rounded-xl text-xs">❌ Diskusi Ulang</button>
               `;
             } else if (group.status === 'completed') {
@@ -1542,7 +1536,7 @@
                   <p class="text-xs text-slate-300 italic font-medium leading-relaxed">Anggota: ${group.members.join(', ')}</p>
                 </div>
                 <div class="text-sm text-slate-300 space-y-1 mb-4">
-                  <p>Ronde Sekarang: <strong class="text-indigo-400">Soal ${group.current_round || 1}</strong></p>
+                  <p>Ronde Sekarang: <strong class="text-indigo-400">Soal ${groupRound}</strong></p>
                   <p>Total Skor: <strong class="text-emerald-400">${group.total_score || 0} Poin</strong></p>
                 </div>
                 ${group.status === 'waiting' ? `<div class="bg-slate-900/80 p-3 rounded-xl mb-4 border border-amber-500/30"><p class="text-xs text-slate-400">Jawaban Siswa:</p><p class="text-sm text-slate-100 italic font-bold">"${group.answer || '-'}"</p></div>` : ''}
