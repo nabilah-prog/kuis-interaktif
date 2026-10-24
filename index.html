@@ -313,7 +313,7 @@
         </div>
 
         <button type="button" onclick="createNewQuizRoomAndSwitch()" class="ml-auto px-5 py-2.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 font-extrabold rounded-xl text-xs shadow-xl flex items-center gap-2">
-          🚀 Buat Kuis dan Dapatkan Kode Ruang
+          🚀 Buat Kuis
         </button>
       </div>
 
@@ -1078,7 +1078,7 @@
           date_saved: timestampStr,
           results: list
         }, () => {
-          alert(`✅ Rekap Kuis "${historyTitle}" Berhasil Disimpan!\n\nRuang kuis telah resmi ditutup & dikunci. Sila buat kuis baru jika ingin memulai lagi.`);
+          alert(`✅ Rekap Kuis "${historyTitle}" Berhasil Disimpan!`);
           
           db.ref(`rooms/${currentRoomCode}`).update({
             quiz_started: false,
