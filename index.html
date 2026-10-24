@@ -260,7 +260,6 @@
         <div class="flex items-center gap-2">
           <h1 class="text-2xl font-extrabold text-sky-300">🏆 Dashboard Guru</h1>
           <span id="teacher-id-badge" class="bg-indigo-500/20 text-indigo-300 text-xs font-bold px-2.5 py-1 rounded-lg border border-indigo-500/30">👤 Guru: -</span>
-          <!-- TOMBOL QR CODE (KODE RUANG HANYA TERDAPAT DI DALAM QR CODE) -->
           <button type="button" id="qr-btn-top" onclick="playClickSound(); openQRModal();" class="hidden px-2.5 py-1 bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold text-xs rounded-lg shadow-md flex items-center gap-1">📱 QR Code</button>
         </div>
       </div>
@@ -1238,31 +1237,18 @@
           location.href = location.pathname;
           return;
         }
-
-        // KETIKA GURU MERESET KUIS: SINKRONISASI ULANG TOMBOL DAN TAMPILAN
-        if (roomData.reset_event_timestamp) {
-          document.getElementById('student-quiz-screen').classList.add('hidden');
-          document.getElementById('student-setup-screen').classList.remove('hidden');
-          
-          // Mengecek ulang apakah foto & data anggota terisi dari memori/state
-          const hasPhoto = capturedPhotoData || tempPhotoData;
-          const hasMembers = document.getElementById('members-input').value.trim() !== '';
-
-          if (hasPhoto && hasMembers) {
-            if (!capturedPhotoData) capturedPhotoData = tempPhotoData;
-            const submitBtn = document.getElementById('submit-student-btn');
-            submitBtn.disabled = false;
-            submitBtn.className = "w-full py-4 bg-gradient-to-r from-indigo-600 to-sky-600 font-bold rounded-2xl shadow-lg cursor-pointer";
-            document.getElementById('photo-status-msg').className = "text-[11px] text-emerald-400 mt-1 italic font-bold";
-            document.getElementById('photo-status-msg').innerText = "✅ Foto dikonfirmasi & siap digunakan!";
-          }
-          return;
-        }
       });
 
       db.ref(`rooms/${currentRoomCode}/quiz_started`).on('value', (snapshot) => {
         const started = snapshot.val() === true;
         if (started) playStartQuizFanfare();
+        
+        // PENGATURAN TAMPILAN SISWA KETIKA KUIS DIMULAI/DIRESET
+        if (document.getElementById('student-quiz-screen').classList.contains('hidden') === false || selectedGroup) {
+          document.getElementById('student-setup-screen').classList.add('hidden');
+          document.getElementById('student-quiz-screen').classList.remove('hidden');
+        }
+
         document.getElementById('quiz-lobby-box').classList.toggle('hidden', started);
         document.getElementById('quiz-content-wrapper').classList.toggle('hidden', !started);
       });
@@ -1453,6 +1439,7 @@
           toggleBtn.innerText = "🚀 Mulai Kuis";
           toggleBtn.className = "px-5 py-2 bg-emerald-600 font-bold rounded-xl text-xs shadow-md";
         }
+        triggerRealtimeGroupUIUpdate();
       });
 
       db.ref(`rooms/${currentRoomCode}/groups`).on('value', (snapshot) => {
@@ -1567,6 +1554,7 @@
               </div>
             ` : '';
 
+            // LOGIKA DIBERSIHKAN: JIKA KUIS DIMULAI -> TEKS KARTU SELALU "Siswa sedang berdiskusi"
             let actionButtons = '';
             if (group.status === 'waiting') {
               actionButtons = `
@@ -1576,7 +1564,7 @@
             } else if (group.status === 'completed') {
               actionButtons = `<div class="w-full py-2 bg-emerald-950/60 text-emerald-400 font-bold rounded-xl text-xs text-center border border-emerald-500/30">✅ Kelompok Selesai Kuis</div>`;
             } else if (isQuizStarted) {
-              actionButtons = `<div class="w-full py-2 bg-slate-800/80 text-slate-400 font-semibold rounded-xl text-xs text-center border border-slate-700">⏳ Siswa Sedang Berdiskusi...</div>`;
+              actionButtons = `<div class="w-full py-2 bg-slate-800/80 text-slate-300 font-semibold rounded-xl text-xs text-center border border-slate-700">⏳ Siswa sedang berdiskusi...</div>`;
             } else {
               actionButtons = `<div class="w-full py-2 bg-slate-800/80 text-slate-500 font-semibold rounded-xl text-xs text-center border border-slate-700">Tunggu Kuis Dimulai Guru...</div>`;
             }
@@ -1715,10 +1703,12 @@
       });
     }
 
+    // LOGIKA RESET LENGKAP: MEMATIKAN KUIS KEMBALI KUNCI DAN MEMBERSIHKAN JAWABAN SELURUH KELOMPOK
     function resetAllGame() {
       if (!currentRoomCode) return;
       playClickSound();
-      if (!confirm("Yakin ingin mereset seluruh kuis di ruangan ini?")) return;
+      if (!confirm("Yakin ingin mereset seluruh kuis di ruangan ini? Semua skor dan jawaban siswa akan diulang kembali dari Soal 1.")) return;
+
       db.ref(`rooms/${currentRoomCode}`).update({
         quiz_started: false,
         reset_event_timestamp: Date.now()
@@ -1737,7 +1727,7 @@
             last_submit_time: Date.now()
           });
         });
-        alert("Berhasil mereset kuis! Semua kelompok dapat berpartisipasi kembali.");
+        alert("Berhasil mereset kuis! Kuis sekarang dalam posisi dikunci dan seluruh siswa kembali ke layar 'Menunggu Kuis Dimulai'. Tekan 'Mulai Kuis' bila ingin memulai dari Soal 1.");
       });
     }
   </script>
