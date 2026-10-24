@@ -294,6 +294,9 @@
           <select id="preset-selector" onchange="loadSelectedPreset(this.value)" class="bg-slate-900 border border-slate-700 text-xs rounded-xl p-2 text-white">
             <option value="default">Bank Soal (Default)</option>
           </select>
+          <button type="button" onclick="playClickSound(); deleteSelectedPreset();" class="px-3 py-2 bg-rose-600/80 hover:bg-rose-600 text-white font-bold rounded-xl text-xs flex items-center gap-1 shadow-md" title="Hapus Bank Soal Pilihan">
+            🗑️ Hapus Soal
+          </button>
           <button type="button" onclick="playClickSound(); saveAsNewPreset();" class="px-3.5 py-2 bg-indigo-600 hover:bg-indigo-500 font-bold rounded-xl text-xs">💾 Simpan Soal</button>
         </div>
       </div>
@@ -970,6 +973,26 @@
       });
     }
 
+    // FITUR BARU: HAPUS BANK SOAL TERPILIH
+    function deleteSelectedPreset() {
+      const selector = document.getElementById('preset-selector');
+      const selectedKey = selector.value;
+
+      if (selectedKey === 'default') {
+        return alert("Bank Soal Utama (Default) tidak dapat dihapus!");
+      }
+
+      const selectedText = selector.options[selector.selectedIndex].text;
+      if (!confirm(`Apakah kamu yakin ingin menghapus bank soal "${selectedText}"?`)) return;
+
+      db.ref(`teachers/${currentTeacherId}/presets/${selectedKey}`).remove(() => {
+        db.ref(`public_bank/${selectedKey}`).remove();
+        alert(`✅ Bank Soal "${selectedText}" berhasil dihapus.`);
+        selector.value = 'default';
+        generateQuestionInputs(activeQuestions.length);
+      });
+    }
+
     function openPublicBankModal() {
       const modal = document.getElementById('public-bank-modal');
       const container = document.getElementById('public-bank-list-container');
@@ -1243,7 +1266,6 @@
         const started = snapshot.val() === true;
         if (started) playStartQuizFanfare();
         
-        // PENGATURAN TAMPILAN SISWA KETIKA KUIS DIMULAI/DIRESET
         if (document.getElementById('student-quiz-screen').classList.contains('hidden') === false || selectedGroup) {
           document.getElementById('student-setup-screen').classList.add('hidden');
           document.getElementById('student-quiz-screen').classList.remove('hidden');
@@ -1554,7 +1576,6 @@
               </div>
             ` : '';
 
-            // LOGIKA DIBERSIHKAN: JIKA KUIS DIMULAI -> TEKS KARTU SELALU "Siswa sedang berdiskusi"
             let actionButtons = '';
             if (group.status === 'waiting') {
               actionButtons = `
@@ -1703,7 +1724,6 @@
       });
     }
 
-    // LOGIKA RESET LENGKAP: MEMATIKAN KUIS KEMBALI KUNCI DAN MEMBERSIHKAN JAWABAN SELURUH KELOMPOK
     function resetAllGame() {
       if (!currentRoomCode) return;
       playClickSound();
