@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Kuis Interaktif Kelompok</title>
+  <title>EDUGAMI</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
@@ -59,8 +59,8 @@
   <div id="role-screen" class="glass-card p-8 rounded-3xl shadow-2xl w-full max-w-md text-center z-10 border border-sky-500/20 flex flex-col justify-between">
     <div>
       <div class="text-5xl mb-3">☁️✨</div>
-      <h1 class="text-3xl font-extrabold mb-2 bg-gradient-to-r from-sky-300 via-indigo-200 to-emerald-300 bg-clip-text text-transparent">Kuis Interaktif Kelompok</h1>
-      <p class="text-slate-300 mb-8 text-sm">Media Pembelajaran Real-Time Kelas</p>
+      <h1 class="text-3xl font-extrabold mb-2 bg-gradient-to-r from-sky-300 via-indigo-200 to-emerald-300 bg-clip-text text-transparent">EDUGAMI</h1>
+      <p class="text-slate-300 mb-8 text-sm">Kuis Interaktif</p>
       
       <div class="space-y-4 mb-8">
         <button type="button" onclick="playClickSound(); showManualCodeModal();" class="w-full py-4 bg-gradient-to-r from-indigo-600 to-sky-600 hover:from-indigo-500 hover:to-sky-500 font-bold rounded-2xl transition text-base shadow-lg flex items-center justify-center gap-2">👨‍🎓 Masuk sebagai Siswa</button>
@@ -81,11 +81,11 @@
   <div id="teacher-login-modal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 z-50">
     <div class="glass-card p-6 rounded-3xl border border-sky-500/30 w-full max-w-sm text-center shadow-2xl space-y-4">
       <h2 class="text-xl font-bold text-sky-300">👨‍🏫 Masuk Akun Guru</h2>
-      <p class="text-xs text-slate-300">Masukkan Nama atau ID Unik Guru milikmu untuk mengelola bank soal & melihat riwayat kuis pribadi.</p>
+      <p class="text-xs text-slate-300">Masukkan Nama atau ID Guru</p>
       <input type="text" id="teacher-id-input" placeholder="Contoh: guru_abil" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-white font-bold text-center focus:outline-none focus:border-sky-400" />
       <div class="flex gap-2">
         <button type="button" onclick="playClickSound(); closeTeacherLoginModal();" class="w-1/2 py-2.5 bg-slate-700 font-semibold rounded-xl text-xs">Batal</button>
-        <button type="button" onclick="playClickSound(); handleTeacherLogin();" class="w-1/2 py-2.5 bg-sky-600 font-bold rounded-xl text-xs">Masuk / Buat</button>
+        <button type="button" onclick="playClickSound(); handleTeacherLogin();" class="w-1/2 py-2.5 bg-sky-600 font-bold rounded-xl text-xs">Buat</button>
       </div>
     </div>
   </div>
@@ -94,11 +94,11 @@
   <div id="manual-code-modal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 z-50">
     <div class="glass-card p-6 rounded-3xl border border-sky-500/30 w-full max-w-sm text-center shadow-2xl">
       <h2 class="text-xl font-bold text-sky-300 mb-2">🔑 Masukkan Kode Ruang</h2>
-      <p class="text-xs text-slate-300 mb-4">Masukkan Kode Ruang yang ditampilkan oleh Guru di papan tulis.</p>
+      <p class="text-xs text-slate-300 mb-4">Masukkan Kode yang ditampilkan oleh Guru</p>
       <input type="text" id="manual-room-input" placeholder="Contoh: KUIS-8A2F" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-white font-bold uppercase text-center mb-4 focus:outline-none focus:border-sky-400" />
       <div class="flex gap-2">
         <button type="button" onclick="playClickSound(); closeManualCodeModal();" class="w-1/2 py-2.5 bg-slate-700 font-semibold rounded-xl text-xs">Batal</button>
-        <button type="button" onclick="playClickSound(); enterStudentRoomManual();" class="w-1/2 py-2.5 bg-sky-600 font-bold rounded-xl text-xs">Lanjut</button>
+        <button type="button" onclick="playClickSound(); enterStudentRoomManual();" class="w-1/2 py-2.5 bg-sky-600 font-bold rounded-xl text-xs">Masuk</button>
       </div>
     </div>
   </div>
@@ -107,8 +107,7 @@
   <div id="public-bank-modal" class="hidden fixed inset-0 bg-black/90 backdrop-blur-md flex items-center justify-center p-4 z-50">
     <div class="glass-card p-6 rounded-3xl border border-emerald-400/40 w-full max-w-2xl shadow-2xl space-y-4 max-h-[85vh] flex flex-col">
       <div class="flex justify-between items-center border-b border-slate-700 pb-3">
-        <h2 class="text-xl font-extrabold text-emerald-300 flex items-center gap-2">🌐 Bank Soal Publik Bersama</h2>
-        <button type="button" onclick="playClickSound(); closePublicBankModal();" class="text-slate-400 hover:text-white font-bold text-sm">✕ Tutup</button>
+        <h2 class="text-xl font-extrabold text-emerald-300 flex items-center gap-2">🌐 Bank Soal</h2>
       </div>
       <p class="text-xs text-slate-300">Bank soal yang dipublikasikan oleh guru-guru lain. Kamu bisa menyalinnya langsung ke akunmu!</p>
 
@@ -125,7 +124,6 @@
     <div class="glass-card p-6 rounded-3xl border border-amber-400/40 w-full max-w-3xl shadow-2xl space-y-4 max-h-[85vh] flex flex-col">
       <div class="flex justify-between items-center border-b border-slate-700 pb-3">
         <h2 class="text-xl font-extrabold text-amber-300 flex items-center gap-2">📜 Riwayat Kuis Saya</h2>
-        <button type="button" onclick="playClickSound(); closeHistoryModal();" class="text-slate-400 hover:text-white font-bold text-sm">✕ Tutup</button>
       </div>
 
       <div id="history-list-container" class="space-y-4 overflow-y-auto pr-2 flex-1"></div>
@@ -139,7 +137,7 @@
   <!-- MODAL QR CODE BESAR UNTUK DIPAPARKAN GURU -->
   <div id="qr-modal" class="hidden fixed inset-0 bg-black/90 backdrop-blur-md flex items-center justify-center p-4 z-50">
     <div class="glass-card p-8 rounded-3xl border-2 border-amber-400 max-w-sm w-full text-center shadow-2xl">
-      <h2 class="text-2xl font-extrabold text-amber-300 mb-1">📱 Scan QR Code Kuis</h2>
+      <h2 class="text-2xl font-extrabold text-amber-300 mb-1">📱 Scan QR Code</h2>
       <p id="qr-room-text" class="text-xs text-slate-300 mb-4 font-bold"></p>
       
       <div class="bg-white p-4 rounded-2xl inline-block shadow-xl mb-4">
@@ -171,7 +169,7 @@
       </div>
 
       <div>
-        <label class="block text-xs font-semibold text-amber-300 mb-1">📸 Swafoto Bersama Kelompok (Wajib):</label>
+        <label class="block text-xs font-semibold text-amber-300 mb-1">📸 Selfie Bersama Kelompok:</label>
         <div class="relative bg-slate-900 rounded-2xl overflow-hidden border border-slate-700 aspect-video flex flex-col items-center justify-center">
           <video id="webcam-preview" autoplay playsinline class="w-full h-full object-cover hidden"></video>
           <img id="selfie-photo-result" class="w-full h-full object-cover hidden" />
