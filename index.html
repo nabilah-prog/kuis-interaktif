@@ -137,14 +137,14 @@
   <!-- MODAL QR CODE BESAR UNTUK DIPAPARKAN GURU -->
   <div id="qr-modal" class="hidden fixed inset-0 bg-black/90 backdrop-blur-md flex items-center justify-center p-4 z-50">
     <div class="glass-card p-8 rounded-3xl border-2 border-amber-400 max-w-sm w-full text-center shadow-2xl">
-      <h2 class="text-2xl font-extrabold text-amber-300 mb-1">📱 Scan QR Code</h2>
-      <p id="qr-room-text" class="text-xs text-slate-300 mb-4 font-bold"></p>
+      <!-- MENGUBAH BACAAN KUNING MENJADI LANGSUNG KODE RUANG -->
+      <h2 id="qr-room-header" class="text-2xl font-extrabold text-amber-300 mb-4 tracking-wider"></h2>
       
       <div class="bg-white p-4 rounded-2xl inline-block shadow-xl mb-4">
         <div id="modal-qrcode" class="flex justify-center items-center min-h-[220px]"></div>
       </div>
       
-      <p class="text-xs text-slate-400 mb-4">Siswa cukup mengarahkan kamera HP ke QR Code di atas untuk langsung gabung kuis!</p>
+      <p class="text-xs text-slate-300 mb-4 font-medium">Siswa cukup mengarahkan kamera HP ke QR Code di atas untuk langsung gabung kuis!</p>
       <button type="button" onclick="playClickSound(); closeQRModal();" class="w-full py-3 bg-rose-600 font-bold rounded-xl text-xs shadow-lg">Tutup QR Code</button>
     </div>
   </div>
@@ -269,7 +269,7 @@
         <div class="flex items-center gap-2">
           <h1 class="text-2xl font-extrabold text-sky-300">🏆 Dashboard Guru</h1>
           <span id="teacher-id-badge" class="bg-indigo-500/20 text-indigo-300 text-xs font-bold px-2.5 py-1 rounded-lg border border-indigo-500/30">👤 Guru: -</span>
-          <span id="teacher-room-badge" class="bg-amber-500/20 text-amber-300 text-xs font-bold px-2.5 py-1 rounded-lg border border-amber-500/30">Ruang: -</span>
+          <!-- TEKS RUANG DIHAPUS DARI DASHBOARD UTAMA SESUAI PERMINTAAN -->
           <button type="button" onclick="playClickSound(); openQRModal();" class="px-2.5 py-1 bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold text-xs rounded-lg shadow-md flex items-center gap-1">📱 QR Code</button>
         </div>
       </div>
@@ -662,7 +662,6 @@
         document.getElementById('role-screen').classList.add('hidden');
         document.getElementById('teacher-dashboard-screen').classList.remove('hidden');
         document.getElementById('teacher-id-badge').innerText = "👤 Guru: " + currentTeacherId;
-        document.getElementById('teacher-room-badge').innerText = "Ruang: " + currentRoomCode;
         initTeacherDashboard();
       });
     }
@@ -718,7 +717,9 @@
       
       const cleanOrigin = window.location.origin.includes('localhost') ? window.location.origin : window.location.href.split('?')[0].split('#')[0];
       const fullUrl = `${cleanOrigin}?room=${currentRoomCode}`;
-      document.getElementById('qr-room-text').innerText = "Kode Ruang: " + currentRoomCode;
+      
+      // JUDUL LANGSUNG KODE RUANG (BACAAN KUNING)
+      document.getElementById('qr-room-header').innerText = "🔑 " + currentRoomCode;
 
       try {
         if (typeof QRCode !== 'undefined') {
@@ -1019,11 +1020,14 @@
       document.getElementById('public-bank-modal').classList.add('hidden');
     }
 
-    // SIMPAN REKAP KUIS LENGKAP DENGAN DETAIL JAWABAN KELOMPOK
+    // SIMPAN REKAP KUIS OTOMATIS DAN RESET KE SETELAN AWAL (HALAMAN UTAMA)
     function saveCurrentQuizResults() {
       db.ref(`rooms/${currentRoomCode}/groups`).once('value', (snapshot) => {
         const groupsData = snapshot.val();
         if (!groupsData) return alert("Belum ada data nilai kelompok untuk disimpan!");
+
+        const historyTitle = prompt("Masukkan nama untuk rekap kuis ini (misal: Pre Test / Post Test Bab 1):");
+        if (!historyTitle) return;
 
         let list = [];
         Object.keys(groupsData).forEach(key => {
@@ -1049,16 +1053,32 @@
 
         const newHistoryKey = db.ref(`teachers/${currentTeacherId}/quiz_history`).push().key;
         db.ref(`teachers/${currentTeacherId}/quiz_history/${newHistoryKey}`).set({
-          room_code: currentRoomCode,
+          title: historyTitle,
           date_saved: timestampStr,
-          questions_snapshot: activeQuestions,
-          winner_name: list[0] ? list[0].group_name : '-',
-          winner_photo: list[0] ? list[0].photo : null,
           results: list
         }, () => {
-          alert("✅ Rekap Kuis Lengkap Berhasil Disimpan ke Akun Guru " + currentTeacherId + "!");
+          alert(`✅ Rekap Kuis "${historyTitle}" Berhasil Disimpan!\n\nKuis di ruangan ini telah selesai. Halaman akan dikembalikan ke Setelan Awal.`);
+          
+          // RESET RUANG KUIS DI FIREBASE LALU KEMBALI KE HALAMAN UTAMA
+          db.ref(`rooms/${currentRoomCode}/quiz_started`).set(false);
+          db.ref(`rooms/${currentRoomCode}/groups`).remove(() => {
+            location.href = location.pathname;
+          });
         });
       });
+    }
+
+    function toggleHistoryDetail(historyKey) {
+      playClickSound();
+      const detailEl = document.getElementById(`history-detail-${historyKey}`);
+      const btnIcon = document.getElementById(`history-icon-${historyKey}`);
+      if (detailEl.classList.contains('hidden')) {
+        detailEl.classList.remove('hidden');
+        btnIcon.innerText = "🔼 Sembunyikan Detail";
+      } else {
+        detailEl.classList.add('hidden');
+        btnIcon.innerText = "🔽 Lihat Detail Kuis";
+      }
     }
 
     function openHistoryModal() {
@@ -1079,38 +1099,43 @@
             const div = document.createElement('div');
             div.className = "bg-slate-900/90 p-4 rounded-2xl border border-slate-800 space-y-3 text-xs";
 
-            let groupTables = '';
+            let leaderboardRows = '';
             h.results.forEach((item, index) => {
               let answerRows = '';
               if (item.answers_history) {
                 Object.keys(item.answers_history).forEach(roundKey => {
                   const rec = item.answers_history[roundKey];
                   answerRows += `
-                    <div class="bg-slate-950 p-2 rounded-lg my-1 border border-slate-800">
-                      <div class="flex justify-between font-bold text-amber-300 text-[11px]">
+                    <div class="bg-slate-950/80 p-2.5 rounded-xl my-1.5 border border-slate-800/80">
+                      <div class="font-bold text-amber-300 text-[11px]">
                         <span>Soal ${roundKey.replace('round_', '')}</span>
-                        <span class="text-emerald-400">+${rec.score_earned || 0} Poin (Urutan #${rec.finish_order || 1})</span>
                       </div>
-                      <p class="text-slate-200 text-xs italic mt-0.5">Jawaban: "${rec.answer || '-'}"</p>
-                      ${rec.picked_member ? `<p class="text-[10px] text-indigo-300">Dipanggil Maju: ${rec.picked_member}</p>` : ''}
+                      <p class="text-slate-100 text-xs italic mt-0.5 font-semibold">Jawaban: "${rec.answer || '-'}"</p>
+                      ${rec.picked_member ? `<p class="text-[10px] text-indigo-300 mt-0.5">📢 Dipanggil Maju: <strong>${rec.picked_member}</strong></p>` : ''}
                     </div>
                   `;
                 });
               } else {
-                answerRows = '<p class="text-slate-500 italic">Tidak ada catatan rincian jawaban.</p>';
+                answerRows = '<p class="text-slate-500 italic text-[11px]">Tidak ada catatan rincian jawaban.</p>';
               }
 
-              groupTables += `
-                <div class="bg-slate-800/60 p-3 rounded-xl border border-slate-700/60 space-y-1">
-                  <div class="flex justify-between items-center">
-                    <span class="font-extrabold ${index === 0 ? 'text-amber-300 text-sm' : 'text-slate-200'}">
-                      ${index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : '#' + (index+1)} ${item.group_name}
-                    </span>
-                    <span class="font-black text-emerald-400 text-sm">${item.score} Poin</span>
+              const rankBadge = index === 0 ? '🥇 PERINGKAT 1' : index === 1 ? '🥈 PERINGKAT 2' : index === 2 ? '🥉 PERINGKAT 3' : `#${index + 1} PERINGKAT`;
+              const rankColor = index === 0 ? 'text-amber-300 border-amber-400/40 bg-amber-400/10' : index === 1 ? 'text-slate-300 border-slate-400/40 bg-slate-400/10' : index === 2 ? 'text-amber-500 border-amber-600/40 bg-amber-600/10' : 'text-slate-400 border-slate-700 bg-slate-800/40';
+
+              leaderboardRows += `
+                <div class="bg-slate-900/90 p-4 rounded-2xl border border-slate-700/80 space-y-2 shadow-lg">
+                  <div class="flex justify-between items-center border-b border-slate-800 pb-2">
+                    <div class="flex items-center gap-2">
+                      <span class="font-extrabold px-2.5 py-1 rounded-lg border text-xs ${rankColor}">${rankBadge}</span>
+                      <h5 class="font-extrabold text-white text-sm">${item.group_name}</h5>
+                    </div>
+                    <span class="font-black text-emerald-400 text-base">${item.score} Poin</span>
                   </div>
-                  <p class="text-[11px] text-slate-400 italic">Anggota: ${item.members.join(', ')}</p>
+
+                  <p class="text-[11px] text-slate-400 italic">Anggota: ${item.members ? item.members.join(', ') : '-'}</p>
+
                   <div class="pt-2">
-                    <p class="text-[11px] font-bold text-sky-300 border-b border-slate-700 pb-1">Detail Jawaban Ronde Soal:</p>
+                    <p class="text-[11px] font-bold text-sky-300 mb-1">📝 Detail Jawaban & Anggota Maju:</p>
                     ${answerRows}
                   </div>
                 </div>
@@ -1118,16 +1143,29 @@
             });
 
             div.innerHTML = `
-              <div class="flex justify-between items-center border-b border-slate-800 pb-2">
+              <div class="flex justify-between items-center">
                 <div>
-                  <span class="font-extrabold text-sky-300 text-sm">Ruang: ${h.room_code}</span>
-                  <p class="text-[10px] text-slate-400">Disimpan: ${h.date_saved}</p>
+                  <h3 class="font-extrabold text-amber-300 text-base">${h.title || 'Rekap Kuis'}</h3>
+                  <p class="text-[11px] text-slate-400">🕒 Disimpan: ${h.date_saved}</p>
                 </div>
-                <button type="button" onclick="deleteHistoryRecord('${key}')" class="text-[11px] text-rose-400 hover:underline">🗑️ Hapus Rekap</button>
+                <div class="flex items-center gap-2">
+                  <button type="button" onclick="toggleHistoryDetail('${key}')" id="history-icon-${key}" class="px-3.5 py-1.5 bg-indigo-600/80 hover:bg-indigo-600 text-white font-bold rounded-xl text-xs shadow-md transition">
+                    🔽 Lihat Detail Kuis
+                  </button>
+                  <button type="button" onclick="deleteHistoryRecord('${key}')" class="p-1.5 text-rose-400 hover:text-rose-300 text-xs font-bold" title="Hapus Rekap">🗑️</button>
+                </div>
               </div>
 
-              <div class="space-y-2">
-                ${groupTables}
+              <!-- PAPAN PERINGKAT HASIL DETAIL KUIS (ACCORDION) -->
+              <div id="history-detail-${key}" class="hidden pt-3 border-t border-slate-800 space-y-3">
+                <div class="bg-indigo-950/40 p-3 rounded-2xl border border-indigo-500/20 text-center">
+                  <h4 class="font-extrabold text-sky-300 text-sm">🏆 HASIL PAPAN PERINGKAT KELAS</h4>
+                  <p class="text-[11px] text-slate-400">Rincian Nilai & Hasil Jawaban Seluruh Kelompok</p>
+                </div>
+
+                <div class="space-y-3">
+                  ${leaderboardRows}
+                </div>
               </div>
             `;
             container.appendChild(div);
@@ -1377,7 +1415,7 @@
           toggleBtn.innerText = "🔒 Kunci Kuis";
           toggleBtn.className = "px-5 py-2 bg-rose-600 font-bold rounded-xl text-xs shadow-md";
         } else {
-          statusInd.innerText = "Status: ⏳ Belum Dimulai";
+          statusInd.innerText = "Status: ⏳ Belum Dimulai / Selesai";
           toggleBtn.innerText = "🚀 Mulai Kuis";
           toggleBtn.className = "px-5 py-2 bg-emerald-600 font-bold rounded-xl text-xs shadow-md";
         }
@@ -1453,7 +1491,7 @@
             if (group.status === 'waiting') {
               statusBadge = `<span class="bg-amber-500/20 text-amber-300 text-xs px-2.5 py-1 font-extrabold rounded-full animate-pulse border border-amber-500/40">Menunggu (#${globalQueuePos})</span>`;
             } else if (group.status === 'completed') {
-              statusBadge = '<span class="bg-emerald-500/20 text-emerald-300 text-xs px-2.5 py-1 font-bold rounded-full">Selesai</span>';
+              statusBadge = '<span class="bg-emerald-500/20 text-emerald-300 text-xs px-2.5 py-1 font-bold rounded-full">Selesai Seluruh Soal</span>';
             } else {
               if (isQuizStarted) {
                 statusBadge = '<span class="bg-blue-500/20 text-blue-300 text-xs px-2.5 py-1 font-semibold rounded-full">Sedang Mengerjakan</span>';
@@ -1469,6 +1507,21 @@
                 <div class="text-sm font-bold text-amber-300">${group.picked_member ? 'Yang Maju: ' + group.picked_member : 'Belum Ditunjuk'}</div>
               </div>
             ` : '';
+
+            // PERBAIKAN TOMBOL AKSI: HINDARI MENAMPILKAN "MENUNGGU JAWABAN SISWA" JIKA KUIS TIDAK BERLANGSUNG ATAU SUDAH SELESAI
+            let actionButtons = '';
+            if (group.status === 'waiting') {
+              actionButtons = `
+                <button type="button" onclick="approveGroup('${groupId}', ${group.current_round || 1}, ${group.total_score || 0}, ${scoreEarned}, '${group.answer || ''}', '${group.picked_member || ''}', ${globalQueuePos})" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 font-bold rounded-xl text-sm mb-2 shadow-lg">✅ ACC & Tambah +${scoreEarned} Poin</button>
+                <button type="button" onclick="rejectGroup('${groupId}')" class="w-full py-1.5 bg-rose-600/30 hover:bg-rose-600/50 text-rose-300 font-bold rounded-xl text-xs">❌ Diskusi Ulang</button>
+              `;
+            } else if (group.status === 'completed') {
+              actionButtons = `<div class="w-full py-2 bg-emerald-950/60 text-emerald-400 font-bold rounded-xl text-xs text-center border border-emerald-500/30">✅ Kelompok Selesai Kuis</div>`;
+            } else if (isQuizStarted) {
+              actionButtons = `<div class="w-full py-2 bg-slate-800/80 text-slate-400 font-semibold rounded-xl text-xs text-center border border-slate-700">⏳ Siswa Sedang Berdiskusi...</div>`;
+            } else {
+              actionButtons = `<div class="w-full py-2 bg-slate-800/80 text-slate-500 font-semibold rounded-xl text-xs text-center border border-slate-700">Tunggu Kuis Dimulai Guru...</div>`;
+            }
 
             const card = document.createElement('div');
             card.className = "glass-card border border-slate-700 rounded-2xl p-5 shadow-xl flex flex-col justify-between";
@@ -1490,10 +1543,7 @@
                 ${pickMemberSection}
               </div>
               <div>
-                ${group.status === 'waiting' ? `
-                  <button type="button" onclick="approveGroup('${groupId}', ${group.current_round || 1}, ${group.total_score || 0}, ${scoreEarned}, '${group.answer || ''}', '${group.picked_member || ''}', ${globalQueuePos})" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 font-bold rounded-xl text-sm mb-2 shadow-lg">✅ ACC & Tambah +${scoreEarned} Poin</button>
-                  <button type="button" onclick="rejectGroup('${groupId}')" class="w-full py-1.5 bg-rose-600/30 hover:bg-rose-600/50 text-rose-300 font-bold rounded-xl text-xs">❌ Diskusi Ulang</button>
-                ` : `<button type="button" disabled class="w-full py-2 bg-slate-800 text-slate-500 font-semibold rounded-xl text-xs">Menunggu Jawaban Siswa...</button>`}
+                ${actionButtons}
               </div>
             `;
             container.appendChild(card);
