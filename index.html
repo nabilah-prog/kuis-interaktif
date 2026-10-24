@@ -267,16 +267,15 @@
     <div class="glass-card p-6 rounded-3xl border border-sky-500/20 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
       <div>
         <div class="flex items-center gap-2">
-          <h1 class="text-2xl font-extrabold text-sky-300">🏆 Dashboard Kontrol Guru</h1>
+          <h1 class="text-2xl font-extrabold text-sky-300">🏆 Dashboard Guru</h1>
           <span id="teacher-id-badge" class="bg-indigo-500/20 text-indigo-300 text-xs font-bold px-2.5 py-1 rounded-lg border border-indigo-500/30">👤 Guru: -</span>
           <span id="teacher-room-badge" class="bg-amber-500/20 text-amber-300 text-xs font-bold px-2.5 py-1 rounded-lg border border-amber-500/30">Ruang: -</span>
           <button type="button" onclick="playClickSound(); openQRModal();" class="px-2.5 py-1 bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold text-xs rounded-lg shadow-md flex items-center gap-1">📱 QR Code</button>
         </div>
-        <p class="text-slate-400 text-xs mt-1">Kelola bank soal pribadi & publik, simpan rekap nilai lengkap, serta ACC kuis real-time.</p>
       </div>
       <div class="flex flex-wrap items-center gap-2">
-        <button type="button" onclick="playClickSound(); openPublicBankModal();" class="px-3 py-2 bg-emerald-600 hover:bg-emerald-500 font-bold rounded-xl text-xs flex items-center gap-1 shadow-lg">🌐 Bank Soal Publik</button>
-        <button type="button" onclick="playClickSound(); openHistoryModal();" class="px-3 py-2 bg-indigo-600 hover:bg-indigo-500 font-bold rounded-xl text-xs flex items-center gap-1 shadow-lg">📜 Riwayat Kuis Saya</button>
+        <button type="button" onclick="playClickSound(); openPublicBankModal();" class="px-3 py-2 bg-emerald-600 hover:bg-emerald-500 font-bold rounded-xl text-xs flex items-center gap-1 shadow-lg">🌐 Bank Soal</button>
+        <button type="button" onclick="playClickSound(); openHistoryModal();" class="px-3 py-2 bg-indigo-600 hover:bg-indigo-500 font-bold rounded-xl text-xs flex items-center gap-1 shadow-lg">📜 Riwayat Kuis</button>
         <button type="button" onclick="playClickSound(); location.href=location.pathname;" class="px-3 py-2 bg-slate-800 rounded-xl text-xs font-bold">← Keluar</button>
       </div>
     </div>
@@ -299,13 +298,13 @@
       <div class="flex flex-wrap justify-between items-center gap-3 border-b border-slate-700 pb-3">
         <div>
           <h3 class="text-lg font-bold text-sky-300">⚙️ Pengaturan Soal & Sistem Poin Kuis</h3>
-          <p class="text-xs text-slate-400">Atur bank soal, jumlah kelompok, dan bobot poin tiap urutan selesai.</p>
+          <p class="text-xs text-slate-400">Atur soal, jumlah kelompok, dan poin tiap urutan selesai.</p>
         </div>
         <div class="flex items-center gap-2">
           <select id="preset-selector" onchange="loadSelectedPreset(this.value)" class="bg-slate-900 border border-slate-700 text-xs rounded-xl p-2 text-white">
-            <option value="default">Bank Soal Utama (Default)</option>
+            <option value="default">Bank Soal (Default)</option>
           </select>
-          <button type="button" onclick="playClickSound(); saveAsNewPreset();" class="px-3.5 py-2 bg-indigo-600 hover:bg-indigo-500 font-bold rounded-xl text-xs">💾 Simpan Preset Baru</button>
+          <button type="button" onclick="playClickSound(); saveAsNewPreset();" class="px-3.5 py-2 bg-indigo-600 hover:bg-indigo-500 font-bold rounded-xl text-xs">💾 Simpan Soal</button>
         </div>
       </div>
 
@@ -316,7 +315,7 @@
         </div>
 
         <div class="flex items-center gap-2">
-          <label class="font-bold text-amber-300">Jumlah Soal Kuis:</label>
+          <label class="font-bold text-amber-300">Jumlah Soal:</label>
           <input type="number" id="total-questions-input" min="1" max="50" value="4" onchange="generateQuestionInputs(this.value)" class="w-16 bg-slate-900 border border-slate-700 rounded-lg p-1.5 text-center text-white font-bold" />
         </div>
 
@@ -325,7 +324,7 @@
 
       <!-- PENGATURAN SKOR POIN DINAMIS -->
       <div class="bg-slate-900/80 p-4 rounded-2xl border border-slate-800 space-y-2">
-        <h4 class="font-bold text-amber-300 text-xs flex items-center gap-1">🎯 Pengaturan Skor Poin Per Urutan Selesai (Bisa Diubah Bebas):</h4>
+        <h4 class="font-bold text-amber-300 text-xs flex items-center gap-1">🎯 Skor Poin Per Urutan Selesai:</h4>
         <div id="dynamic-score-inputs-container" class="grid grid-cols-2 sm:grid-cols-5 gap-3 text-xs"></div>
       </div>
 
@@ -336,7 +335,7 @@
     <div id="tab-content-leaderboard" class="hidden space-y-6">
       <!-- PODIUM JUARA 1 GEDE BERGERAK -->
       <div id="winner-podium-section" class="hidden glass-card p-10 rounded-3xl border-2 border-amber-400 text-center bg-gradient-to-b from-indigo-950 via-slate-900 to-slate-950 shadow-2xl relative overflow-hidden">
-        <h2 class="text-4xl font-extrabold text-amber-300 mb-6 tracking-wider animate-bounce">👑 PEMENANG UTAMA KELAS 👑</h2>
+        <h2 class="text-4xl font-extrabold text-amber-300 mb-6 tracking-wider animate-bounce">👑 PEMENANG KELAS 👑</h2>
         
         <div class="inline-block relative bg-slate-900/90 border-4 border-amber-400 rounded-3xl p-8 shadow-2xl max-w-lg w-full animate-winner-pop glow-gold">
           <div class="text-6xl mb-2 animate-pulse">👑</div>
@@ -349,7 +348,7 @@
 
       <!-- DIAGRAM BATANG VERTIKAL FULL KETINGGIAN -->
       <div class="glass-card p-6 rounded-3xl border border-sky-500/20 space-y-4">
-        <h3 class="text-lg font-bold text-amber-300">📊 Papan Peringkat Diagram Batang Vertikal</h3>
+        <h3 class="text-lg font-bold text-amber-300">📊 Peringkat</h3>
         <div id="vertical-leaderboard-container" class="flex justify-around items-end h-72 bg-slate-900/80 rounded-2xl p-4 border border-slate-800 overflow-x-auto"></div>
       </div>
     </div>
@@ -364,7 +363,7 @@
           <button type="button" id="toggle-quiz-btn" onclick="toggleQuizState()" class="px-5 py-2 bg-emerald-600 font-bold rounded-xl text-xs shadow-md">🚀 Mulai Kuis</button>
           <button type="button" onclick="resetAllGame()" class="px-3.5 py-2 bg-rose-600/80 font-bold rounded-xl text-xs shadow-md">🔄 Reset Kuis</button>
         </div>
-        <button type="button" onclick="playClickSound(); saveCurrentQuizResults();" class="px-4 py-2 bg-amber-600 hover:bg-amber-500 text-white font-bold rounded-xl text-xs shadow-lg">💾 Simpan Rekap Kuis Lengkap</button>
+        <button type="button" onclick="playClickSound(); saveCurrentQuizResults();" class="px-4 py-2 bg-amber-600 hover:bg-amber-500 text-white font-bold rounded-xl text-xs shadow-lg">💾 Simpan Rekap Kuis</button>
       </div>
 
       <!-- KARTU VERIFIKASI KELOMPOK -->
@@ -556,7 +555,7 @@
       if (!container) return;
       container.innerHTML = '';
 
-      const labels = ['🥇 Urutan #1', '🥈 Urutan #2', '🥉 Urutan #3', '🏅 Urutan #4', '🎗️ Urutan #5'];
+      const labels = ['🥇 Urutan 1', '🥈 Urutan 2', '🥉 Urutan 3', '🏅 Urutan 4', '🎗️ Urutan 5'];
       const defaultValues = [140, 130, 120, 110, 100];
 
       for (let i = 1; i <= count; i++) {
@@ -689,7 +688,7 @@
           closeManualCodeModal();
           openStudentSetupScreen();
         } else {
-          alert(`❌ Kode Ruang "${code}" tidak ditemukan!\n\nPastikan Guru sudah menekan "Masuk Akun Guru" terlebih dahulu.`);
+          alert(`❌ Kode Ruang "${code}" tidak ditemukan!`);
         }
       });
     }
