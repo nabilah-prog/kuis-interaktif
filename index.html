@@ -310,7 +310,6 @@
           <input type="number" id="total-questions-input" min="1" max="50" value="4" onchange="generateQuestionInputs(this.value)" class="w-16 bg-slate-900 border border-slate-700 rounded-lg p-1.5 text-center text-white font-bold" />
         </div>
 
-        <!-- TOMBOL UTAMA DEDIKASI BUAT KUIS & GENERATE KODE RUANG -->
         <button type="button" onclick="createNewQuizRoomAndSwitch()" class="ml-auto px-5 py-2.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 font-extrabold rounded-xl text-xs shadow-xl flex items-center gap-2">
           🚀 Buat Kuis & Dapatkan Kode Ruang
         </button>
@@ -1024,7 +1023,6 @@
       document.getElementById('public-bank-modal').classList.add('hidden');
     }
 
-    // GURU SIMPAN REKAP: KUNCI TOTAL RUANG KUIS (GURU BISA BUAT RUANG BARU DENGAN "BUAT KUIS")
     function saveCurrentQuizResults() {
       if (!currentRoomCode) return alert("Belum ada kuis yang aktif!");
       db.ref(`rooms/${currentRoomCode}/groups`).once('value', (snapshot) => {
@@ -1048,7 +1046,6 @@
           });
         });
 
-        // TIE-BREAKER: URUTAN PERINGKAT SAMA DILIHAT DARI SIAPA YANG LEBIH DULUAN KIRIM
         list.sort((a, b) => {
           if (b.score !== a.score) return b.score - a.score;
           return a.last_submit_time - b.last_submit_time;
@@ -1071,7 +1068,6 @@
           });
           db.ref(`rooms/${currentRoomCode}/groups`).remove();
 
-          // LOCK CONTROL ROOM TAMPILAN GURU
           currentRoomCode = null;
           document.getElementById('room-badge-top').classList.add('hidden');
           document.getElementById('qr-btn-top').classList.add('hidden');
@@ -1200,10 +1196,10 @@
     // LOGIKA SISWA
     function startStudentQuiz() {
       playClickSound();
-      if (!capturedPhotoData) return alert("Wajib swafoto bersama kelompok dulu!");
-
       selectedGroup = document.getElementById('group-select').value;
       const rawMembers = document.getElementById('members-input').value;
+      
+      if (!capturedPhotoData) return alert("Wajib swafoto bersama kelompok dulu!");
       if (!rawMembers.trim()) return alert("Masukkan nama anggota!");
 
       const membersArray = rawMembers.split(',').map(name => name.trim()).filter(name => name !== '');
@@ -1246,9 +1242,18 @@
           return;
         }
 
+        // KETIKA GURU MERESET KUIS: CEK DAN PASTIKAN TOMBOL "MASUK KE RUANG KUIS" TETAP AKTIF JIKA DATA SUDAH TERISI
         if (roomData.reset_event_timestamp) {
           document.getElementById('student-quiz-screen').classList.add('hidden');
           document.getElementById('student-setup-screen').classList.remove('hidden');
+          
+          if (capturedPhotoData && document.getElementById('members-input').value.trim()) {
+            const submitBtn = document.getElementById('submit-student-btn');
+            submitBtn.disabled = false;
+            submitBtn.className = "w-full py-4 bg-gradient-to-r from-indigo-600 to-sky-600 font-bold rounded-2xl shadow-lg cursor-pointer";
+            document.getElementById('photo-status-msg').className = "text-[11px] text-emerald-400 mt-1 italic font-bold";
+            document.getElementById('photo-status-msg').innerText = "✅ Foto dikonfirmasi & siap digunakan!";
+          }
           return;
         }
       });
@@ -1356,7 +1361,6 @@
             });
           });
 
-          // PERINGKAT SISWA BERDASARKAN SKOR TINGGI DAN WAKTU SUBMIT TERCEPAT (TIE-BREAKER PRESISI)
           groupList.sort((a, b) => {
             if (b.score !== a.score) return b.score - a.score;
             return a.last_submit_time - b.last_submit_time;
@@ -1561,6 +1565,7 @@
               </div>
             ` : '';
 
+            // PEMBARUAN TEKS TOMBOL PADA DASBOR GURU SAAT KUIS DIMULAI
             let actionButtons = '';
             if (group.status === 'waiting') {
               actionButtons = `
@@ -1602,7 +1607,6 @@
           }
         }
 
-        // PERINGKAT DI DASBOR GURU: JIKA SKOR SAMA, PEMENANG DILIHAT DARI WAKTU SUBMIT TERCEPAT (TIE-BREAKER)
         groupList.sort((a, b) => {
           if (b.score !== a.score) return b.score - a.score;
           return a.last_submit_time - b.last_submit_time;
@@ -1694,7 +1698,7 @@
         finish_order: null,
         answer: '',
         picked_member: null,
-        last_submit_time: Date.now() // MENCATAT WAKTU SELESAI RONDE SECARA AKURAT
+        last_submit_time: Date.now()
       });
     }
 
