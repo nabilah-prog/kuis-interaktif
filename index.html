@@ -219,11 +219,9 @@
 
       <div id="waiting-box" class="hidden text-center py-8">
         <div class="animate-spin w-12 h-12 border-4 border-sky-400 border-t-transparent rounded-full mx-auto mb-4"></div>
-        <h2 class="text-xl font-bold mb-2 text-amber-300">Jawaban Terkirim!</h2>
-        <p class="text-xs text-slate-300 mb-4">Menunggu Verifikasi & ACC dari Guru untuk lanjut ke soal berikutnya...</p>
-        <div id="finish-order-badge" class="inline-block bg-slate-800 text-slate-200 text-xs px-3.5 py-1.5 rounded-xl mb-4"></div>
+        <h2 id="student-waiting-status-text" class="text-xl font-extrabold text-amber-300 mb-2">Menunggu Verifikasi Guru #1</h2>
         
-        <div id="picked-member-box" class="hidden bg-indigo-900/50 border border-indigo-400/40 p-4 rounded-2xl animate-bounce mt-2">
+        <div id="picked-member-box" class="hidden bg-indigo-900/50 border border-indigo-400/40 p-4 rounded-2xl animate-bounce mt-4">
           <p class="text-xs text-indigo-300 uppercase font-bold mb-1">📢 Guru Memanggil:</p>
           <p id="picked-member-text" class="text-xl font-extrabold text-amber-300"></p>
         </div>
@@ -747,7 +745,6 @@
       }).catch(err => alert("Kamera tidak dapat diakses: " + err));
     }
 
-    // PENGAMBILAN FOTO SELFIE MIRROR
     function takePhoto() {
       playCameraShutterSound();
       const video = document.getElementById('webcam-preview');
@@ -756,7 +753,6 @@
       canvas.height = 240;
       const ctx = canvas.getContext('2d');
 
-      // Gambar mirror tanpa terbalik
       ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
       tempPhotoData = canvas.toDataURL('image/jpeg', 0.6);
@@ -1011,7 +1007,6 @@
       document.getElementById('public-bank-modal').classList.add('hidden');
     }
 
-    // SIMPAN REKAP KUIS -> KUIS SELESAI -> SISWA OTOMATIS KEMBALI KE LAMAN UTAMA
     function saveCurrentQuizResults() {
       db.ref(`rooms/${currentRoomCode}/groups`).once('value', (snapshot) => {
         const groupsData = snapshot.val();
@@ -1050,7 +1045,6 @@
         }, () => {
           alert(`✅ Rekap Kuis "${historyTitle}" Berhasil Disimpan!\n\nKuis di ruangan ini telah selesai secara resmi.`);
           
-          // SET STATUS ROOM DENGAN SIGN KUIS SELESAI FINAL
           db.ref(`rooms/${currentRoomCode}`).update({
             quiz_started: false,
             quiz_finished_final: true
@@ -1216,18 +1210,15 @@
         if (snapshot.val()) activeQuestions = snapshot.val();
       });
 
-      // MONITOR JIKA KUIS SELESAI FINAL / DI-RESET OLEH GURU
       db.ref(`rooms/${currentRoomCode}`).on('value', (roomSnap) => {
         const roomData = roomSnap.val() || {};
         
-        // JIKA GURU SIMPAN REKAP (KUIS SELESAI FINAL) -> SISWA KEMBALI KE HALAMAN UTAMA
         if (roomData.quiz_finished_final) {
           alert("🏁 Kuis telah selesai & disimpan oleh Guru! Kamu akan dikembalikan ke Halaman Utama.");
           location.href = location.pathname;
           return;
         }
 
-        // JIKA GURU TEKAN RESET KUIS -> SISWA KEMBALI KE REGISTRASI KELOMPOK (DATA FOTO & ANGGOTA TETAP ADA)
         if (roomData.reset_event_timestamp) {
           document.getElementById('student-quiz-screen').classList.add('hidden');
           document.getElementById('student-setup-screen').classList.remove('hidden');
@@ -1305,6 +1296,7 @@
           document.getElementById('waiting-box').classList.remove('hidden');
           document.getElementById('finished-all-box').classList.add('hidden');
 
+          // URUTAN MENGUMPULKAN BERDASARKAN WAKTU PADA SOAL YANG SAMA
           let waitingList = [];
           Object.keys(allGroups).forEach(k => {
             if (allGroups[k].status === 'waiting' && (allGroups[k].current_round || 1) === currentRoundNum) {
@@ -1315,7 +1307,8 @@
           const myPos = waitingList.findIndex(x => x.id === selectedGroup);
           const queueNum = myPos !== -1 ? myPos + 1 : 1;
 
-          document.getElementById('finish-order-badge').innerText = 'Urutan Periksa Soal ' + currentRoundNum + ': #' + queueNum;
+          // FORMAT RINGKAS TEKS SUSAH DIPERINGKAS PADA SISWA
+          document.getElementById('student-waiting-status-text').innerText = `Menunggu Verifikasi Guru #${queueNum}`;
 
           const pickedBox = document.getElementById('picked-member-box');
           if (myData.picked_member) {
@@ -1471,6 +1464,7 @@
           } else {
             const groupRound = group.current_round || 1;
 
+            // HITUNG BERAPA BANYAK YANG SUDAH DITERIMA/ACC DI RONDE INI
             let approvedCountForThisRound = 0;
             Object.keys(data).forEach(otherKey => {
               const otherGroup = data[otherKey];
@@ -1479,6 +1473,7 @@
               }
             });
 
+            // HITUNG ANTREAN MENUNGGU VERIFIKASI PADA SOAL / RONDE INI BERDASARKAN WAKTU SUBMIT
             let waitingQueueForThisRound = [];
             Object.keys(data).forEach(k => {
               if (data[k] && data[k].status === 'waiting' && (data[k].current_round || 1) === groupRound) {
@@ -1487,13 +1482,14 @@
             });
             waitingQueueForThisRound.sort((a, b) => a.time - b.time);
 
-            let roundQueuePos = 1;
+            let roundSubmitPos = 1;
             if (group.status === 'waiting') {
               const posIdx = waitingQueueForThisRound.findIndex(x => x.id === groupId);
-              roundQueuePos = posIdx !== -1 ? posIdx + 1 : 1;
+              roundSubmitPos = posIdx !== -1 ? posIdx + 1 : 1;
             }
 
-            const roundFinishOrderRank = approvedCountForThisRound + roundQueuePos;
+            // PERINGKAT UNTUK PENENTUAN SKOR = YANG SUDAH DI-ACC + ANTREAN SAAT INI
+            const roundFinishOrderRank = approvedCountForThisRound + roundSubmitPos;
 
             groupList.push({
               id: groupId,
@@ -1508,9 +1504,10 @@
             const currentScores = getCustomScoreFromInputs();
             const scoreEarned = currentScores[roundFinishOrderRank] !== undefined ? currentScores[roundFinishOrderRank] : (currentScores[totalConfiguredGroups] || 100);
 
+            // BADGE STATUS DENGAN TEKS "MENUNGGU #X"sesuai urutan mengumpulkan
             let statusBadge = '';
             if (group.status === 'waiting') {
-              statusBadge = `<span class="bg-amber-500/20 text-amber-300 text-xs px-2.5 py-1 font-extrabold rounded-full animate-pulse border border-amber-500/40">Urutan #${roundFinishOrderRank}</span>`;
+              statusBadge = `<span class="bg-amber-500/20 text-amber-300 text-xs px-2.5 py-1 font-extrabold rounded-full animate-pulse border border-amber-500/40">Menunggu #${roundSubmitPos}</span>`;
             } else if (group.status === 'completed') {
               statusBadge = '<span class="bg-emerald-500/20 text-emerald-300 text-xs px-2.5 py-1 font-bold rounded-full">Selesai Seluruh Soal</span>';
             } else {
@@ -1528,7 +1525,6 @@
               </div>
             ` : '';
 
-            // TOMBOL ACC DAN DISKUSI ULANG BERSIH TANPA TEKS BERLEBIHAN
             let actionButtons = '';
             if (group.status === 'waiting') {
               actionButtons = `
@@ -1675,7 +1671,6 @@
       });
     }
 
-    // RESET SELURUH KUIS (LAMAN SISWA KEMBALI KE REGISTRASI TAPI NAMA & FOTO TERISI)
     function resetAllGame() {
       playClickSound();
       if (!confirm("Yakin ingin mereset seluruh kuis di ruangan ini?")) return;
