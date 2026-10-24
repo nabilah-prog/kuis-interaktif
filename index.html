@@ -9,6 +9,12 @@
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  
+  <!-- KaTeX CSS & JS untuk Render Simbol/Rumus Matematika -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css" />
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+
   <style>
     @keyframes floatClouds {
       0% { transform: translateX(-10%); }
@@ -27,7 +33,7 @@
 
     @keyframes glowPulse {
       0%, 100% { box-shadow: 0 0 25px rgba(251, 191, 36, 0.6); }
-      50% { box-shadow: 0 0 50px rgba(251, 191, 36, 0.9); }
+      50% { shadow: 0 0 50px rgba(251, 191, 36, 0.9); }
     }
     .glow-gold { animation: glowPulse 2s infinite ease-in-out; }
 
@@ -47,6 +53,12 @@
 
     .mirror-cam {
       transform: scaleX(-1);
+    }
+
+    /* Style untuk menjaga baris enter (multiline) */
+    .preserve-lines {
+      white-space: pre-wrap;
+      word-break: break-word;
     }
   </style>
 </head>
@@ -212,7 +224,7 @@
           <span id="round-badge" class="bg-indigo-500/20 text-indigo-300 text-xs font-bold px-3 py-1 rounded-lg border border-indigo-500/30">Soal 1</span>
           <span class="text-xs text-slate-400 bg-slate-800/80 px-2.5 py-1 rounded-md">💡 Diskusi Kelompok</span>
         </div>
-        <div id="question-text" class="text-lg font-medium mb-4 leading-relaxed text-slate-100"></div>
+        <div id="question-text" class="text-lg font-medium mb-4 leading-relaxed text-slate-100 preserve-lines"></div>
         <div id="answer-container" class="mb-6 space-y-3"></div>
         <button type="button" onclick="submitAnswer()" class="w-full py-4 bg-gradient-to-r from-emerald-600 to-teal-600 font-bold rounded-2xl shadow-lg">Kirim Jawaban Kelompok</button>
       </div>
@@ -247,7 +259,7 @@
 
         <div id="explanations-container" class="hidden mt-6 text-left space-y-3 bg-slate-900/90 p-4 rounded-2xl border border-slate-800 text-xs text-slate-300">
           <h4 class="font-bold text-sky-300 border-b border-slate-700 pb-2">Pembahasan Jawaban Soal:</h4>
-          <div id="explanation-list" class="space-y-2"></div>
+          <div id="explanation-list" class="space-y-3"></div>
         </div>
       </div>
     </div>
@@ -288,7 +300,7 @@
       <div class="flex flex-wrap justify-between items-center gap-3 border-b border-slate-700 pb-3">
         <div>
           <h3 class="text-lg font-bold text-sky-300">⚙️ Pengaturan Soal dan Sistem Poin Kuis</h3>
-          <p class="text-xs text-slate-400">Atur soal, jumlah kelompok, dan poin tiap urutan selesai sebelum membuat kuis.</p>
+          <p class="text-xs text-slate-400">Atur soal, jumlah kelompok, dan poin tiap urutan selesai sebelum membuat kuis. Gunakan <code class="text-amber-300">$...$</code> untuk rumus matematika.</p>
         </div>
         <div class="flex items-center gap-2">
           <select id="preset-selector" onchange="loadSelectedPreset(this.value)" class="bg-slate-900 border border-slate-700 text-xs rounded-xl p-2 text-white">
@@ -383,6 +395,23 @@
     let previousRound = null;
 
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+    // FUNGSI UNTUK MERENDER RUMUS MATEMATIKA SECARA OTOMATIS
+    function renderMathExpressions() {
+      setTimeout(() => {
+        if (typeof renderMathInElement === 'function') {
+          renderMathInElement(document.body, {
+            delimiters: [
+              {left: '$$', right: '$$', display: true},
+              {left: '$', right: '$', display: false},
+              {left: '\\(', right: '\\)', display: false},
+              {left: '\\[', right: '\\]', display: true}
+            ],
+            throwOnError: false
+          });
+        }
+      }, 50);
+    }
 
     function playClickSound() {
       if (audioCtx.state === 'suspended') audioCtx.resume();
@@ -585,10 +614,10 @@
     }
     
     let activeQuestions = [
-      { text: "Soal Ronde 1: Apa jawaban hasil diskusi kelompok kalian?", type: "uraian", explanation: "Penjelasan Soal 1" },
-      { text: "Soal Ronde 2: Berapakah hasil dari 15 + 25 x 2?", type: "pg", options: ["A. 80", "B. 65", "C. 50", "D. 90"], explanation: "Perkalian dahulukan: 25x2=50 + 15 = 65" },
-      { text: "Soal Ronde 3: Jelaskan analisis kelompok kalian mengenai pertanyaan ketiga?", type: "uraian", explanation: "Penjelasan Soal 3" },
-      { text: "Soal Ronde 4: Apa kesimpulan akhir tantangan kelompok?", type: "uraian", explanation: "Penjelasan Soal 4" }
+      { text: "Soal Ronde 1: Jika $f(x) = 2x + 5$, berapakah nilai dari $f(3)$?", type: "uraian", explanation: "Substitusi $x = 3$ ke fungsi:\n$f(3) = 2(3) + 5$\n$f(3) = 6 + 5 = 11$" },
+      { text: "Soal Ronde 2: Berapakah hasil dari $15 + 25 \\times 2$?", type: "pg", options: ["A. 80", "B. 65", "C. 50", "D. 90"], explanation: "Dahulukan perkalian:\n$25 \\times 2 = 50$\n$15 + 50 = 65$" },
+      { text: "Soal Ronde 3: Sederhanakan persamaan $x^2 - 9 = 0$!", type: "uraian", explanation: "Faktorkan persamaan kuadrat:\n$(x - 3)(x + 3) = 0$\nSehingga $x = 3$ atau $x = -3$" },
+      { text: "Soal Ronde 4: Apa kesimpulan akhir tantangan kelompok?", type: "uraian", explanation: "Kesimpulan diperoleh dari rangkuman ronde 1 hingga 3." }
     ];
 
     window.addEventListener('DOMContentLoaded', () => {
@@ -623,6 +652,7 @@
           content.classList.add('hidden');
         }
       });
+      renderMathExpressions();
     }
 
     function generateUniqueRoomCode() {
@@ -826,6 +856,7 @@
 
     function toggleExplanations() {
       document.getElementById('explanations-container').classList.toggle('hidden');
+      renderMathExpressions();
     }
 
     function showStatusFeedback(type, title, desc) {
@@ -853,6 +884,7 @@
       }, 5000);
     }
 
+    // PEMBARUAN EDITOR SOAL: MENGGUNAKAN TEXTAREA PADA PEMBAHASAN UNTUK MULTILINE
     function generateQuestionInputs(count) {
       const container = document.getElementById('question-editor-container');
       container.innerHTML = '';
@@ -870,7 +902,7 @@
               <option value="pg" ${q.type === 'pg' ? 'selected' : ''}>Pilihan Ganda (PG)</option>
             </select>
           </div>
-          <textarea id="q-text-${i}" rows="2" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2 text-white" placeholder="Teks Soal...">${q.text || ''}</textarea>
+          <textarea id="q-text-${i}" rows="2" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2 text-white" placeholder="Teks Soal (Gunakan $...$ untuk rumus)...">${q.text || ''}</textarea>
           
           <div id="pg-box-${i}" class="${q.type === 'pg' ? '' : 'hidden'} grid grid-cols-2 gap-2 pt-1">
             <input id="q-opt-${i}-0" type="text" value="${q.options ? q.options[0] : 'A.'}" class="bg-slate-950 border border-slate-800 rounded-lg p-1.5 text-white" />
@@ -879,10 +911,12 @@
             <input id="q-opt-${i}-3" type="text" value="${q.options ? q.options[3] : 'D.'}" class="bg-slate-950 border border-slate-800 rounded-lg p-1.5 text-white" />
           </div>
 
-          <input id="q-exp-${i}" type="text" value="${q.explanation || ''}" placeholder="Pembahasan Singkat Soal Ini..." class="w-full bg-slate-950 border border-slate-800 rounded-lg p-1.5 text-slate-300 italic" />
+          <label class="block font-semibold text-sky-300 text-[11px] mt-1">Pembahasan Singkat (Bisa Enter ke Bawah & Rumus $...$):</label>
+          <textarea id="q-exp-${i}" rows="3" placeholder="Tuliskan pembahasan soal ini...\nBisa enter ke bawah untuk langkah kerja..." class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-slate-200 italic font-sans preserve-lines">${q.explanation || ''}</textarea>
         `;
         container.appendChild(div);
       }
+      renderMathExpressions();
     }
 
     function toggleOptionInputs(index, type) {
@@ -1019,6 +1053,7 @@
             container.appendChild(div);
           });
         }
+        renderMathExpressions();
       });
 
       modal.classList.remove('hidden');
@@ -1105,6 +1140,7 @@
         detailEl.classList.add('hidden');
         btnIcon.innerText = "🔽 Lihat Detail Kuis";
       }
+      renderMathExpressions();
     }
 
     function openHistoryModal() {
@@ -1136,7 +1172,7 @@
                       <div class="font-bold text-amber-300 text-[11px]">
                         <span>Soal ${roundKey.replace('round_', '')}</span>
                       </div>
-                      <p class="text-slate-100 text-xs italic mt-0.5 font-semibold">Jawaban: "${rec.answer || '-'}"</p>
+                      <p class="text-slate-100 text-xs italic mt-0.5 font-semibold preserve-lines">Jawaban: "${rec.answer || '-'}"</p>
                       ${rec.picked_member ? `<p class="text-[10px] text-indigo-300 mt-0.5">📢 Dipanggil Maju: <strong>${rec.picked_member}</strong></p>` : ''}
                     </div>
                   `;
@@ -1196,6 +1232,7 @@
             container.appendChild(div);
           });
         }
+        renderMathExpressions();
       });
 
       modal.classList.remove('hidden');
@@ -1271,6 +1308,7 @@
 
         document.getElementById('quiz-lobby-box').classList.toggle('hidden', started);
         document.getElementById('quiz-content-wrapper').classList.toggle('hidden', !started);
+        renderMathExpressions();
       });
 
       db.ref(`rooms/${currentRoomCode}/groups`).on('value', (allGroupsSnap) => {
@@ -1312,7 +1350,7 @@
             currentQ.options.forEach((opt) => {
               const optBtn = document.createElement('button');
               optBtn.type = "button";
-              optBtn.className = "w-full p-3 bg-slate-900 hover:bg-slate-800 border border-slate-700 rounded-xl text-left text-xs font-semibold focus:border-sky-400";
+              optBtn.className = "w-full p-3 bg-slate-900 hover:bg-slate-800 border border-slate-700 rounded-xl text-left text-xs font-semibold focus:border-sky-400 preserve-lines";
               optBtn.innerText = opt;
               optBtn.onclick = () => {
                 playClickSound();
@@ -1327,7 +1365,7 @@
             textarea.id = "text-answer-input";
             textarea.rows = 3;
             textarea.placeholder = "Tuliskan jawaban hasil diskusi kelompok...";
-            textarea.className = "w-full bg-slate-900/90 border border-slate-700 rounded-xl p-3.5 text-white text-sm";
+            textarea.className = "w-full bg-slate-900/90 border border-slate-700 rounded-xl p-3.5 text-white text-sm preserve-lines";
             answerContainer.appendChild(textarea);
           }
 
@@ -1391,16 +1429,19 @@
             document.getElementById('student-self-photo').src = myData.photo;
           }
 
+          // PEMBAHASAN MULTILINE DENGAN LOGIKA ENTER & RUMUS MATEMATIKA
           const expList = document.getElementById('explanation-list');
           expList.innerHTML = '';
           activeQuestions.forEach((q, idx) => {
-            const p = document.createElement('p');
-            p.innerHTML = `<strong>Soal ${idx+1}:</strong> ${q.explanation || 'Pembahasan dijelaskan oleh guru.'}`;
-            expList.appendChild(p);
+            const div = document.createElement('div');
+            div.className = "bg-slate-950/70 p-3 rounded-xl border border-slate-800/80";
+            div.innerHTML = `<div class="font-bold text-amber-300 mb-1">Soal ${idx+1}:</div><div class="preserve-lines text-slate-200">${q.explanation || 'Pembahasan dijelaskan oleh guru.'}</div>`;
+            expList.appendChild(div);
           });
 
           triggerConfetti();
         }
+        renderMathExpressions();
       });
     }
 
@@ -1604,7 +1645,7 @@
                   <p>Ronde Sekarang: <strong class="text-indigo-400">Soal ${groupRound}</strong></p>
                   <p>Total Skor: <strong class="text-emerald-400">${group.total_score || 0} Poin</strong></p>
                 </div>
-                ${group.status === 'waiting' ? `<div class="bg-slate-900/80 p-3 rounded-xl mb-4 border border-amber-500/30"><p class="text-xs text-slate-400">Jawaban Siswa:</p><p class="text-sm text-slate-100 italic font-bold">"${group.answer || '-'}"</p></div>` : ''}
+                ${group.status === 'waiting' ? `<div class="bg-slate-900/80 p-3 rounded-xl mb-4 border border-amber-500/30"><p class="text-xs text-slate-400">Jawaban Siswa:</p><p class="text-sm text-slate-100 italic font-bold preserve-lines">"${group.answer || '-'}"</p></div>` : ''}
                 ${pickMemberSection}
               </div>
               <div>
@@ -1661,6 +1702,8 @@
           `;
           verticalLeaderboardContainer.appendChild(barCol);
         });
+
+        renderMathExpressions();
       });
     }
 
