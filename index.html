@@ -273,7 +273,7 @@
     <!-- TAB NAVIGASI GURU -->
     <div class="flex border-b border-slate-700/80 gap-2">
       <button type="button" id="tab-btn-questions" onclick="playClickSound(); switchTeacherTab('questions')" class="py-3 px-5 font-bold text-xs rounded-t-2xl bg-indigo-600 text-white border-t border-x border-indigo-400/30">
-        📝 Soal & Pengaturan
+        📝 Soal dan Pengaturan
       </button>
       <button type="button" id="tab-btn-leaderboard" onclick="playClickSound(); switchTeacherTab('leaderboard')" class="py-3 px-5 font-bold text-xs rounded-t-2xl bg-slate-800 text-slate-400 hover:text-white">
         📊 Papan Peringkat
@@ -283,11 +283,11 @@
       </button>
     </div>
 
-    <!-- TAB 1: SOAL & PENGATURAN -->
+    <!-- TAB 1: SOAL DAN PENGATURAN -->
     <div id="tab-content-questions" class="glass-card p-6 rounded-b-3xl rounded-tr-3xl border border-sky-500/20 space-y-4">
       <div class="flex flex-wrap justify-between items-center gap-3 border-b border-slate-700 pb-3">
         <div>
-          <h3 class="text-lg font-bold text-sky-300">⚙️ Pengaturan Soal & Sistem Poin Kuis</h3>
+          <h3 class="text-lg font-bold text-sky-300">⚙️ Pengaturan Soal dan Sistem Poin Kuis</h3>
           <p class="text-xs text-slate-400">Atur soal, jumlah kelompok, dan poin tiap urutan selesai sebelum membuat kuis.</p>
         </div>
         <div class="flex items-center gap-2">
@@ -313,7 +313,7 @@
         </div>
 
         <button type="button" onclick="createNewQuizRoomAndSwitch()" class="ml-auto px-5 py-2.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 font-extrabold rounded-xl text-xs shadow-xl flex items-center gap-2">
-          🚀 Buat Kuis & Dapatkan Kode Ruang
+          🚀 Buat Kuis dan Dapatkan Kode Ruang
         </button>
       </div>
 
@@ -349,9 +349,8 @@
     <div id="tab-content-answers" class="hidden space-y-4">
       <div id="no-room-warning" class="glass-card p-12 rounded-3xl border border-amber-500/30 text-center space-y-3">
         <div class="text-5xl animate-bounce">⚠️</div>
-        <h3 class="text-xl font-bold text-amber-300">Ruang Kuis Belum Dibuat / Telah Selesai</h3>
-        <p class="text-xs text-slate-300 max-w-md mx-auto">Atur dan selesaikan soal terlebih dahulu di tab <strong>"📝 Soal & Pengaturan"</strong>, lalu tekan tombol <strong>"🚀 Buat Kuis & Dapatkan Kode Ruang"</strong> untuk membuat ruang kuis baru.</p>
-        <button type="button" onclick="switchTeacherTab('questions')" class="px-5 py-2.5 bg-indigo-600 font-bold text-xs rounded-xl shadow-lg mt-2">Go to Soal & Pengaturan →</button>
+        <h3 class="text-xl font-bold text-amber-300">Kuis Belum Dibuat</h3>
+        <button type="button" onclick="switchTeacherTab('questions')" class="px-5 py-2.5 bg-indigo-600 font-bold text-xs rounded-xl shadow-lg mt-2">Soal dan Pengaturan -></button>
       </div>
 
       <div id="active-room-controls" class="hidden space-y-4">
@@ -973,7 +972,6 @@
       });
     }
 
-    // FITUR BARU: HAPUS BANK SOAL TERPILIH
     function deleteSelectedPreset() {
       const selector = document.getElementById('preset-selector');
       const selectedKey = selector.value;
@@ -1163,7 +1161,7 @@
                   <p class="text-[11px] text-slate-400 italic">Anggota: ${item.members ? item.members.join(', ') : '-'}</p>
 
                   <div class="pt-2">
-                    <p class="text-[11px] font-bold text-sky-300 mb-1">📝 Detail Jawaban & Anggota Maju:</p>
+                    <p class="text-[11px] font-bold text-sky-300 mb-1">📝 Detail Jawaban dan Anggota Maju:</p>
                     ${answerRows}
                   </div>
                 </div>
@@ -1187,7 +1185,7 @@
               <div id="history-detail-${key}" class="hidden pt-3 border-t border-slate-800 space-y-3">
                 <div class="bg-indigo-950/40 p-3 rounded-2xl border border-indigo-500/20 text-center">
                   <h4 class="font-extrabold text-sky-300 text-sm">🏆 HASIL PAPAN PERINGKAT KELAS</h4>
-                  <p class="text-[11px] text-slate-400">Rincian Nilai & Hasil Jawaban Seluruh Kelompok</p>
+                  <p class="text-[11px] text-slate-400">Rincian Nilai dan Hasil Jawaban Seluruh Kelompok</p>
                 </div>
 
                 <div class="space-y-3">
@@ -1256,7 +1254,7 @@
         const roomData = roomSnap.val() || {};
         
         if (roomData.quiz_finished_final) {
-          alert("🏁 Kuis telah selesai & disimpan oleh Guru! Kamu akan dikembalikan ke Halaman Utama.");
+          alert("🏁 Kuis telah selesai dan disimpan oleh Guru! Kamu akan dikembalikan ke Halaman Utama.");
           location.href = location.pathname;
           return;
         }
@@ -1579,7 +1577,7 @@
             let actionButtons = '';
             if (group.status === 'waiting') {
               actionButtons = `
-                <button type="button" onclick="approveGroup('${groupId}', ${groupRound}, ${group.total_score || 0}, ${scoreEarned}, '${group.answer || ''}', '${group.picked_member || ''}', ${roundFinishOrderRank})" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 font-bold rounded-xl text-sm mb-2 shadow-lg">✅ ACC & Tambah +${scoreEarned} Poin</button>
+                <button type="button" onclick="approveGroup('${groupId}', ${groupRound}, ${group.total_score || 0}, ${scoreEarned}, '${group.answer || ''}', '${group.picked_member || ''}', ${roundFinishOrderRank})" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 font-bold rounded-xl text-sm mb-2 shadow-lg">✅ ACC dan Tambah +${scoreEarned} Poin</button>
                 <button type="button" onclick="rejectGroup('${groupId}')" class="w-full py-1.5 bg-rose-600/30 hover:bg-rose-600/50 text-rose-300 font-bold rounded-xl text-xs">❌ Diskusi Ulang</button>
               `;
             } else if (group.status === 'completed') {
