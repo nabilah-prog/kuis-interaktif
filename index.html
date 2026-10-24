@@ -260,7 +260,7 @@
         <div class="flex items-center gap-2">
           <h1 class="text-2xl font-extrabold text-sky-300">🏆 Dashboard Guru</h1>
           <span id="teacher-id-badge" class="bg-indigo-500/20 text-indigo-300 text-xs font-bold px-2.5 py-1 rounded-lg border border-indigo-500/30">👤 Guru: -</span>
-          <span id="room-badge-top" class="hidden bg-amber-500/20 text-amber-300 text-xs font-bold px-2.5 py-1 rounded-lg border border-amber-500/30">🔑 Ruang: -</span>
+          <!-- TOMBOL QR CODE (KODE RUANG HANYA TERDAPAT DI DALAM QR CODE) -->
           <button type="button" id="qr-btn-top" onclick="playClickSound(); openQRModal();" class="hidden px-2.5 py-1 bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold text-xs rounded-lg shadow-md flex items-center gap-1">📱 QR Code</button>
         </div>
       </div>
@@ -666,8 +666,6 @@
         score_table: customScoreTable,
         active_quiz_questions: activeQuestions
       }, () => {
-        document.getElementById('room-badge-top').innerText = "🔑 Ruang: " + currentRoomCode;
-        document.getElementById('room-badge-top').classList.remove('hidden');
         document.getElementById('qr-btn-top').classList.remove('hidden');
 
         document.getElementById('no-room-warning').classList.add('hidden');
@@ -1069,7 +1067,6 @@
           db.ref(`rooms/${currentRoomCode}/groups`).remove();
 
           currentRoomCode = null;
-          document.getElementById('room-badge-top').classList.add('hidden');
           document.getElementById('qr-btn-top').classList.add('hidden');
           document.getElementById('active-room-controls').classList.add('hidden');
           document.getElementById('no-room-warning').classList.remove('hidden');
@@ -1242,12 +1239,17 @@
           return;
         }
 
-        // KETIKA GURU MERESET KUIS: CEK DAN PASTIKAN TOMBOL "MASUK KE RUANG KUIS" TETAP AKTIF JIKA DATA SUDAH TERISI
+        // KETIKA GURU MERESET KUIS: SINKRONISASI ULANG TOMBOL DAN TAMPILAN
         if (roomData.reset_event_timestamp) {
           document.getElementById('student-quiz-screen').classList.add('hidden');
           document.getElementById('student-setup-screen').classList.remove('hidden');
           
-          if (capturedPhotoData && document.getElementById('members-input').value.trim()) {
+          // Mengecek ulang apakah foto & data anggota terisi dari memori/state
+          const hasPhoto = capturedPhotoData || tempPhotoData;
+          const hasMembers = document.getElementById('members-input').value.trim() !== '';
+
+          if (hasPhoto && hasMembers) {
+            if (!capturedPhotoData) capturedPhotoData = tempPhotoData;
             const submitBtn = document.getElementById('submit-student-btn');
             submitBtn.disabled = false;
             submitBtn.className = "w-full py-4 bg-gradient-to-r from-indigo-600 to-sky-600 font-bold rounded-2xl shadow-lg cursor-pointer";
@@ -1565,7 +1567,6 @@
               </div>
             ` : '';
 
-            // PEMBARUAN TEKS TOMBOL PADA DASBOR GURU SAAT KUIS DIMULAI
             let actionButtons = '';
             if (group.status === 'waiting') {
               actionButtons = `
