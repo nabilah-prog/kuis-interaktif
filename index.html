@@ -1296,19 +1296,18 @@
           document.getElementById('waiting-box').classList.remove('hidden');
           document.getElementById('finished-all-box').classList.add('hidden');
 
-          // URUTAN MENGUMPULKAN BERDASARKAN WAKTU PADA SOAL YANG SAMA
-          let waitingList = [];
+          // HITUNG ANTREAN GLOBAL WAKTU NYATA UNTUK DIPERIKSA GURU
+          let globalWaitingList = [];
           Object.keys(allGroups).forEach(k => {
-            if (allGroups[k].status === 'waiting' && (allGroups[k].current_round || 1) === currentRoundNum) {
-              waitingList.push({ id: k, time: allGroups[k].last_submit_time || 9999999999999 });
+            if (allGroups[k].status === 'waiting') {
+              globalWaitingList.push({ id: k, time: allGroups[k].last_submit_time || 9999999999999 });
             }
           });
-          waitingList.sort((a, b) => a.time - b.time);
-          const myPos = waitingList.findIndex(x => x.id === selectedGroup);
-          const queueNum = myPos !== -1 ? myPos + 1 : 1;
+          globalWaitingList.sort((a, b) => a.time - b.time);
+          const myPos = globalWaitingList.findIndex(x => x.id === selectedGroup);
+          const globalQueueNum = myPos !== -1 ? myPos + 1 : 1;
 
-          // FORMAT RINGKAS TEKS SUSAH DIPERINGKAS PADA SISWA
-          document.getElementById('student-waiting-status-text').innerText = `Menunggu Verifikasi Guru #${queueNum}`;
+          document.getElementById('student-waiting-status-text').innerText = `Menunggu Verifikasi Guru #${globalQueueNum}`;
 
           const pickedBox = document.getElementById('picked-member-box');
           if (myData.picked_member) {
@@ -1442,6 +1441,15 @@
       db.ref(`rooms/${currentRoomCode}/quiz_started`).once('value', (startedSnap) => {
         const isQuizStarted = startedSnap.val() === true;
 
+        // HITUNG ANTREAN GLOBAL SELURUH KELOMPOK YANG STATUSNYA 'WAITING' BERDASARKAN WAKTU SUBMIT
+        let globalWaitingList = [];
+        Object.keys(data).forEach(k => {
+          if (data[k] && data[k].status === 'waiting') {
+            globalWaitingList.push({ id: k, time: data[k].last_submit_time || 9999999999999 });
+          }
+        });
+        globalWaitingList.sort((a, b) => a.time - b.time);
+
         let groupList = [];
         for (let i = 1; i <= totalConfiguredGroups; i++) {
           const groupId = 'kelompok_' + i;
@@ -1464,7 +1472,14 @@
           } else {
             const groupRound = group.current_round || 1;
 
-            // HITUNG BERAPA BANYAK YANG SUDAH DITERIMA/ACC DI RONDE INI
+            // URUTAN GLOBAL SANGAT PRESISI BERDASARKAN SIAPA DULUAN YANG MENGUMPULKAN PADA DASBOR
+            let globalQueuePos = 1;
+            if (group.status === 'waiting') {
+              const posIdx = globalWaitingList.findIndex(x => x.id === groupId);
+              globalQueuePos = posIdx !== -1 ? posIdx + 1 : 1;
+            }
+
+            // HITUNG PERINGKAT FINISH PADA RONDE/SOAL YANG SPESIFIK UNTUK HITUNGAN POIN
             let approvedCountForThisRound = 0;
             Object.keys(data).forEach(otherKey => {
               const otherGroup = data[otherKey];
@@ -1473,7 +1488,6 @@
               }
             });
 
-            // HITUNG ANTREAN MENUNGGU VERIFIKASI PADA SOAL / RONDE INI BERDASARKAN WAKTU SUBMIT
             let waitingQueueForThisRound = [];
             Object.keys(data).forEach(k => {
               if (data[k] && data[k].status === 'waiting' && (data[k].current_round || 1) === groupRound) {
@@ -1482,14 +1496,13 @@
             });
             waitingQueueForThisRound.sort((a, b) => a.time - b.time);
 
-            let roundSubmitPos = 1;
+            let roundQueuePos = 1;
             if (group.status === 'waiting') {
               const posIdx = waitingQueueForThisRound.findIndex(x => x.id === groupId);
-              roundSubmitPos = posIdx !== -1 ? posIdx + 1 : 1;
+              roundQueuePos = posIdx !== -1 ? posIdx + 1 : 1;
             }
 
-            // PERINGKAT UNTUK PENENTUAN SKOR = YANG SUDAH DI-ACC + ANTREAN SAAT INI
-            const roundFinishOrderRank = approvedCountForThisRound + roundSubmitPos;
+            const roundFinishOrderRank = approvedCountForThisRound + roundQueuePos;
 
             groupList.push({
               id: groupId,
@@ -1504,10 +1517,10 @@
             const currentScores = getCustomScoreFromInputs();
             const scoreEarned = currentScores[roundFinishOrderRank] !== undefined ? currentScores[roundFinishOrderRank] : (currentScores[totalConfiguredGroups] || 100);
 
-            // BADGE STATUS DENGAN TEKS "MENUNGGU #X"sesuai urutan mengumpulkan
+            // MENAMPILKAN "MENUNGGU #X" SESUAI ANTREAN PENGUMPULAN GLOBAL
             let statusBadge = '';
             if (group.status === 'waiting') {
-              statusBadge = `<span class="bg-amber-500/20 text-amber-300 text-xs px-2.5 py-1 font-extrabold rounded-full animate-pulse border border-amber-500/40">Menunggu #${roundSubmitPos}</span>`;
+              statusBadge = `<span class="bg-amber-500/20 text-amber-300 text-xs px-2.5 py-1 font-extrabold rounded-full animate-pulse border border-amber-500/40">Menunggu #${globalQueuePos}</span>`;
             } else if (group.status === 'completed') {
               statusBadge = '<span class="bg-emerald-500/20 text-emerald-300 text-xs px-2.5 py-1 font-bold rounded-full">Selesai Seluruh Soal</span>';
             } else {
