@@ -45,6 +45,11 @@
     .bar-grow {
       transition: height 1.2s cubic-bezier(0.34, 1.56, 0.64, 1);
     }
+
+    /* CSS Mirror Kamera Selfie */
+    .mirror-cam {
+      transform: scaleX(-1);
+    }
   </style>
 </head>
 <body id="dynamic-bg" class="bg-round-1 text-white min-h-screen flex flex-col items-center justify-center p-4 relative overflow-x-hidden transition-all duration-1000">
@@ -137,7 +142,6 @@
   <!-- MODAL QR CODE BESAR UNTUK DIPAPARKAN GURU -->
   <div id="qr-modal" class="hidden fixed inset-0 bg-black/90 backdrop-blur-md flex items-center justify-center p-4 z-50">
     <div class="glass-card p-8 rounded-3xl border-2 border-amber-400 max-w-sm w-full text-center shadow-2xl">
-      <!-- MENGUBAH BACAAN KUNING MENJADI LANGSUNG KODE RUANG -->
       <h2 id="qr-room-header" class="text-2xl font-extrabold text-amber-300 mb-4 tracking-wider"></h2>
       
       <div class="bg-white p-4 rounded-2xl inline-block shadow-xl mb-4">
@@ -171,13 +175,14 @@
       <div>
         <label class="block text-xs font-semibold text-amber-300 mb-1">📸 Selfie Bersama Kelompok:</label>
         <div class="relative bg-slate-900 rounded-2xl overflow-hidden border border-slate-700 aspect-video flex flex-col items-center justify-center">
-          <video id="webcam-preview" autoplay playsinline class="w-full h-full object-cover hidden"></video>
-          <img id="selfie-photo-result" class="w-full h-full object-cover hidden" />
+          <!-- MIRROR KAMERA PREVIEW DAN HASIL FOTO -->
+          <video id="webcam-preview" autoplay playsinline class="w-full h-full object-cover mirror-cam hidden"></video>
+          <img id="selfie-photo-result" class="w-full h-full object-cover mirror-cam hidden" />
           
           <button type="button" id="start-cam-btn" onclick="playClickSound(); startCamera();" class="px-3 py-1.5 bg-slate-800 text-xs font-bold rounded-lg border border-slate-700 text-sky-300">📷 Nyalakan Kamera</button>
-          <button type="button" id="take-photo-btn" onclick="takePhoto()" class="hidden absolute bottom-3 px-4 py-1.5 bg-emerald-600 text-xs font-bold rounded-xl shadow-lg">📸 Ambil Foto Selfie</button>
+          <button type="button" id="take-photo-btn" onclick="takePhoto()" class="hidden absolute bottom-3 px-4 py-1.5 bg-emerald-600 text-xs font-bold rounded-xl shadow-lg z-10">📸 Ambil Foto Selfie</button>
           
-          <div id="photo-action-buttons" class="hidden absolute bottom-3 flex gap-2">
+          <div id="photo-action-buttons" class="hidden absolute bottom-3 flex gap-2 z-10">
             <button type="button" onclick="retakePhoto()" class="px-3 py-1.5 bg-rose-600 hover:bg-rose-500 text-xs font-bold rounded-xl shadow-lg border border-rose-400 flex items-center gap-1">🔄 Foto Ulang</button>
             <button type="button" onclick="confirmPhoto()" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-xs font-bold rounded-xl shadow-lg border border-emerald-400 flex items-center gap-1">✅ Gunakan Foto Ini</button>
           </div>
@@ -269,7 +274,6 @@
         <div class="flex items-center gap-2">
           <h1 class="text-2xl font-extrabold text-sky-300">🏆 Dashboard Guru</h1>
           <span id="teacher-id-badge" class="bg-indigo-500/20 text-indigo-300 text-xs font-bold px-2.5 py-1 rounded-lg border border-indigo-500/30">👤 Guru: -</span>
-          <!-- TEKS RUANG DIHAPUS DARI DASHBOARD UTAMA SESUAI PERMINTAAN -->
           <button type="button" onclick="playClickSound(); openQRModal();" class="px-2.5 py-1 bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold text-xs rounded-lg shadow-md flex items-center gap-1">📱 QR Code</button>
         </div>
       </div>
@@ -718,7 +722,6 @@
       const cleanOrigin = window.location.origin.includes('localhost') ? window.location.origin : window.location.href.split('?')[0].split('#')[0];
       const fullUrl = `${cleanOrigin}?room=${currentRoomCode}`;
       
-      // JUDUL LANGSUNG KODE RUANG (BACAAN KUNING)
       document.getElementById('qr-room-header').innerText = "🔑 " + currentRoomCode;
 
       try {
@@ -761,13 +764,20 @@
       }).catch(err => alert("Kamera tidak dapat diakses: " + err));
     }
 
+    // PENGAMBILAN FOTO DENGAN HASIL TIDAK TERBALIK (DISESUAIKAN DENGAN Cermin/MIRROR)
     function takePhoto() {
       playCameraShutterSound();
       const video = document.getElementById('webcam-preview');
       const canvas = document.createElement('canvas');
       canvas.width = 320;
       canvas.height = 240;
-      canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+      const ctx = canvas.getContext('2d');
+
+      // Gambar secara terbalik (mirrored) agar pas dengan gaya foto selfie
+      ctx.translate(canvas.width, 0);
+      ctx.scale(-1, 1);
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
       tempPhotoData = canvas.toDataURL('image/jpeg', 0.6);
 
       document.getElementById('selfie-photo-result').src = tempPhotoData;
@@ -1020,7 +1030,7 @@
       document.getElementById('public-bank-modal').classList.add('hidden');
     }
 
-    // SIMPAN REKAP KUIS OTOMATIS DAN RESET KE SETELAN AWAL (HALAMAN UTAMA)
+    // SIMPAN REKAP KUIS LALU BERSIHKAN TAB KONTROL JAWABAN KE SETELAN AWAL (TANPA PINDAH KE MENU AWAL)
     function saveCurrentQuizResults() {
       db.ref(`rooms/${currentRoomCode}/groups`).once('value', (snapshot) => {
         const groupsData = snapshot.val();
@@ -1057,13 +1067,11 @@
           date_saved: timestampStr,
           results: list
         }, () => {
-          alert(`✅ Rekap Kuis "${historyTitle}" Berhasil Disimpan!\n\nKuis di ruangan ini telah selesai. Halaman akan dikembalikan ke Setelan Awal.`);
+          alert(`✅ Rekap Kuis "${historyTitle}" Berhasil Disimpan!\n\nLaman Kontrol Jawaban telah dibersihkan dan siap untuk pendaftaran kuis berikutnya.`);
           
-          // RESET RUANG KUIS DI FIREBASE LALU KEMBALI KE HALAMAN UTAMA
+          // UBAH STATUS KUIS MENJADI NORMALLY STOPPED & HAPUS KELOMPOK DARI RUANG INI
           db.ref(`rooms/${currentRoomCode}/quiz_started`).set(false);
-          db.ref(`rooms/${currentRoomCode}/groups`).remove(() => {
-            location.href = location.pathname;
-          });
+          db.ref(`rooms/${currentRoomCode}/groups`).remove();
         });
       });
     }
@@ -1500,7 +1508,6 @@
               }
             }
 
-            // BAGIAN KONTROL PENUNJUKAN ANGGOTA HANYA MUNCUL JIKA KUIS SUDAH DIMULAI
             const pickMemberSection = isQuizStarted ? `
               <div class="bg-slate-900/50 p-3 rounded-xl mb-4 text-center border border-slate-800">
                 <button type="button" onclick="pickRandomMember('${groupId}')" class="text-xs bg-indigo-600/30 hover:bg-indigo-600/50 text-indigo-300 px-3 py-1.5 rounded-lg mb-2 font-bold transition">🎲 Tunjuk Anggota Maju</button>
@@ -1508,7 +1515,6 @@
               </div>
             ` : '';
 
-            // PERBAIKAN TOMBOL AKSI: HINDARI MENAMPILKAN "MENUNGGU JAWABAN SISWA" JIKA KUIS TIDAK BERLANGSUNG ATAU SUDAH SELESAI
             let actionButtons = '';
             if (group.status === 'waiting') {
               actionButtons = `
@@ -1532,7 +1538,7 @@
                   ${statusBadge}
                 </div>
                 <div class="flex items-center gap-3 mb-3">
-                  ${group.photo ? `<img src="${group.photo}" class="w-12 h-12 rounded-xl object-cover border border-amber-300 shadow-md" />` : ''}
+                  ${group.photo ? `<img src="${group.photo}" class="w-12 h-12 rounded-xl object-cover border border-amber-300 shadow-md mirror-cam" />` : ''}
                   <p class="text-xs text-slate-300 italic font-medium leading-relaxed">Anggota: ${group.members.join(', ')}</p>
                 </div>
                 <div class="text-sm text-slate-300 space-y-1 mb-4">
@@ -1589,7 +1595,7 @@
             <span class="text-xs font-extrabold text-amber-300 mb-1">${item.score}</span>
             <div class="w-12 bg-slate-950 rounded-t-2xl p-1 flex flex-col justify-end h-full border border-slate-700 overflow-hidden">
               <div class="w-full bg-gradient-to-t from-indigo-600 via-sky-500 to-amber-300 rounded-t-xl bar-grow flex justify-center items-start pt-1" style="height: ${heightPercent}%">
-                ${item.photo ? `<img src="${item.photo}" class="w-7 h-7 rounded-full object-cover border-2 border-white shadow-md" />` : ''}
+                ${item.photo ? `<img src="${item.photo}" class="w-7 h-7 rounded-full object-cover border-2 border-white shadow-md mirror-cam" />` : ''}
               </div>
             </div>
             <span class="text-[11px] font-bold text-slate-300 mt-2 text-center">${item.name}</span>
